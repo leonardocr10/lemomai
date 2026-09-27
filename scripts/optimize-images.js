@@ -24,7 +24,7 @@ const OUT = path.join(ROOT, 'public');
 const LOGO_BOX = { left: 96, top: 350, width: 1290, height: 380 };
 const SYMBOL_BOX = { left: 96, top: 350, width: 550, height: 380 };
 // Área do texto "LC Serviços" dentro do recorte do logo.
-const TEXT_AREA = { x: 520 - LOGO_BOX.left, y: 500 - LOGO_BOX.top };
+const TEXT_AREA = { x: 570 - LOGO_BOX.left, y: 495 - LOGO_BOX.top };
 const HERO_BOX = { left: 1060, top: 0, width: 1095, height: 730 };
 const NAVY = { r: 6, g: 26, b: 58 };
 
