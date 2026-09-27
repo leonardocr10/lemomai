@@ -1,0 +1,17 @@
+<%# FaqAccordion — params: items, idPrefix %>
+<% const prefix = locals.idPrefix || 'faq'; %>
+<div class="faq" data-accordion>
+  <% items.forEach((item, index) => { %>
+    <div class="faq__item" data-reveal>
+      <h3 class="faq__question">
+        <button class="faq__trigger" type="button" aria-expanded="false" aria-controls="<%= prefix %>-panel-<%= index %>" id="<%= prefix %>-trigger-<%= index %>">
+          <span><%= item.question %></span>
+          <%- include('icon', { name: 'chevron-down' }) %>
+        </button>
+      </h3>
+      <div class="faq__panel" id="<%= prefix %>-panel-<%= index %>" role="region" aria-labelledby="<%= prefix %>-trigger-<%= index %>" hidden>
+        <div><p><%= item.answer %></p></div>
+      </div>
+    </div>
+  <% }) %>
+</div>

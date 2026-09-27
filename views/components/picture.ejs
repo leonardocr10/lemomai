@@ -1,0 +1,19 @@
+<%#
+  Picture responsivo com AVIF/WebP e fallback.
+  params: src (caminho sem extensão), alt, width, height, fallback ('png'|'jpg'),
+          eager (bool), cls, sizes, widths (array para srcset, ex.: [720, 1100])
+%>
+<%
+  const fb = locals.fallback || 'png';
+  const srcsetFor = (ext) => locals.widths
+    ? locals.widths.map((w) => src + '-' + w + '.' + ext + ' ' + w + 'w').join(', ')
+    : src + '.' + ext;
+  const fallbackSrc = locals.widths ? src + '-' + locals.widths[locals.widths.length - 1] + '.' + fb : src + '.' + fb;
+%>
+<picture<% if (locals.cls) { %> class="<%= locals.cls %>"<% } %>>
+  <source type="image/avif" srcset="<%= srcsetFor('avif') %>"<% if (locals.sizes) { %> sizes="<%= locals.sizes %>"<% } %>>
+  <source type="image/webp" srcset="<%= srcsetFor('webp') %>"<% if (locals.sizes) { %> sizes="<%= locals.sizes %>"<% } %>>
+  <img src="<%= fallbackSrc %>"<% if (locals.widths) { %> srcset="<%= srcsetFor(fb) %>"<% } %><% if (locals.sizes) { %> sizes="<%= locals.sizes %>"<% } %>
+       alt="<%= alt %>" width="<%= width %>" height="<%= height %>"
+       <%- locals.eager ? 'fetchpriority="high"' : 'loading="lazy"' %> decoding="async">
+</picture>

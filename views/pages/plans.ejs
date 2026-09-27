@@ -1,0 +1,41 @@
+<% const p = sections.plansPage; %>
+<%- include('../components/page-hero', { breadcrumbs, ...p.hero }) %>
+
+<section class="section section--soft" aria-labelledby="planos-saas-title">
+  <div class="container">
+    <%- include('../components/section-title', { ...p.saas, center: true, id: 'planos-saas-title' }) %>
+    <div class="pricing-grid pricing-grid--saas" data-carousel tabindex="0" aria-label="Planos SaaS (role para ver mais)">
+      <% saasPlans.forEach((plan) => { %>
+        <%- include('../components/pricing-card', { plan }) %>
+      <% }) %>
+    </div>
+    <div class="carousel-dots" data-carousel-dots aria-hidden="true"></div>
+
+    <ul class="saas-includes" aria-label="Incluso em todos os planos">
+      <% p.includes.forEach((item) => { %>
+        <li data-reveal><%- include('../components/icon', { name: item.icon }) %><%= item.text %></li>
+      <% }) %>
+    </ul>
+  </div>
+</section>
+
+<section class="section section--white" aria-labelledby="projetos-title">
+  <div class="container">
+    <%- include('../components/section-title', { ...p.projects, center: true, id: 'projetos-title' }) %>
+    <div class="pricing-grid" data-carousel tabindex="0" aria-label="Planos de projeto (role para ver mais)">
+      <% projectPlans.forEach((plan) => { %>
+        <%- include('../components/pricing-card', { plan }) %>
+      <% }) %>
+    </div>
+    <div class="carousel-dots" data-carousel-dots aria-hidden="true"></div>
+  </div>
+</section>
+
+<section class="section section--soft" aria-labelledby="faq-planos-title">
+  <div class="container faq-layout">
+    <%- include('../components/section-title', { eyebrow: sections.faq.eyebrow, title: sections.faq.title, highlight: sections.faq.highlight, id: 'faq-planos-title' }) %>
+    <%- include('../components/faq-accordion', { items: faq, idPrefix: 'faq-planos' }) %>
+  </div>
+</section>
+
+<%- include('../partials/sections/cta', { sections: { ...sections, cta: p.cta } }) %>

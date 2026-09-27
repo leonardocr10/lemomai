@@ -1,0 +1,48 @@
+<%- include('../../components/page-hero', {
+  breadcrumbs,
+  eyebrow: 'Serviço',
+  title: service.name,
+  subtitle: service.shortDescription
+}) %>
+
+<section class="section section--white">
+  <div class="container detail-layout">
+    <div class="detail-layout__main">
+      <p class="detail-lead" data-reveal><%= service.description %></p>
+
+      <% if (service.features && service.features.length) { %>
+        <div data-reveal>
+          <h2>O que está incluído</h2>
+          <ul class="check-grid">
+            <% service.features.forEach((feature) => { %>
+              <li><%- include('../../components/icon', { name: 'check-circle' }) %><span><%= feature %></span></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+    </div>
+
+    <aside class="aside-card" aria-labelledby="aside-title" data-reveal>
+      <span class="icon-tile icon-tile--dark"><%- include('../../components/icon', { name: service.icon || 'code' }) %></span>
+      <h2 id="aside-title">Vamos conversar sobre seu projeto de <%= service.name.toLowerCase() %>?</h2>
+      <p>Receba uma proposta personalizada, sem compromisso.</p>
+      <%- include('../../components/button', { label: 'Solicitar orçamento', href: '/orcamento', icon: 'send', arrow: true, block: true }) %>
+      <%- include('../../components/whatsapp-button', { variant: 'ghost-light', block: true }) %>
+    </aside>
+  </div>
+</section>
+
+<% if (otherServices.length) { %>
+<section class="section section--soft" aria-labelledby="outros-servicos">
+  <div class="container">
+    <%- include('../../components/section-title', { eyebrow: 'Veja também', title: 'Outros', highlight: 'serviços', id: 'outros-servicos' }) %>
+    <div class="grid grid--3">
+      <% otherServices.forEach((item) => { %>
+        <%- include('../../components/service-card', { service: item }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<%- include('../../partials/sections/cta') %>

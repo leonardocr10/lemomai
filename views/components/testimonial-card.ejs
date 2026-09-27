@@ -1,0 +1,19 @@
+<%# TestimonialCard — params: testimonial %>
+<figure class="card testimonial-card" data-reveal>
+  <%- include('icon', { name: 'quote', cls: 'testimonial-card__quote' }) %>
+  <div class="stars" role="img" aria-label="Avaliação <%= testimonial.rating || 5 %> de 5">
+    <% for (let i = 0; i < (testimonial.rating || 5); i++) { %><%- include('icon', { name: 'star' }) %><% } %>
+  </div>
+  <blockquote><p><%= testimonial.content %></p></blockquote>
+  <figcaption class="testimonial-card__author">
+    <% if (testimonial.avatar) { %>
+      <img class="avatar" src="<%= testimonial.avatar %>" alt="" width="44" height="44" loading="lazy">
+    <% } else { %>
+      <span class="avatar" aria-hidden="true"><%= testimonial.author.charAt(0) %></span>
+    <% } %>
+    <div>
+      <strong><%= testimonial.author %></strong>
+      <span><%= [testimonial.role, testimonial.company].filter(Boolean).join(' · ') %></span>
+    </div>
+  </figcaption>
+</figure>

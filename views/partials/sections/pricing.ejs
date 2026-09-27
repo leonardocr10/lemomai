@@ -1,0 +1,23 @@
+<% const s = sections.pricing; %>
+<section class="section section--soft" id="precos" aria-labelledby="precos-title">
+  <div class="container">
+    <div class="pricing-head">
+      <div class="section-title" data-reveal>
+        <p class="eyebrow"><%= s.eyebrow %></p>
+        <h2 id="precos-title"><%= s.title %> <span class="text-gradient--light"><%= s.highlight %></span></h2>
+        <p><%= s.subtitle %></p>
+      </div>
+      <ul class="pricing-perks" data-reveal>
+        <% s.perks.forEach((perk) => { %>
+          <li><%- include('../../components/icon', { name: perk.icon }) %><span><%= perk.text %></span></li>
+        <% }) %>
+      </ul>
+    </div>
+    <div class="pricing-grid" data-carousel tabindex="0" aria-label="Planos disponíveis (role para ver mais)">
+      <% plans.forEach((plan) => { %>
+        <%- include('../../components/pricing-card', { plan }) %>
+      <% }) %>
+    </div>
+    <div class="carousel-dots" data-carousel-dots aria-hidden="true"></div>
+  </div>
+</section>

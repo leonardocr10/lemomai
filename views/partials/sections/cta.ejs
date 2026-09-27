@@ -1,0 +1,16 @@
+<% const s = sections.cta; %>
+<section class="section section--tight" aria-labelledby="cta-title">
+  <div class="container">
+    <div class="cta-banner" data-reveal>
+      <%- include('../../components/waves', { waveId: 'cta' }) %>
+      <div>
+        <h2 id="cta-title"><%= s.title %></h2>
+        <p><%= s.subtitle %></p>
+      </div>
+      <div class="cta-banner__actions">
+        <%- include('../../components/button', { label: s.primaryCta.label, href: s.primaryCta.href, size: 'lg', icon: 'send', arrow: true }) %>
+        <%- include('../../components/whatsapp-button', { variant: 'ghost-light', size: 'lg' }) %>
+      </div>
+    </div>
+  </div>
+</section>

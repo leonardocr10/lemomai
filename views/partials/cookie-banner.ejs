@@ -1,0 +1,64 @@
+<%# Banner de cookies + modal de preferências (Modal). Controlado por public/js/modules/cookies.js %>
+<section class="cookie-banner" data-cookie-banner hidden aria-labelledby="cookie-title">
+  <div class="cookie-banner__text">
+    <%- include('../components/icon', { name: 'cookie' }) %>
+    <div>
+      <strong id="cookie-title">Sua privacidade importa</strong>
+      Usamos cookies essenciais para o funcionamento do site e, com sua permissão, cookies de análise e marketing.
+      Saiba mais na <a href="/politica-de-privacidade">Política de Privacidade</a>.
+    </div>
+  </div>
+  <div class="cookie-banner__actions">
+    <button class="btn btn--outline btn--sm" type="button" data-cookie-open>Preferências</button>
+    <button class="btn btn--outline btn--sm" type="button" data-cookie-reject>Recusar</button>
+    <button class="btn btn--solid btn--sm" type="button" data-cookie-accept>Aceitar todos</button>
+  </div>
+</section>
+
+<dialog class="modal" data-cookie-modal aria-labelledby="cookie-modal-title">
+  <form method="dialog" data-cookie-form>
+    <div class="modal__header">
+      <h2 id="cookie-modal-title">Preferências de cookies</h2>
+      <button class="modal__close" type="button" data-modal-close aria-label="Fechar">
+        <%- include('../components/icon', { name: 'close' }) %>
+      </button>
+    </div>
+    <div class="modal__body">
+      <div class="pref-row">
+        <div>
+          <strong>Essenciais</strong>
+          <p>Necessários para segurança e funcionamento do site (ex.: proteção de formulários). Sempre ativos.</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" checked disabled aria-label="Cookies essenciais (sempre ativos)">
+          <span></span>
+        </label>
+      </div>
+      <div class="pref-row">
+        <div>
+          <strong>Análise</strong>
+          <p>Nos ajudam a entender como o site é usado (Google Analytics).</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" name="analytics" aria-label="Permitir cookies de análise">
+          <span></span>
+        </label>
+      </div>
+      <div class="pref-row">
+        <div>
+          <strong>Marketing</strong>
+          <p>Permitem medir campanhas e exibir anúncios relevantes (Meta Pixel).</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" name="marketing" aria-label="Permitir cookies de marketing">
+          <span></span>
+        </label>
+      </div>
+      <p><a href="/politica-de-cookies">Ler a Política de Cookies</a></p>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--outline btn--sm" type="button" data-cookie-reject>Recusar opcionais</button>
+      <button class="btn btn--solid btn--sm" type="submit" data-cookie-save>Salvar preferências</button>
+    </div>
+  </form>
+</dialog>

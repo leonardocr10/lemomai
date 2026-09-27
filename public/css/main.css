@@ -1,0 +1,11 @@
+/* ==========================================================================
+   LC Serviços — folha de estilo principal
+   Em desenvolvimento os @import são servidos direto; `npm run build`
+   gera um único arquivo minificado em public/dist.
+   ========================================================================== */
+@import url('./tokens.css');
+@import url('./base.css');
+@import url('./components.css');
+@import url('./sections.css');
+@import url('./pages.css');
+@import url('./animations.css');

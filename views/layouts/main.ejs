@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <%- include('../partials/head') %>
+</head>
+<body data-ga-id="<%= analytics.gaMeasurementId %>" data-pixel-id="<%= analytics.metaPixelId %>">
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <%- include('../partials/header') %>
+
+  <main id="conteudo" tabindex="-1">
+    <%- body %>
+  </main>
+
+  <%- include('../partials/footer') %>
+  <%- include('../partials/whatsapp-float') %>
+  <%- include('../partials/cookie-banner') %>
+
+  <div class="toast-region" data-toast-region role="status" aria-live="polite" aria-atomic="false"></div>
+
+  <script type="module" src="<%= asset('js/main.js') %>"></script>
+</body>
+</html>

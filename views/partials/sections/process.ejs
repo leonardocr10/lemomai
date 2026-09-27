@@ -1,0 +1,16 @@
+<% const s = sections.process; %>
+<section class="section section--dark" id="como-funciona" aria-labelledby="processo-title">
+  <%- include('../../components/waves', { waveId: 'process' }) %>
+  <div class="container">
+    <%- include('../../components/section-title', { eyebrow: s.eyebrow, title: s.title, highlight: s.highlight, subtitle: s.subtitle, center: true, id: 'processo-title' }) %>
+    <ol class="process">
+      <% s.steps.forEach((step) => { %>
+        <li class="process__step" data-reveal>
+          <span class="process__icon"><%- include('../../components/icon', { name: step.icon }) %></span>
+          <h3><%= step.title %></h3>
+          <p><%= step.text %></p>
+        </li>
+      <% }) %>
+    </ol>
+  </div>
+</section>

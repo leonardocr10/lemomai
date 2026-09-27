@@ -1,0 +1,7 @@
+<%# SectionTitle — params: eyebrow, title, highlight, subtitle, center (bool), level (h1|h2), id %>
+<% const tag = locals.level || 'h2'; %>
+<header class="section-title<%= locals.center ? ' section-title--center' : '' %>" data-reveal>
+  <% if (locals.eyebrow) { %><p class="eyebrow"><%= eyebrow %></p><% } %>
+  <<%= tag %><% if (locals.id) { %> id="<%= locals.id %>"<% } %>><%= title %><% if (locals.highlight) { %> <span class="text-gradient--light"><%= locals.highlight %></span><% } %></<%= tag %>>
+  <% if (locals.subtitle) { %><p><%= locals.subtitle %></p><% } %>
+</header>

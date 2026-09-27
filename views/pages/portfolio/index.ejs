@@ -1,0 +1,20 @@
+<%- include('../../components/page-hero', {
+  breadcrumbs,
+  eyebrow: sections.portfolio.eyebrow,
+  title: sections.portfolio.title,
+  highlight: sections.portfolio.highlight,
+  subtitle: sections.portfolio.subtitle
+}) %>
+
+<section class="section section--soft" aria-labelledby="lista-projetos">
+  <div class="container">
+    <h2 class="visually-hidden" id="lista-projetos">Lista de projetos</h2>
+    <div class="grid grid--2">
+      <% projects.forEach((project) => { %>
+        <%- include('../../components/portfolio-card', { project }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%- include('../../partials/sections/cta') %>

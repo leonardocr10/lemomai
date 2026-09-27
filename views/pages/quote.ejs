@@ -1,0 +1,154 @@
+<%
+  const v = values || {};
+  const e = errors || {};
+  const hasErrors = Object.keys(e).length > 0;
+  const fieldClass = (name, extra) => 'field' + (e[name] ? ' has-error' : '') + (extra ? ' ' + extra : '');
+  const invalid = (name) => e[name] ? 'aria-invalid="true" aria-describedby="quote-' + name + '-error"' : '';
+%>
+<%- include('../components/page-hero', {
+  breadcrumbs,
+  eyebrow: 'Orçamento sem compromisso',
+  title: 'Solicite um orçamento para o',
+  highlight: 'seu projeto',
+  subtitle: 'Quanto mais detalhes você compartilhar, mais precisa será nossa proposta. Leva menos de 3 minutos.'
+}) %>
+
+<section class="section section--soft">
+  <div class="container detail-layout">
+    <form class="form-card" action="/orcamento#formulario" method="post" enctype="multipart/form-data" novalidate
+          data-ajax-form data-endpoint="/api/quote" data-format="multipart" id="formulario" aria-labelledby="quote-form-title">
+      <h2 class="visually-hidden" id="quote-form-title">Formulário de orçamento</h2>
+
+      <% if (success) { %>
+        <div class="alert alert--success" role="status"><%- include('../components/icon', { name: 'check-circle-outline' }) %><span>Solicitação enviada! Em breve você receberá nossa proposta.</span></div>
+      <% } else if (hasErrors) { %>
+        <div class="alert alert--error" role="alert"><%- include('../components/icon', { name: 'alert' }) %><span>Verifique os campos destacados e tente novamente.</span></div>
+      <% } %>
+
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="hp-field" aria-hidden="true">
+        <label for="quote-website">Não preencha este campo</label>
+        <input type="text" id="quote-website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="form-grid">
+        <h3 class="form-section-title"><span>1</span>Seus dados</h3>
+
+        <div class="<%= fieldClass('name') %>">
+          <label for="quote-name">Nome <span class="req" aria-hidden="true">*</span></label>
+          <input class="input" id="quote-name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="120" value="<%= v.name || '' %>" <%- invalid('name') %>>
+          <p class="field__error" id="quote-name-error" data-error-for="name"><%= e.name || '' %></p>
+        </div>
+
+        <div class="<%= fieldClass('company') %>">
+          <label for="quote-company">Empresa <span class="optional">(opcional)</span></label>
+          <input class="input" id="quote-company" name="company" type="text" autocomplete="organization" maxlength="120" value="<%= v.company || '' %>" <%- invalid('company') %>>
+          <p class="field__error" id="quote-company-error" data-error-for="company"><%= e.company || '' %></p>
+        </div>
+
+        <div class="<%= fieldClass('email') %>">
+          <label for="quote-email">E-mail <span class="req" aria-hidden="true">*</span></label>
+          <input class="input" id="quote-email" name="email" type="email" autocomplete="email" required maxlength="160" value="<%= v.email || '' %>" <%- invalid('email') %>>
+          <p class="field__error" id="quote-email-error" data-error-for="email"><%= e.email || '' %></p>
+        </div>
+
+        <div class="<%= fieldClass('phone') %>">
+          <label for="quote-phone">Telefone / WhatsApp <span class="req" aria-hidden="true">*</span></label>
+          <input class="input" id="quote-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required data-mask="phone" placeholder="(11) 90000-0000" value="<%= v.phone || '' %>" <%- invalid('phone') %>>
+          <p class="field__error" id="quote-phone-error" data-error-for="phone"><%= e.phone || '' %></p>
+        </div>
+
+        <h3 class="form-section-title"><span>2</span>Sobre o projeto</h3>
+
+        <fieldset class="<%= fieldClass('projectType', 'field--full radio-cards') %>" <%- invalid('projectType') %>>
+          <legend>Tipo de projeto <span class="req" aria-hidden="true">*</span></legend>
+          <% quoteProjectTypes.forEach((option) => { %>
+            <label class="radio-card">
+              <input type="radio" name="projectType" value="<%= option.value %>" required<%= v.projectType === option.value ? ' checked' : '' %>>
+              <span><%= option.label %></span>
+            </label>
+          <% }) %>
+          <p class="field__error field--full" id="quote-projectType-error" data-error-for="projectType"><%= e.projectType || '' %></p>
+        </fieldset>
+
+        <div class="<%= fieldClass('plan', 'field--full') %>">
+          <label for="quote-plan">Plano de interesse <span class="optional">(opcional)</span></label>
+          <select class="select" id="quote-plan" name="plan">
+            <option value="">Ainda não sei</option>
+            <% plans.forEach((plan) => { %>
+              <option value="<%= plan.slug %>"<%= v.plan === plan.slug ? ' selected' : '' %>><%= plan.category === 'saas' ? 'SaaS — ' : '' %><%= plan.name %> (<%= fmt.planPrice(plan).amount %><%= fmt.planPrice(plan).suffix %>)</option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="<%= fieldClass('objective', 'field--full') %>">
+          <label for="quote-objective">Objetivo do projeto <span class="req" aria-hidden="true">*</span></label>
+          <textarea class="textarea" id="quote-objective" name="objective" required minlength="10" maxlength="5000"
+                    placeholder="O que você quer alcançar? Quais funcionalidades são essenciais? Tem alguma referência?" <%- invalid('objective') %>><%= v.objective || '' %></textarea>
+          <p class="field__error" id="quote-objective-error" data-error-for="objective"><%= e.objective || '' %></p>
+        </div>
+
+        <h3 class="form-section-title"><span>3</span>Prazo e investimento</h3>
+
+        <fieldset class="<%= fieldClass('deadline', 'field--full radio-cards') %>" <%- invalid('deadline') %>>
+          <legend>Prazo desejado <span class="req" aria-hidden="true">*</span></legend>
+          <% deadlines.forEach((option) => { %>
+            <label class="radio-card">
+              <input type="radio" name="deadline" value="<%= option.value %>" required<%= v.deadline === option.value ? ' checked' : '' %>>
+              <span><%= option.label %></span>
+            </label>
+          <% }) %>
+          <p class="field__error field--full" id="quote-deadline-error" data-error-for="deadline"><%= e.deadline || '' %></p>
+        </fieldset>
+
+        <fieldset class="<%= fieldClass('budgetRange', 'field--full radio-cards') %>" <%- invalid('budgetRange') %>>
+          <legend>Faixa de investimento <span class="req" aria-hidden="true">*</span></legend>
+          <% budgetRanges.forEach((option) => { %>
+            <label class="radio-card">
+              <input type="radio" name="budgetRange" value="<%= option.value %>" required<%= v.budgetRange === option.value ? ' checked' : '' %>>
+              <span><%= option.label %></span>
+            </label>
+          <% }) %>
+          <p class="field__error field--full" id="quote-budgetRange-error" data-error-for="budgetRange"><%= e.budgetRange || '' %></p>
+        </fieldset>
+
+        <div class="<%= fieldClass('attachment', 'field--full') %>">
+          <span class="field__label" id="quote-attachment-label"><strong>Anexo</strong> <span class="optional">(opcional)</span></span>
+          <div class="file-drop" data-file-drop>
+            <span class="icon-tile"><%- include('../components/icon', { name: 'upload' }) %></span>
+            <div>
+              <strong data-file-name>Arraste um arquivo ou clique para selecionar</strong>
+              <span>PDF, DOC, XLS, imagens ou ZIP — até <%= maxUploadMb %> MB</span>
+            </div>
+            <input type="file" id="quote-attachment" name="attachment" accept="<%= attachmentAccept %>" data-max-bytes="<%= maxUploadMb * 1024 * 1024 %>" aria-labelledby="quote-attachment-label" <%- invalid('attachment') %>>
+          </div>
+          <p class="field__error" id="quote-attachment-error" data-error-for="attachment"><%= e.attachment || '' %></p>
+        </div>
+
+        <div class="<%= fieldClass('acceptPrivacy', 'field--full') %>">
+          <label class="checkbox" for="quote-acceptPrivacy">
+            <input type="checkbox" id="quote-acceptPrivacy" name="acceptPrivacy" required<%= v.acceptPrivacy ? ' checked' : '' %> <%- invalid('acceptPrivacy') %>>
+            <span>Li e concordo com a <a href="/politica-de-privacidade" target="_blank">Política de Privacidade</a> e autorizo o contato da <%= company.companyName %>.</span>
+          </label>
+          <p class="field__error" id="quote-acceptPrivacy-error" data-error-for="acceptPrivacy"><%= e.acceptPrivacy || '' %></p>
+        </div>
+
+        <div class="form-actions field--full">
+          <button class="btn btn--primary btn--lg" type="submit"><%- include('../components/icon', { name: 'send' }) %><span>Enviar solicitação</span></button>
+          <small>Seus dados estão protegidos.</small>
+        </div>
+      </div>
+    </form>
+
+    <aside class="aside-card" aria-labelledby="proximos-passos">
+      <h2 id="proximos-passos">O que acontece depois?</h2>
+      <ol class="check-list">
+        <li><%- include('../components/icon', { name: 'check-circle' }) %><span>Analisamos sua solicitação em até 1 dia útil.</span></li>
+        <li><%- include('../components/icon', { name: 'check-circle' }) %><span>Agendamos uma conversa rápida para entender os detalhes.</span></li>
+        <li><%- include('../components/icon', { name: 'check-circle' }) %><span>Enviamos uma proposta com escopo, prazo e investimento.</span></li>
+      </ol>
+      <p>Prefere conversar agora?</p>
+      <%- include('../components/whatsapp-button', { block: true }) %>
+    </aside>
+  </div>
+</section>

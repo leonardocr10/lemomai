@@ -1,0 +1,53 @@
+{
+  "name": "lc-servicos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site institucional e comercial da LC Serviços — sistemas, sites e soluções digitais.",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "build": "node scripts/build-assets.js",
+    "images": "node scripts/optimize-images.js",
+    "placeholders": "node scripts/generate-placeholders.js",
+    "db:create": "sequelize-cli db:create",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:migrate:undo": "sequelize-cli db:migrate:undo:all",
+    "db:seed": "sequelize-cli db:seed:all",
+    "db:reset": "sequelize-cli db:migrate:undo:all && sequelize-cli db:migrate && sequelize-cli db:seed:all",
+    "test": "node --test tests/*.test.js"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src",
+      "views",
+      "server.js",
+      ".env"
+    ],
+    "ext": "js,ejs,json"
+  },
+  "dependencies": {
+    "compression": "^1.8.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^18.0.4",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
+    "morgan": "^1.12.1",
+    "multer": "^2.4.0",
+    "mysql2": "^3.24.4",
+    "nodemailer": "^10.0.10",
+    "sequelize": "^6.37.8",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "nodemon": "^3.1.14",
+    "sequelize-cli": "^6.6.5",
+    "sharp": "^0.35.4"
+  }
+}

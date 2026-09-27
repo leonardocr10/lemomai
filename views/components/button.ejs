@@ -1,0 +1,10 @@
+<%#
+  Button — params: label, href, variant (primary|solid|outline|ghost-light|whatsapp),
+  size (sm|lg), icon (antes do texto), arrow (bool), block (bool), external (bool), track
+%>
+<a class="btn btn--<%= locals.variant || 'primary' %><%= locals.size ? ' btn--' + locals.size : '' %><%= locals.block ? ' btn--block' : '' %>"
+   href="<%= href %>"<% if (locals.external) { %> target="_blank" rel="noopener noreferrer"<% } %><% if (locals.track) { %> data-track="<%= locals.track %>"<% } %>>
+  <% if (locals.icon) { %><%- include('icon', { name: locals.icon, cls: locals.icon === 'whatsapp' ? 'icon--whatsapp' : '' }) %><% } %>
+  <span><%= label %></span>
+  <% if (locals.arrow) { %><%- include('icon', { name: 'arrow-right', cls: 'btn__arrow' }) %><% } %>
+</a>

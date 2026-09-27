@@ -1,0 +1,29 @@
+<%# PricingCard — params: plan %>
+<% const price = fmt.planPrice(plan); %>
+<article class="card pricing-card<%= plan.highlighted ? ' pricing-card--highlight' : ' card--hover' %>" data-reveal aria-labelledby="plan-<%= plan.slug %>">
+  <% if (plan.badge) { %>
+    <span class="pricing-card__badge"><%- include('badge', { text: plan.badge, variant: 'glow', icon: 'star' }) %></span>
+  <% } %>
+  <div class="pricing-card__head">
+    <span class="icon-tile"><%- include('icon', { name: plan.icon || 'layout' }) %></span>
+    <h3 class="pricing-card__name" id="plan-<%= plan.slug %>"><%= plan.name %></h3>
+  </div>
+  <% if (plan.description) { %><p class="pricing-card__desc"><%= plan.description %></p><% } %>
+  <p class="pricing-card__price">
+    <% if (price.prefix) { %><span class="pricing-card__prefix"><%= price.prefix %></span><% } %>
+    <span class="pricing-card__amount<%= price.isCustom ? ' pricing-card__amount--custom' : '' %>"><%= price.amount %><% if (price.suffix) { %><small><%= price.suffix %></small><% } %></span>
+  </p>
+  <ul class="check-list">
+    <% plan.features.forEach((feature) => { %>
+      <li><%- include('icon', { name: 'check-circle' }) %><span><%= feature %></span></li>
+    <% }) %>
+  </ul>
+  <%- include('button', {
+    label: plan.ctaText || 'Quero este plano',
+    href: plan.ctaHref || '/orcamento',
+    variant: plan.highlighted ? 'primary' : 'outline',
+    arrow: true,
+    block: true,
+    track: 'plan-' + plan.slug
+  }) %>
+</article>

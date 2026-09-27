@@ -1,0 +1,13 @@
+<nav class="breadcrumbs" aria-label="Você está em">
+  <ol>
+    <% items.forEach((item, index) => { %>
+      <li>
+        <% if (index === items.length - 1) { %>
+          <span aria-current="page"><%= item.label %></span>
+        <% } else { %>
+          <a href="<%= item.href %>"><%= item.label %></a>
+        <% } %>
+      </li>
+    <% }) %>
+  </ol>
+</nav>

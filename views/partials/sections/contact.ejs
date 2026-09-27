@@ -1,0 +1,44 @@
+<%# Seção de contato: informações + ContactForm. params (opcionais): values, errors, success, headingLevel %>
+<% const s = sections.contact; %>
+<section class="section section--white" id="contato" aria-labelledby="contato-title">
+  <div class="container contact-layout">
+    <div>
+      <%- include('../../components/section-title', { eyebrow: s.eyebrow, title: s.title, highlight: s.highlight, subtitle: s.subtitle, id: 'contato-title', level: locals.headingLevel }) %>
+      <ul class="contact-info">
+        <% if (company.whatsappUrl) { %>
+          <li>
+            <a class="contact-info__item" href="<%= company.whatsappUrl %>" target="_blank" rel="noopener noreferrer" data-track="whatsapp">
+              <span class="icon-tile icon-tile--whatsapp"><%- include('../../components/icon', { name: 'whatsapp' }) %></span>
+              <span><strong>WhatsApp</strong><span><%= company.phone %></span></span>
+            </a>
+          </li>
+        <% } %>
+        <% if (company.email) { %>
+          <li>
+            <a class="contact-info__item" href="mailto:<%= company.email %>">
+              <span class="icon-tile"><%- include('../../components/icon', { name: 'mail' }) %></span>
+              <span><strong>E-mail</strong><span><%= company.email %></span></span>
+            </a>
+          </li>
+        <% } %>
+        <li>
+          <div class="contact-info__item">
+            <span class="icon-tile"><%- include('../../components/icon', { name: 'map-pin' }) %></span>
+            <span><strong><%= company.location %></strong><span><%= company.serviceArea %></span></span>
+          </div>
+        </li>
+        <% if (company.businessHoursLabel) { %>
+          <li>
+            <div class="contact-info__item">
+              <span class="icon-tile"><%- include('../../components/icon', { name: 'clock' }) %></span>
+              <span><strong>Horário de atendimento</strong><span><%= company.businessHoursLabel %></span></span>
+            </div>
+          </li>
+        <% } %>
+      </ul>
+    </div>
+    <div data-reveal>
+      <%- include('../../components/contact-form', { values: locals.values, errors: locals.errors, success: locals.success }) %>
+    </div>
+  </div>
+</section>

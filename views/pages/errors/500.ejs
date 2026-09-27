@@ -1,0 +1,12 @@
+<section class="error-page">
+  <div class="container">
+    <p class="error-page__code text-gradient--light" aria-hidden="true"><%= status %></p>
+    <h1>Algo deu errado</h1>
+    <p><%= message %></p>
+    <div class="hero__actions">
+      <%- include('../../components/button', { label: 'Ir para o início', href: '/', icon: 'arrow-left' }) %>
+      <%- include('../../components/whatsapp-button', { variant: 'outline' }) %>
+    </div>
+    <% if (locals.stack) { %><pre><%= stack %></pre><% } %>
+  </div>
+</section>

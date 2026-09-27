@@ -1,0 +1,95 @@
+<%- include('../../components/page-hero', {
+  breadcrumbs,
+  eyebrow: project.category,
+  title: project.name,
+  subtitle: project.description
+}) %>
+
+<section class="section section--white">
+  <div class="container">
+    <figure class="case-cover" data-reveal>
+      <img src="<%= project.coverImage %>" alt="<%= project.name %> — visão geral do projeto" width="1600" height="900" fetchpriority="high">
+    </figure>
+  </div>
+
+  <div class="container detail-layout section--tight">
+    <div class="detail-layout__main">
+      <ul class="case-facts" data-reveal>
+        <li><span>Projeto</span><strong><%= project.name %></strong></li>
+        <li><span>Segmento</span><strong><%= project.segment %></strong></li>
+        <li><span>Tipo</span><strong><%= project.category %></strong></li>
+      </ul>
+
+      <div class="case-block" data-reveal>
+        <span class="icon-tile"><%- include('../../components/icon', { name: 'target' }) %></span>
+        <div>
+          <h2>Desafio</h2>
+          <p><%= project.challenge %></p>
+        </div>
+      </div>
+
+      <div class="case-block" data-reveal>
+        <span class="icon-tile"><%- include('../../components/icon', { name: 'code' }) %></span>
+        <div>
+          <h2>Solução</h2>
+          <p><%= project.solution %></p>
+        </div>
+      </div>
+
+      <% if (project.results && project.results.length) { %>
+        <div class="case-block" data-reveal>
+          <span class="icon-tile"><%- include('../../components/icon', { name: 'trending-up' }) %></span>
+          <div>
+            <h2>Resultados</h2>
+            <ul class="check-list check-list--large">
+              <% project.results.forEach((result) => { %>
+                <li><%- include('../../components/icon', { name: 'check-circle' }) %><span><%= result %></span></li>
+              <% }) %>
+            </ul>
+          </div>
+        </div>
+      <% } %>
+    </div>
+
+    <aside class="aside-card" aria-labelledby="tech-title" data-reveal>
+      <h2 id="tech-title">Tecnologias</h2>
+      <ul class="tags">
+        <% (project.technologies || []).forEach((tech) => { %>
+          <li class="tag"><%= tech %></li>
+        <% }) %>
+      </ul>
+      <p>Quer um projeto como este para a sua empresa?</p>
+      <%- include('../../components/button', { label: 'Solicitar orçamento', href: '/orcamento', icon: 'send', arrow: true, block: true }) %>
+      <%- include('../../components/whatsapp-button', { variant: 'ghost-light', block: true }) %>
+    </aside>
+  </div>
+</section>
+
+<% if (project.screenshots && project.screenshots.length > 1) { %>
+<section class="section section--soft" aria-labelledby="telas-title">
+  <div class="container">
+    <%- include('../../components/section-title', { eyebrow: 'Screenshots', title: 'Telas do', highlight: 'projeto', id: 'telas-title' }) %>
+    <div class="gallery">
+      <% project.screenshots.forEach((shot) => { %>
+        <figure data-reveal>
+          <img src="<%= shot.src %>" alt="<%= shot.alt %>" width="800" height="500" loading="lazy" decoding="async">
+          <figcaption><%= shot.alt %></figcaption>
+        </figure>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (related.length) { %>
+<section class="section section--white" aria-labelledby="relacionados-title">
+  <div class="container">
+    <%- include('../../components/section-title', { eyebrow: 'Portfólio', title: 'Outros', highlight: 'projetos', id: 'relacionados-title' }) %>
+    <div class="grid grid--3">
+      <% related.forEach((item) => { %>
+        <%- include('../../components/portfolio-card', { project: item }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>

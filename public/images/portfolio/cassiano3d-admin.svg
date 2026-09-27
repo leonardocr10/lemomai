@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="Painel administrativo Cassiano3D">
+<defs>
+<radialGradient id="glow" cx="75%" cy="20%" r="80%">
+<stop offset="0" stop-color="#0b7cff" stop-opacity=".55"/>
+<stop offset="1" stop-color="#061a3a" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0" stop-color="#00d8ff"/>
+<stop offset="1" stop-color="#0b7cff"/>
+</linearGradient>
+<linearGradient id="area" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#0b7cff" stop-opacity=".35"/>
+<stop offset="1" stop-color="#0b7cff" stop-opacity="0"/>
+</linearGradient>
+<filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+<feDropShadow dx="0" dy="24" stdDeviation="30" flood-color="#000" flood-opacity=".35"/>
+</filter>
+</defs>
+<rect width="1600" height="1000" fill="#061a3a"/>
+<rect width="1600" height="1000" fill="url(#glow)"/>
+<path d="M-20 820 C 300 720, 520 960, 860 820 S 1360 600, 1640 700" stroke="#00d8ff" stroke-opacity=".5" stroke-width="3" fill="none"/>
+<g filter="url(#shadow)">
+<rect x="110" y="90" width="1380" height="820" rx="22" fill="#ffffff" />
+<rect x="110" y="90" width="1380" height="56" rx="22" fill="#eef3fb" />
+<rect x="110" y="124" width="1380" height="22" rx="0" fill="#eef3fb" />
+<circle cx="146" cy="118" r="8" fill="#ff5f57"/><circle cx="172" cy="118" r="8" fill="#febc2e"/><circle cx="198" cy="118" r="8" fill="#28c840"/>
+<rect x="520" y="104" width="560" height="28" rx="14" fill="#ffffff" />
+</g>
+<g transform="translate(110 146)"><rect x="0" y="0" width="260" height="764" rx="0" fill="#061a3a" />
+<text x="36" y="64" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="800" fill="#ffffff" text-anchor="start">Cassiano3D</text>
+<rect x="24" y="100" width="212" height="48" rx="10" fill="#0b7cff" /><text x="48" y="131" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="start">Dashboard</text>
+<text x="48" y="196" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="500" fill="#a9bddc" text-anchor="start">Clientes</text><text x="48" y="252" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="500" fill="#a9bddc" text-anchor="start">Projetos</text><text x="48" y="308" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="500" fill="#a9bddc" text-anchor="start">Financeiro</text><text x="48" y="364" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="500" fill="#a9bddc" text-anchor="start">Relatórios</text><text x="48" y="420" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="500" fill="#a9bddc" text-anchor="start">Configurações</text>
+<rect x="260" y="0" width="1120" height="764" rx="0" fill="#f6f9ff" />
+<rect x="300" y="110" width="250" height="130" rx="14" fill="#ffffff" stroke="#dce6f4"/>
+<text x="324" y="150" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="600" fill="#94a3b8" text-anchor="start">Receita</text><text x="324" y="205" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="800" fill="#10213f" text-anchor="start">R$ 24.960</text><rect x="570" y="110" width="250" height="130" rx="14" fill="#ffffff" stroke="#dce6f4"/>
+<text x="594" y="150" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="600" fill="#94a3b8" text-anchor="start">Clientes</text><text x="594" y="205" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="800" fill="#10213f" text-anchor="start">125</text><rect x="840" y="110" width="250" height="130" rx="14" fill="#ffffff" stroke="#dce6f4"/>
+<text x="864" y="150" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="600" fill="#94a3b8" text-anchor="start">Projetos</text><text x="864" y="205" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="800" fill="#10213f" text-anchor="start">18</text><rect x="1110" y="110" width="250" height="130" rx="14" fill="#ffffff" stroke="#dce6f4"/>
+<text x="1134" y="150" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="600" fill="#94a3b8" text-anchor="start">Crescimento</text><text x="1134" y="205" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="800" fill="#16a34a" text-anchor="start">+32%</text>
+<rect x="300" y="270" width="560" height="440" rx="14" fill="#ffffff" stroke="#dce6f4"/>
+<text x="330" y="312" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#10213f" text-anchor="start">Desempenho</text>
+<path d="M420 560 L480 500 L540 520 L600 450 L660 470 L720 410 L780 430 L840 350 L900 370 L960 300 L 960 680 L 420 680 Z" fill="url(#area)" transform="translate(-90 0)"/>
+<path d="M420 560 L480 500 L540 520 L600 450 L660 470 L720 410 L780 430 L840 350 L900 370 L960 300" stroke="#0b7cff" stroke-width="5" fill="none" transform="translate(-90 0)"/>
+<rect x="890" y="270" width="450" height="440" rx="14" fill="#ffffff" stroke="#dce6f4"/>
+<text x="920" y="312" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#10213f" text-anchor="start">Projetos recentes</text>
+<rect x="920" y="366" width="200" height="14" rx="7" fill="#10213f" /><rect x="920" y="392" width="130" height="14" rx="7" fill="#dce6f4" /><rect x="1180" y="360" width="132" height="36" rx="18" fill="#dcfce7" /><text x="1246" y="384" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#16a34a" text-anchor="middle">Concluído</text><rect x="920" y="448" width="200" height="14" rx="7" fill="#10213f" /><rect x="920" y="474" width="130" height="14" rx="7" fill="#dce6f4" /><rect x="1180" y="442" width="132" height="36" rx="18" fill="#e6f1ff" /><text x="1246" y="466" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#0b7cff" text-anchor="middle">Em andamento</text><rect x="920" y="530" width="200" height="14" rx="7" fill="#10213f" /><rect x="920" y="556" width="130" height="14" rx="7" fill="#dce6f4" /><rect x="1180" y="524" width="132" height="36" rx="18" fill="#fef3c7" /><text x="1246" y="548" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#d97706" text-anchor="middle">Em revisão</text><rect x="920" y="612" width="200" height="14" rx="7" fill="#10213f" /><rect x="920" y="638" width="130" height="14" rx="7" fill="#dce6f4" /><rect x="1180" y="606" width="132" height="36" rx="18" fill="#dcfce7" /><text x="1246" y="630" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700" fill="#16a34a" text-anchor="middle">Concluído</text></g>
+</svg>

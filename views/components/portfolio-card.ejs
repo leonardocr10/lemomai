@@ -1,0 +1,12 @@
+<%# PortfolioCard — params: project %>
+<a class="card card--hover portfolio-card" href="/portfolio/<%= project.slug %>" data-reveal>
+  <div class="portfolio-card__media">
+    <img src="<%= project.coverImage %>" alt="<%= project.name %> — <%= project.category %>" width="800" height="500" loading="lazy" decoding="async">
+    <%- include('badge', { text: project.category, variant: 'glow' }) %>
+  </div>
+  <div class="portfolio-card__body">
+    <h3><%= project.name %></h3>
+    <p><%= project.description %></p>
+    <span class="link-arrow">Ver projeto <%- include('icon', { name: 'arrow-right' }) %></span>
+  </div>
+</a>

@@ -1,0 +1,60 @@
+<%- include('../components/page-hero', {
+  breadcrumbs,
+  eyebrow: 'Sobre a ' + company.companyName,
+  title: about.title,
+  highlight: about.highlight,
+  subtitle: about.intro
+}) %>
+
+<section class="section section--white" aria-labelledby="quem-somos">
+  <div class="container about-intro">
+    <div class="about-intro__text" data-reveal>
+      <p class="eyebrow">Quem somos</p>
+      <h2 id="quem-somos" class="visually-hidden">Quem somos</h2>
+      <p class="lead"><%= about.intro %></p>
+      <% about.paragraphs.forEach((paragraph) => { %>
+        <p><%= paragraph %></p>
+      <% }) %>
+      <div class="hero__actions">
+        <%- include('../components/button', { label: 'Conheça nossos serviços', href: '/servicos', arrow: true }) %>
+        <%- include('../components/button', { label: 'Ver portfólio', href: '/portfolio', variant: 'outline' }) %>
+      </div>
+    </div>
+    <div class="about-visual" data-reveal>
+      <%- include('../components/waves', { waveId: 'about' }) %>
+      <%- include('../components/picture', { src: '/images/brand/logo-symbol', alt: '', width: 320, height: 215 }) %>
+      <p><%= sections.hero.handwritten %></p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--soft" aria-labelledby="mvv-title">
+  <div class="container">
+    <%- include('../components/section-title', { eyebrow: 'Nosso propósito', title: 'Missão, visão e', highlight: 'valores', center: true, id: 'mvv-title' }) %>
+    <div class="mvv">
+      <article class="card" data-reveal>
+        <span class="icon-tile"><%- include('../components/icon', { name: 'target' }) %></span>
+        <h3><%= about.mission.title %></h3>
+        <p><%= about.mission.text %></p>
+      </article>
+      <article class="card" data-reveal>
+        <span class="icon-tile"><%- include('../components/icon', { name: 'eye' }) %></span>
+        <h3><%= about.vision.title %></h3>
+        <p><%= about.vision.text %></p>
+      </article>
+      <article class="card" data-reveal>
+        <span class="icon-tile"><%- include('../components/icon', { name: 'diamond' }) %></span>
+        <h3><%= about.values.title %></h3>
+        <ul class="check-list">
+          <% about.values.items.forEach((value) => { %>
+            <li><%- include('../components/icon', { name: 'check-circle' }) %><span><%= value %></span></li>
+          <% }) %>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/sections/differentials') %>
+<%- include('../partials/sections/process') %>
+<%- include('../partials/sections/cta') %>

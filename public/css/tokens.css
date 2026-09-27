@@ -1,0 +1,94 @@
+/* ==========================================================================
+   Design tokens — LC Serviços
+   Todas as cores, sombras, raios e espaçamentos do site saem daqui.
+   ========================================================================== */
+:root {
+  /* Marca */
+  --primary: #0b7cff;
+  --primary-dark: #072b63;
+  --secondary: #00d8ff;
+  --navy: #061a3a;
+  --navy-deep: #03112a;
+  --navy-soft: #0b2a5c;
+  --background: #f6f9ff;
+  --surface: #ffffff;
+  --surface-soft: #eef4ff;
+  --text: #10213f;
+  --muted: #64748b;
+  --border: #dce6f4;
+
+  /* Derivadas */
+  --primary-tint: #e6f1ff;
+  --primary-tint-strong: #d3e6ff;
+  --on-primary: #ffffff;
+  --on-dark: #ffffff;
+  --on-dark-muted: #a9bddc;
+  --on-dark-border: rgba(120, 170, 255, 0.22);
+  --success: #16a34a;
+  --success-tint: #dcfce7;
+  --danger: #dc2626;
+  --danger-tint: #fee2e2;
+  --warning: #d97706;
+  --whatsapp: #25d366;
+  --whatsapp-dark: #128c4b;
+  --overlay: rgba(3, 17, 42, 0.62);
+  --glow-primary: rgba(11, 124, 255, 0.45);
+  --glow-secondary: rgba(0, 216, 255, 0.45);
+  --focus-ring: #00d8ff;
+
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #3fe3ff 0%, #2b8fff 100%);
+  --gradient-text: linear-gradient(90deg, var(--secondary) 0%, #36b3ff 55%, var(--primary) 100%);
+  --gradient-text-light: linear-gradient(90deg, var(--primary) 0%, #1aa3ff 100%);
+  --gradient-hero: radial-gradient(1200px 600px at 78% 30%, rgba(11, 124, 255, 0.38), transparent 60%),
+    radial-gradient(700px 420px at 12% 110%, rgba(0, 216, 255, 0.18), transparent 60%),
+    linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
+  --gradient-dark-card: linear-gradient(160deg, var(--navy-soft) 0%, var(--navy) 100%);
+
+  /* Tipografia */
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
+  --fs-2xl: clamp(1.875rem, 1.4rem + 1.6vw, 2.5rem);
+  --fs-3xl: clamp(2.25rem, 1.5rem + 3vw, 3.75rem);
+
+  /* Espaçamento */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --section-y: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  --container: 1240px;
+  --gutter: clamp(1rem, 0.5rem + 2vw, 2rem);
+
+  /* Raios */
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(7, 43, 99, 0.06), 0 1px 3px rgba(7, 43, 99, 0.05);
+  --shadow: 0 6px 20px rgba(7, 43, 99, 0.08);
+  --shadow-lg: 0 18px 40px rgba(7, 43, 99, 0.14);
+  --shadow-glow: 0 10px 30px var(--glow-primary);
+  --shadow-glow-cyan: 0 0 0 1px rgba(0, 216, 255, 0.6), 0 18px 45px rgba(0, 150, 255, 0.35);
+
+  /* Movimento */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration: 220ms;
+  --duration-slow: 650ms;
+
+  --header-h: 76px;
+}

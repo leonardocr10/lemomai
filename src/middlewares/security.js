@@ -1,0 +1,76 @@
+/**
+ * Cabeçalhos de segurança (Helmet + CSP) e limites de requisição.
+ */
+const helmet = require('helmet');
+const { rateLimit } = require('express-rate-limit');
+const config = require('../config');
+
+function contentSecurityPolicy() {
+  const scriptSrc = ["'self'"];
+  const connectSrc = ["'self'"];
+  const imgSrc = ["'self'", 'data:'];
+
+  if (config.analytics.gaMeasurementId) {
+    scriptSrc.push('https://www.googletagmanager.com');
+    connectSrc.push('https://*.google-analytics.com', 'https://*.analytics.google.com', 'https://*.googletagmanager.com');
+    imgSrc.push('https://*.google-analytics.com', 'https://*.googletagmanager.com');
+  }
+  if (config.analytics.metaPixelId) {
+    scriptSrc.push('https://connect.facebook.net');
+    connectSrc.push('https://www.facebook.com');
+    imgSrc.push('https://www.facebook.com');
+  }
+
+  return {
+    useDefaults: true,
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc,
+      styleSrc: ["'self'", 'https://fonts.googleapis.com'],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+      imgSrc,
+      connectSrc,
+      frameAncestors: ["'none'"],
+      formAction: ["'self'"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: config.isProduction ? [] : null,
+    },
+  };
+}
+
+const securityHeaders = helmet({
+  contentSecurityPolicy: contentSecurityPolicy(),
+  crossOriginEmbedderPolicy: false,
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  hsts: config.isProduction ? undefined : false,
+});
+
+/** Envio de formulários: protege contra spam/abuso. */
+const formLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: config.limits.formRequestsPer15Min,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  handler: (req, res) => {
+    const message = 'Muitas tentativas de envio. Aguarde alguns minutos e tente novamente.';
+    if (req.originalUrl.startsWith('/api/') || req.accepts(['html', 'json']) === 'json') {
+      return res.status(429).json({ ok: false, message });
+    }
+    return res.status(429).renderPage('errors/error', {
+      seo: { title: 'Muitas tentativas | LC Serviços', noindex: true },
+      status: 429,
+      title: 'Muitas tentativas',
+      message,
+    });
+  },
+});
+
+/** Leitura da API pública. */
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 120,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+});
+
+module.exports = { securityHeaders, formLimiter, apiLimiter };

@@ -1,0 +1,11 @@
+<%# Page hero das páginas internas — params: eyebrow, title, highlight, subtitle, breadcrumbs, actions (html) %>
+<section class="page-hero" aria-labelledby="page-title">
+  <%- include('waves') %>
+  <div class="container">
+    <% if (locals.breadcrumbs) { %><%- include('breadcrumbs', { items: locals.breadcrumbs }) %><% } %>
+    <% if (locals.eyebrow) { %><p class="eyebrow eyebrow--pill"><%= locals.eyebrow %></p><% } %>
+    <h1 class="page-hero__title" id="page-title"><%= title %><% if (locals.highlight) { %> <span class="text-gradient"><%= locals.highlight %></span><% } %></h1>
+    <% if (locals.subtitle) { %><p class="page-hero__subtitle"><%= locals.subtitle %></p><% } %>
+    <% if (locals.actions) { %><div class="hero__actions"><%- locals.actions %></div><% } %>
+  </div>
+</section>

@@ -1,0 +1,26 @@
+module.exports = (sequelize, DataTypes) =>
+  sequelize.define(
+    'CompanySetting',
+    {
+      id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
+      companyName: { type: DataTypes.STRING(120), allowNull: false },
+      legalName: { type: DataTypes.STRING(160) },
+      tagline: { type: DataTypes.STRING(255) },
+      logo: { type: DataTypes.STRING(255) },
+      email: { type: DataTypes.STRING(160) },
+      phone: { type: DataTypes.STRING(30) },
+      whatsapp: { type: DataTypes.STRING(20) },
+      whatsappMessage: { type: DataTypes.STRING(255) },
+      instagram: { type: DataTypes.STRING(255) },
+      linkedin: { type: DataTypes.STRING(255) },
+      youtube: { type: DataTypes.STRING(255) },
+      address: { type: DataTypes.STRING(255) },
+      city: { type: DataTypes.STRING(120) },
+      state: { type: DataTypes.STRING(2) },
+      country: { type: DataTypes.STRING(2), defaultValue: 'BR' },
+      serviceArea: { type: DataTypes.STRING(120) },
+      openingHours: { type: DataTypes.STRING(120) },
+      businessHoursLabel: { type: DataTypes.STRING(120) },
+    },
+    { tableName: 'company_settings' },
+  );

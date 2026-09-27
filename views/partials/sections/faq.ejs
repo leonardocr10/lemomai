@@ -1,0 +1,14 @@
+<% const s = sections.faq; %>
+<section class="section section--soft" id="faq" aria-labelledby="faq-title">
+  <div class="container faq-layout">
+    <div>
+      <%- include('../../components/section-title', { eyebrow: s.eyebrow, title: s.title, highlight: s.highlight, id: 'faq-title' }) %>
+      <div class="faq-help" data-reveal>
+        <strong>Ainda com dúvidas?</strong>
+        <p>Fale com nossa equipe e receba uma orientação personalizada para o seu projeto.</p>
+        <%- include('../../components/whatsapp-button', { arrow: true }) %>
+      </div>
+    </div>
+    <%- include('../../components/faq-accordion', { items: faq, idPrefix: 'faq' }) %>
+  </div>
+</section>

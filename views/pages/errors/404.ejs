@@ -1,0 +1,11 @@
+<section class="error-page">
+  <div class="container">
+    <p class="error-page__code text-gradient--light" aria-hidden="true">404</p>
+    <h1>Página não encontrada</h1>
+    <p>O endereço acessado não existe ou foi alterado. Que tal voltar para a página inicial ou conhecer nossos serviços?</p>
+    <div class="hero__actions">
+      <%- include('../../components/button', { label: 'Ir para o início', href: '/', icon: 'arrow-left' }) %>
+      <%- include('../../components/button', { label: 'Ver serviços', href: '/servicos', variant: 'outline' }) %>
+    </div>
+  </div>
+</section>

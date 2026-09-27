@@ -1,0 +1,21 @@
+<%- include('../../components/page-hero', {
+  breadcrumbs,
+  eyebrow: 'Nossos serviços',
+  title: 'Soluções completas para o',
+  highlight: 'seu negócio',
+  subtitle: sections.services.subtitle
+}) %>
+
+<section class="section section--white" aria-labelledby="lista-servicos">
+  <div class="container">
+    <h2 class="visually-hidden" id="lista-servicos">Lista de serviços</h2>
+    <div class="grid grid--3">
+      <% services.forEach((service) => { %>
+        <%- include('../../components/service-card', { service }) %>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%- include('../../partials/sections/process') %>
+<%- include('../../partials/sections/cta') %>

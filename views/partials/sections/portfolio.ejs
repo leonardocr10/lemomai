@@ -1,0 +1,14 @@
+<% const s = sections.portfolio; %>
+<section class="section section--soft" id="portfolio" aria-labelledby="portfolio-title">
+  <div class="container">
+    <%- include('../../components/section-title', { eyebrow: s.eyebrow, title: s.title, highlight: s.highlight, subtitle: s.subtitle, center: true, id: 'portfolio-title' }) %>
+    <div class="grid grid--4">
+      <% portfolio.forEach((project) => { %>
+        <%- include('../../components/portfolio-card', { project }) %>
+      <% }) %>
+    </div>
+    <div class="section-actions" data-reveal>
+      <%- include('../../components/button', { label: 'Ver portfólio completo', href: '/portfolio', variant: 'outline', arrow: true }) %>
+    </div>
+  </div>
+</section>

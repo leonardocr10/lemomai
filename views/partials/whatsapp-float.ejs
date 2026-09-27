@@ -1,0 +1,5 @@
+<% if (company.whatsappUrl) { %>
+<a class="whatsapp-float" href="<%= company.whatsappUrl %>" target="_blank" rel="noopener noreferrer" data-track="whatsapp-float" aria-label="Falar com a <%= company.companyName %> no WhatsApp">
+  <%- include('../components/icon', { name: 'whatsapp' }) %>
+</a>
+<% } %>

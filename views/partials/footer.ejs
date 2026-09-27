@@ -1,0 +1,68 @@
+<footer class="site-footer">
+  <div class="container site-footer__top">
+    <div class="site-footer__brand">
+      <a href="/" aria-label="<%= company.companyName %> — página inicial">
+        <%- include('../components/picture', { src: '/images/brand/logo-dark', alt: company.companyName, width: 210, height: 59 }) %>
+      </a>
+      <p><%= company.tagline %></p>
+      <% if (company.socials.length) { %>
+        <ul class="socials">
+          <% company.socials.forEach((social) => { %>
+            <li>
+              <a href="<%= social.url %>" target="_blank" rel="noopener noreferrer" aria-label="<%= company.companyName %> no <%= social.name %>">
+                <%- include('../components/icon', { name: social.icon }) %>
+              </a>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+
+    <% footerNav.forEach((column) => { %>
+      <nav aria-label="<%= column.title %>">
+        <h2><%= column.title %></h2>
+        <ul class="footer-links">
+          <% column.links.forEach((link) => { %>
+            <li><a href="<%= link.href %>"><%= link.label %></a></li>
+          <% }) %>
+        </ul>
+      </nav>
+    <% }) %>
+
+    <div class="site-footer__contact">
+      <h2>Contato</h2>
+      <ul class="footer-contact">
+        <% if (company.whatsappUrl) { %>
+          <li>
+            <a href="<%= company.whatsappUrl %>" target="_blank" rel="noopener noreferrer" data-track="whatsapp">
+              <%- include('../components/icon', { name: 'whatsapp', cls: 'icon--whatsapp' }) %>
+              <span><strong><%= company.phone %></strong><small>WhatsApp</small></span>
+            </a>
+          </li>
+        <% } %>
+        <% if (company.email) { %>
+          <li>
+            <a href="mailto:<%= company.email %>">
+              <%- include('../components/icon', { name: 'mail' }) %>
+              <span><strong><%= company.email %></strong><small>E-mail</small></span>
+            </a>
+          </li>
+        <% } %>
+        <li>
+          <span>
+            <%- include('../components/icon', { name: 'map-pin' }) %>
+            <span><strong><%= company.location %></strong><small><%= company.serviceArea %></small></span>
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="site-footer__bottom">
+      <p>© <%= year %> <%= company.companyName %>. Todos os direitos reservados.</p>
+      <p><button type="button" data-cookie-preferences>Preferências de cookies</button></p>
+      <p><em>Transformando ideias em soluções reais.</em></p>
+    </div>
+  </div>
+</footer>

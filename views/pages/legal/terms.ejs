@@ -1,0 +1,59 @@
+<%- include('../../components/page-hero', { breadcrumbs, eyebrow: 'Legal', title: page.title, subtitle: 'Última atualização: ' + updatedAt }) %>
+
+<section class="section section--white">
+  <div class="container">
+    <article class="prose">
+      <p>
+        Ao acessar e utilizar o site da <strong><%= company.legalName || company.companyName %></strong>, você concorda com os
+        termos e condições abaixo. Caso não concorde, recomendamos não utilizar o site.
+      </p>
+
+      <h2>1. Objeto</h2>
+      <p>
+        Este site tem caráter institucional e comercial, apresentando os serviços de desenvolvimento de sites,
+        sistemas, landing pages, soluções SaaS, suporte e manutenção oferecidos pela <%= company.companyName %>.
+      </p>
+
+      <h2>2. Informações e preços</h2>
+      <p>
+        Os valores divulgados são referenciais ("a partir de") e podem variar conforme o escopo de cada projeto. A
+        contratação de qualquer serviço depende de proposta comercial formal e de contrato específico.
+      </p>
+
+      <h2>3. Uso adequado</h2>
+      <ul>
+        <li>Não utilizar o site para fins ilícitos ou que violem direitos de terceiros;</li>
+        <li>Não enviar conteúdos maliciosos, spam ou arquivos que possam comprometer a segurança;</li>
+        <li>Fornecer informações verdadeiras nos formulários.</li>
+      </ul>
+
+      <h2>4. Propriedade intelectual</h2>
+      <p>
+        Marca, logotipo, layout, textos e demais conteúdos deste site pertencem à <%= company.companyName %> ou a seus
+        licenciantes e não podem ser reproduzidos sem autorização prévia. Projetos exibidos no portfólio são
+        apresentados com autorização dos respectivos clientes.
+      </p>
+
+      <h2>5. Responsabilidades</h2>
+      <p>
+        Empregamos esforços para manter o site disponível e as informações atualizadas, mas não garantimos ausência
+        de interrupções ou erros. Links para sites de terceiros são oferecidos por conveniência, sem responsabilidade
+        sobre seu conteúdo.
+      </p>
+
+      <h2>6. Privacidade</h2>
+      <p>
+        O tratamento de dados pessoais segue a nossa <a href="/politica-de-privacidade">Política de Privacidade</a>.
+      </p>
+
+      <h2>7. Legislação e foro</h2>
+      <p>
+        Estes termos são regidos pelas leis brasileiras. Fica eleito o foro da comarca de <%= company.city %>/<%= company.state %>
+        para dirimir eventuais controvérsias.
+      </p>
+
+      <h2>8. Contato</h2>
+      <p>Dúvidas sobre estes termos: <a href="mailto:<%= company.email %>"><%= company.email %></a>.</p>
+    </article>
+  </div>
+</section>

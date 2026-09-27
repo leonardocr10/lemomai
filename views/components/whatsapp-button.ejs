@@ -1,0 +1,14 @@
+<%# Botão "Falar no WhatsApp" — o link vem SEMPRE de company.whatsappUrl (company settings). %>
+<% if (company.whatsappUrl) { %>
+<%- include('button', {
+  label: locals.label || 'Falar no WhatsApp',
+  href: company.whatsappUrl,
+  variant: locals.variant || 'whatsapp',
+  size: locals.size,
+  icon: 'whatsapp',
+  arrow: locals.arrow,
+  block: locals.block,
+  external: true,
+  track: 'whatsapp'
+}) %>
+<% } %>

@@ -1,0 +1,33 @@
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <a class="brand" href="/" aria-label="<%= company.companyName %> — página inicial">
+      <%- include('../components/picture', {
+        src: '/images/brand/logo-horizontal',
+        alt: company.companyName,
+        width: 164, height: 46, eager: true
+      }) %>
+    </a>
+
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-principal" data-menu-toggle>
+      <span class="visually-hidden">Abrir menu</span>
+      <%- include('../components/icon', { name: 'menu', cls: 'icon--menu' }) %>
+      <%- include('../components/icon', { name: 'close', cls: 'icon--close' }) %>
+    </button>
+
+    <nav class="nav" id="menu-principal" aria-label="Menu principal" data-menu>
+      <ul class="nav__list">
+        <% mainNav.forEach((item) => { %>
+          <li><a class="nav__link" href="<%= item.href %>"<% if (item.active) { %> aria-current="page"<% } %>><%= item.label %></a></li>
+        <% }) %>
+      </ul>
+      <div class="nav__mobile-extra">
+        <%- include('../components/button', { label: 'Solicitar orçamento', href: '/orcamento', icon: 'send', block: true }) %>
+        <%- include('../components/whatsapp-button', { block: true }) %>
+      </div>
+    </nav>
+
+    <div class="site-header__cta">
+      <%- include('../components/button', { label: 'Solicitar orçamento', href: '/orcamento', variant: 'solid', icon: 'send' }) %>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,15 @@
+node_modules/
+.env
+storage/uploads/*
+!storage/uploads/.gitkeep
+storage/logs/*
+!storage/logs/.gitkeep
+storage/leads.json
+public/dist/
+public/uploads/*
+!public/uploads/.gitkeep
+.DS_Store
+Thumbs.db
+.claude/
+# Originais exportados do ChatGPT (copias versionadas em assets-src/)
+Imagem do ChatGPT*.png
