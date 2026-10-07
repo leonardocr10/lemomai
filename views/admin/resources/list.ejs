@@ -1,0 +1,41 @@
+<div class="admin-main__toolbar">
+  <a class="btn btn--primary btn--small" href="/admin/<%= def.path %>/novo">+ Novo cadastro</a>
+</div>
+<section class="admin-card">
+  <% if (!items.length) { %>
+    <p class="admin-empty">Nenhum cadastro ainda.</p>
+  <% } else { %>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <% def.columns.forEach((column) => { %><th<%- column.num ? ' class="num"' : '' %>><%= column.label %></th><% }) %>
+            <th>Status</th>
+            <th class="num">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach((item) => { const st = def.status(item); %>
+            <tr<%- item.active ? '' : ' class="is-inactive"' %>>
+              <% def.columns.forEach((column) => { %>
+                <td<%- column.num ? ' class="num"' : '' %>>
+                  <% if (column.link) { %><a href="/admin/<%= def.path %>/<%= item.id %>"><%= column.value(item) %></a><% } else { %><%= column.value(item) %><% } %>
+                </td>
+              <% }) %>
+              <td><span class="admin-badge admin-badge--<%= st.badge %>"><%= st.text %></span></td>
+              <td>
+                <div class="admin-row-actions">
+                  <a class="btn btn--outline btn--small" href="/admin/<%= def.path %>/<%= item.id %>">Editar</a>
+                  <form action="/admin/<%= def.path %>/<%= item.id %>/excluir" method="post" data-confirm="Excluir este item? Esta ação não pode ser desfeita.">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn--danger btn--small" type="submit">Excluir</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>

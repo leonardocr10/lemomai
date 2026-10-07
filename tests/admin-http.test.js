@@ -69,3 +69,52 @@ test('login válido abre o painel e logout encerra a sessão', async () => {
   assert.equal(logout.status, 302);
   assert.equal((await client.get('/admin')).status, 302);
 });
+
+const inputValue = (html, name) => html.match(new RegExp(`name="${name}"[^>]*value="([^"]*)"`))?.[1] ?? '';
+
+test('editar preço de plano reflete na home', async () => {
+  const client = await loggedClient();
+  const list = await client.get('/admin/planos');
+  assert.equal(list.status, 200);
+  const id = list.body.match(/href="\/admin\/planos\/(\d+)"/)[1];
+  const form = await client.get(`/admin/planos/${id}`);
+  const value = (name) => inputValue(form.body, name);
+  const features = form.body.match(/name="features"[^>]*>([\s\S]*?)<\/textarea>/)[1];
+
+  const response = await client.post(`/admin/planos/${id}`, {
+    name: value('name'), slug: value('slug'), category: 'project', icon: value('icon'), price: '1.777,00',
+    billingType: 'one-time', pricePrefix: value('pricePrefix'), badge: value('badge'), description: value('description'),
+    ctaText: value('ctaText'), ctaHref: value('ctaHref'), features, displayOrder: '1', active: 'on',
+  });
+  assert.equal(response.status, 302);
+  assert.equal(response.location, '/admin/planos?salvo=1');
+  const home = await (await fetch(`${base}/`)).text();
+  assert.match(home, /1\.777/);
+});
+
+test('formulário inválido mostra erros por campo', async () => {
+  const client = await loggedClient();
+  await client.get('/admin/faq/novo');
+  const response = await client.post('/admin/faq', { question: '', answer: '' });
+  assert.equal(response.status, 422);
+  assert.match(response.body, /Informe a pergunta/);
+});
+
+test('FAQ: criar e excluir', async () => {
+  const client = await loggedClient();
+  await client.get('/admin/faq/novo');
+  const created = await client.post('/admin/faq', { question: 'Pergunta de teste?', answer: 'Resposta de teste.', displayOrder: '50', active: 'on' });
+  assert.equal(created.status, 302);
+  const list = await client.get('/admin/faq');
+  assert.match(list.body, /Pergunta de teste\?/);
+  const id = [...list.body.matchAll(/\/admin\/faq\/(\d+)\/excluir/g)].pop()[1];
+  const removed = await client.post(`/admin/faq/${id}/excluir`);
+  assert.equal(removed.status, 302);
+  assert.doesNotMatch((await client.get('/admin/faq')).body, /Pergunta de teste\?/);
+});
+
+test('ID inexistente responde 404', async () => {
+  const client = await loggedClient();
+  assert.equal((await client.get('/admin/planos/99999')).status, 404);
+  assert.equal((await client.get('/admin/planos/abc')).status, 404);
+});

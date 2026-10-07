@@ -1,0 +1,15 @@
+<form class="admin-card admin-form" action="<%= action %>" method="post" novalidate>
+  <% if (Object.keys(errors).length) { %>
+    <div class="alert alert--error" role="alert"><span>Verifique os campos destacados.</span></div>
+  <% } %>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="form-grid">
+    <% def.fields.forEach((field) => { %>
+      <%- include('../partials/field', { ...field, value: values[field.name], errors }) %>
+    <% }) %>
+  </div>
+  <div class="admin-form__actions">
+    <button class="btn btn--primary" type="submit">Salvar</button>
+    <a class="btn btn--outline" href="/admin/<%= def.path %>">Cancelar</a>
+  </div>
+</form>

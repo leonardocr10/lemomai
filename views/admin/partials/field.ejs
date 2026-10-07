@@ -1,0 +1,34 @@
+<%#
+  Campo de formulário do painel.
+  params: name, label, value, errors, type ('text'|'number'|'email'|'password'|'textarea'|'select'|'checkbox'),
+          options [{ value, label }], hint, required, rows, full (ocupa a linha inteira), attrs (atributos extras, texto fixo)
+%>
+<%
+  const id = 'f-' + name;
+  const error = (locals.errors || {})[name];
+  const type = locals.type || 'text';
+  const val = locals.value === null || locals.value === undefined ? '' : locals.value;
+%>
+<% if (type === 'checkbox') { %>
+  <div class="field<%= locals.full ? ' field--full' : '' %>">
+    <label class="admin-check"><input type="checkbox" name="<%= name %>"<%= val ? ' checked' : '' %>> <%= label %></label>
+    <% if (locals.hint) { %><p class="field__hint"><%= hint %></p><% } %>
+  </div>
+<% } else { %>
+  <div class="field<%= locals.full ? ' field--full' : '' %><%= error ? ' has-error' : '' %>">
+    <label for="<%= id %>"><%= label %><% if (locals.required) { %> <span class="req" aria-hidden="true">*</span><% } %></label>
+    <% if (type === 'textarea') { %>
+      <textarea class="textarea" id="<%= id %>" name="<%= name %>" rows="<%= locals.rows || 4 %>"<%- error ? ' aria-invalid="true"' : '' %>><%= val %></textarea>
+    <% } else if (type === 'select') { %>
+      <select class="select" id="<%= id %>" name="<%= name %>"<%- error ? ' aria-invalid="true"' : '' %>>
+        <% options.forEach((option) => { %>
+          <option value="<%= option.value %>"<%= String(option.value) === String(val) ? ' selected' : '' %>><%= option.label %></option>
+        <% }) %>
+      </select>
+    <% } else { %>
+      <input class="input" id="<%= id %>" name="<%= name %>" type="<%= type %>" value="<%= type === 'password' ? '' : val %>"<%- locals.attrs || '' %><%- error ? ' aria-invalid="true"' : '' %>>
+    <% } %>
+    <% if (locals.hint) { %><p class="field__hint"><%= hint %></p><% } %>
+    <p class="field__error"><%= error || '' %></p>
+  </div>
+<% } %>
