@@ -250,3 +250,24 @@ Ao salvar, o site reflete a mudança na hora (o cache é limpo). As imagens envi
 **Banco:** o arquivo `storage/lenom.db` fica fora do git. Para fazer backup, copie o arquivo com o servidor parado. Apagar o arquivo recria o banco com o conteúdo de exemplo.
 
 **Banner animado:** a tela de login mostra o nome "Lenom.AI" sendo digitado. Uma versão avulsa, em arquivo único, está em `assets-src/banner-lenom.html` (abra direto no navegador).
+
+## Publicar no servidor (Ubuntu + PM2 + Nginx)
+
+Os scripts em `deploy/servidor/` trocam uma aplicação antiga que já roda no PM2 por esta, **na mesma porta** — o Nginx (domínio e HTTPS) não muda. A antiga ganha backup completo e pode voltar com um comando.
+
+```bash
+git clone https://github.com/leonardocr10/lemomai.git ~/lenom-deploy
+cd ~/lenom-deploy/deploy/servidor
+pm2 list                                   # veja o nome da aplicação antiga
+bash 1-backup-app-antiga.sh NOME_DA_ANTIGA # backup (não para nada)
+bash 2-instalar-app-nova.sh                # instala a nova em /var/www/lenom-ai (não para nada)
+bash 3-trocar-para-app-nova.sh             # para a antiga e sobe a nova na mesma porta
+```
+
+| Script | O que faz |
+|---|---|
+| `1-backup-app-antiga.sh` | Copia arquivos, `.env`, banco (SQLite ou dump MySQL), lista do PM2 e Nginx para `~/backups-lenom/` |
+| `2-instalar-app-nova.sh` | Node 22 (via nvm, sem mexer no Node da antiga), código, `npm ci`, build, `.env` de produção e upload de 10 MB no Nginx |
+| `3-trocar-para-app-nova.sh` | Troca as aplicações; se a nova não responder em 30 s, a antiga volta sozinha |
+| `4-atualizar-app-nova.sh` | Atualiza com o que estiver no `main` (copia o banco antes) |
+| `9-voltar-app-antiga.sh` | Volta para a aplicação antiga |
