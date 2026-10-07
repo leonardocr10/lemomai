@@ -12,6 +12,9 @@
     <% banners.forEach((banner, index) => { %>
       <li class="banner-slide<%= banner.mobileImage ? '' : ' banner-slide--desktop-only' %>"
           aria-roledescription="slide" aria-label="<%= index + 1 %> de <%= total %>" data-banner-slide>
+        <%# Fundo: a mesma imagem ampliada e desfocada preenche as laterais (mesmo arquivo, sem novo download). %>
+        <img class="banner-slide__backdrop" src="<%= banner.image %>" alt="" aria-hidden="true" decoding="async"
+             <%- index === 0 ? '' : 'loading="lazy"' %>>
         <% const tag = banner.href ? 'a' : 'div'; %>
         <<%= tag %> class="banner-slide__link"<% if (banner.href) { %> href="<%= banner.href %>"<% } %>>
           <picture>

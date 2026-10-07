@@ -343,16 +343,12 @@
 }
 
 /* ---------- Carrossel de banners (home) ----------
-   Card na largura do conteúdo do site, sempre em 3:1 (2000×667, sem cortar a
-   imagem). A largura também é limitada a 120vh: assim o banner nunca passa de
-   40% da altura da tela e o conteúdo da página aparece logo na primeira tela. */
+   Faixa na largura toda da tela. O banner fica no centro sempre em 3:1
+   (2000×667, sem cortar a imagem) e no máximo 40% da altura da tela (largura
+   ≤ 120vh); as laterais são preenchidas pela própria imagem desfocada. */
 .banner-carousel {
   position: relative;
-  width: min(100% - 2 * var(--gutter), var(--container), 120vh);
-  margin: var(--space-5) auto 0;
   overflow: hidden;
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow);
 }
 
 .banner-carousel__track {
@@ -372,15 +368,30 @@
 }
 
 .banner-slide {
+  position: relative;
   flex: 0 0 100%;
+  overflow: hidden;
   scroll-snap-align: start;
 }
 
-.banner-slide__link {
-  display: block;
+.banner-slide__backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(28px) saturate(1.1);
+  transform: scale(1.15);
 }
 
-.banner-slide img {
+.banner-slide__link {
+  position: relative;
+  display: block;
+  width: min(100%, 120vh);
+  margin-inline: auto;
+}
+
+.banner-slide__link img {
   display: block;
   width: 100%;
   height: auto;
@@ -388,10 +399,22 @@
   object-fit: cover;
 }
 
-/* Imagem própria de celular: mantém a proporção dela. */
+/* Quando o banner é mais estreito que a tela, as bordas da imagem se fundem ao fundo desfocado. */
+@media (min-aspect-ratio: 13 / 10) {
+  .banner-slide__link img {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 3%, #000 97%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 3%, #000 97%, transparent 100%);
+  }
+}
+
+/* Imagem própria de celular: mantém a proporção dela e dispensa o fundo desfocado. */
 @media (max-width: 767px) {
-  .banner-slide img {
+  .banner-slide__link img {
     aspect-ratio: auto;
+  }
+
+  .banner-slide__backdrop {
+    display: none;
   }
 }
 
