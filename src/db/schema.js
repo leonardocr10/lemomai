@@ -51,8 +51,20 @@ CREATE TABLE IF NOT EXISTS banners (
   href TEXT,
   image TEXT NOT NULL,
   mobile_image TEXT,
+  full_width INTEGER NOT NULL DEFAULT 0,
   active INTEGER NOT NULL DEFAULT 1,
   display_order INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS media (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  url TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  width INTEGER,
+  height INTEGER,
+  size INTEGER,
+  mime TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -99,8 +111,13 @@ const TABLES = {
   },
   banners: {
     table: 'banners',
-    columns: ['title', 'alt', 'href', 'image', 'mobileImage', 'active', 'displayOrder'],
-    bool: ['active'],
+    columns: ['title', 'alt', 'href', 'image', 'mobileImage', 'fullWidth', 'active', 'displayOrder'],
+    bool: ['fullWidth', 'active'],
+  },
+  media: {
+    table: 'media',
+    columns: ['url', 'name', 'width', 'height', 'size', 'mime'],
+    order: 'ORDER BY created_at DESC, id DESC',
   },
   testimonials: {
     table: 'testimonials',
@@ -109,4 +126,19 @@ const TABLES = {
   },
 };
 
-module.exports = { SCHEMA, TABLES };
+/**
+ * Colunas acrescentadas depois da primeira versão: bancos já criados ganham a
+ * coluna ao abrir (CREATE TABLE IF NOT EXISTS não altera tabelas existentes).
+ */
+const ADDED_COLUMNS = [
+  { table: 'banners', column: 'full_width', definition: 'INTEGER NOT NULL DEFAULT 0' },
+];
+
+function migrate(db) {
+  for (const { table, column, definition } of ADDED_COLUMNS) {
+    const exists = db.prepare(`PRAGMA table_info(${table})`).all().some((row) => row.name === column);
+    if (!exists) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+
+module.exports = { SCHEMA, TABLES, migrate };

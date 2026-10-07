@@ -113,3 +113,15 @@ test('produção só ativa cookies Secure/HSTS quando APP_URL é https', () => {
   assert.equal(check('http://203.0.113.10:8080'), 'false');
   assert.equal(check('https://lenom.ai'), 'true');
 });
+
+test('imageSize lê dimensões de PNG, JPEG e WebP (com e sem perdas)', async () => {
+  const sharp = require('sharp');
+  const { imageSize, imageSizeFromFile } = require('../src/utils/image-size');
+  const base = sharp({ create: { width: 321, height: 107, channels: 3, background: '#0f2d4a' } });
+  assert.deepEqual(imageSize(await base.clone().png().toBuffer()), { width: 321, height: 107 });
+  assert.deepEqual(imageSize(await base.clone().jpeg().toBuffer()), { width: 321, height: 107 });
+  assert.deepEqual(imageSize(await base.clone().webp().toBuffer()), { width: 321, height: 107 });
+  assert.deepEqual(imageSize(await base.clone().webp({ lossless: true }).toBuffer()), { width: 321, height: 107 });
+  assert.equal(imageSize(Buffer.from('não é imagem, só texto qualquer')), null);
+  assert.deepEqual(imageSizeFromFile(require('node:path').resolve(__dirname, '../public/images/banners/sites-crescimento.webp')), { width: 2000, height: 667 });
+});

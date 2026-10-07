@@ -5,7 +5,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const config = require('../config');
-const { SCHEMA } = require('./schema');
+const { SCHEMA, migrate } = require('./schema');
 const { seed } = require('./seed');
 
 // node:sqlite ainda emite ExperimentalWarning ao carregar; silencia só esse aviso.
@@ -24,6 +24,7 @@ function getDb() {
   db = new DatabaseSync(config.dataFile);
   if (!inMemory) db.exec('PRAGMA journal_mode = WAL;');
   db.exec(SCHEMA);
+  migrate(db);
   seed(db, { withLeads: !inMemory });
   return db;
 }
