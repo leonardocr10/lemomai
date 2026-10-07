@@ -8,7 +8,8 @@ const config = require('../config');
 function contentSecurityPolicy() {
   const scriptSrc = ["'self'"];
   const connectSrc = ["'self'"];
-  const imgSrc = ["'self'", 'data:'];
+  // blob: = prévia local das imagens escolhidas no painel (antes do envio).
+  const imgSrc = ["'self'", 'data:', 'blob:'];
 
   if (config.analytics.gaMeasurementId) {
     scriptSrc.push('https://www.googletagmanager.com');

@@ -43,6 +43,11 @@ function createApp() {
       if (filePath.includes(`${path.sep}uploads${path.sep}`)) res.set('X-Content-Type-Options', 'nosniff');
     },
   }));
+  // Bibliotecas do painel (Tabler, ícones, Cropper) servidas direto de node_modules, sem CDN.
+  const vendor = (dir) => express.static(path.join(ROOT, 'node_modules', dir), { maxAge: config.isProduction ? '30d' : 0 });
+  app.use('/vendor/tabler', vendor('@tabler/core/dist'));
+  app.use('/vendor/tabler-icons', vendor('@tabler/icons-webfont/dist'));
+  app.use('/vendor/cropper', vendor('cropperjs/dist'));
   app.get('/favicon.ico', (req, res) => res.redirect(302, '/favicon-32.png?v=lenom'));
 
   app.use(cookieParser(config.cookieSecret));

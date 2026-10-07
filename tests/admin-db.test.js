@@ -63,3 +63,24 @@ test('banco novo traz os 4 banners iniciais', async () => {
     assert.ok(banner.alt.length > 10);
   }
 });
+
+test('findPage: busca, ordena e pagina; total ignora a paginação', async () => {
+  const found = await repositories.plans.findPage({ q: 'landing', searchColumns: ['name', 'slug', 'description'] });
+  assert.equal(found.total, 1);
+  assert.equal(found.items[0].slug, 'landing-page');
+
+  const byPrice = await repositories.plans.findPage({ sort: 'price', dir: 'desc', limit: 2 });
+  assert.equal(byPrice.items.length, 2);
+  assert.ok(byPrice.total > 2);
+  assert.ok(byPrice.items[0].price >= byPrice.items[1].price);
+
+  // Curingas do LIKE são tratados como texto.
+  assert.equal((await repositories.plans.findPage({ q: '%', searchColumns: ['name'] })).total, 0);
+});
+
+test('leads: busca por nome ou e-mail', async () => {
+  await repositories.leads.create({ source: 'contact', name: 'Beatriz Souza', email: 'bia@empresa.com', status: 'new' });
+  assert.equal((await repositories.leads.findAll({ q: 'beatriz' })).length, 1);
+  assert.equal(await repositories.leads.count({ q: 'empresa.com' }), 1);
+  assert.equal(await repositories.leads.count({ q: 'ninguem' }), 0);
+});
