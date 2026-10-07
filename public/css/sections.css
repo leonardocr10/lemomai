@@ -67,10 +67,13 @@
   background: var(--surface);
 }
 
+/* Mesma largura do banner (ver .banner-carousel) para as bordas alinharem. */
 .highlights__list {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin-block: 0;
+  width: min(100% - 2 * var(--gutter), var(--container), 120vh);
+  margin: 0 auto;
+  padding: 0;
   list-style: none;
 }
 
@@ -343,13 +346,16 @@
 }
 
 /* ---------- Carrossel de banners (home) ----------
-   Todos os slides em 3:1 (o tamanho ideal dos banners, 2000×667), ocupando a
-   largura da tela. A largura é limitada a 210vh para o banner nunca passar de
-   ~70% da altura da tela em monitores muito largos. */
+   Card na largura do conteúdo do site, sempre em 3:1 (2000×667, sem cortar a
+   imagem). A largura também é limitada a 120vh: assim o banner nunca passa de
+   40% da altura da tela e o conteúdo da página aparece logo na primeira tela. */
 .banner-carousel {
   position: relative;
-  width: min(100%, 2000px, 210vh);
-  margin-inline: auto;
+  width: min(100% - 2 * var(--gutter), var(--container), 120vh);
+  margin: var(--space-5) auto 0;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
 }
 
 .banner-carousel__track {
