@@ -343,9 +343,9 @@
 }
 
 /* ---------- Carrossel de banners (home) ----------
-   Faixa na largura toda da tela. O banner fica no centro sempre em 3:1
-   (2000×667, sem cortar a imagem) e no máximo 40% da altura da tela (largura
-   ≤ 120vh); as laterais são preenchidas pela própria imagem desfocada. */
+   Banner na largura toda da tela. As imagens são 3:1 (2000×667) com margem
+   livre de ~11% em cima e ~9% embaixo; em telas largas a altura pode baixar
+   até a proporção 3.75:1, recortando só essa margem (o texto nunca é cortado). */
 .banner-carousel {
   position: relative;
   overflow: hidden;
@@ -368,103 +368,138 @@
 }
 
 .banner-slide {
-  position: relative;
   flex: 0 0 100%;
-  overflow: hidden;
   scroll-snap-align: start;
 }
 
-.banner-slide__backdrop {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: blur(28px) saturate(1.1);
-  transform: scale(1.15);
-}
-
 .banner-slide__link {
-  position: relative;
   display: block;
-  width: min(100%, 120vh);
-  margin-inline: auto;
 }
 
 .banner-slide__link img {
   display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 3 / 1;
+  height: clamp(100vw / 3.75, 45vh, 100vw / 3);
   object-fit: cover;
+  object-position: 50% 55%;
 }
 
-/* Quando o banner é mais estreito que a tela, as bordas da imagem se fundem ao fundo desfocado. */
-@media (min-aspect-ratio: 13 / 10) {
-  .banner-slide__link img {
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 3%, #000 97%, transparent 100%);
-    mask-image: linear-gradient(90deg, transparent 0, #000 3%, #000 97%, transparent 100%);
-  }
-}
-
-/* Imagem própria de celular: mantém a proporção dela e dispensa o fundo desfocado. */
+/* Imagem própria de celular: mantém a proporção dela. */
 @media (max-width: 767px) {
   .banner-slide__link img {
-    aspect-ratio: auto;
-  }
-
-  .banner-slide__backdrop {
-    display: none;
+    height: auto;
   }
 }
 
-/* Controles numa pílula sobre a base do banner, a 62% da largura da imagem
-   (base do notebook nos banners): fica fora do texto e dos destaques da esquerda. */
+/* ---------- Controles discretos ---------- */
+.banner-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  background: rgba(9, 28, 47, 0.35);
+  color: #ffffff;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-50%);
+  backdrop-filter: blur(6px);
+  transition: opacity var(--duration) var(--ease), background var(--duration) var(--ease);
+}
+
+.banner-carousel__arrow--prev {
+  left: var(--space-4);
+}
+
+.banner-carousel__arrow--next {
+  right: var(--space-4);
+}
+
+.banner-carousel:hover .banner-carousel__arrow,
+.banner-carousel__arrow:focus-visible {
+  opacity: 1;
+}
+
+.banner-carousel__arrow:hover {
+  background: rgba(9, 28, 47, 0.6);
+}
+
+.banner-carousel__arrow .icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Telas de toque: sem hover, as setas ficam sempre visíveis (bem leves). */
+@media (hover: none) {
+  .banner-carousel__arrow {
+    opacity: 0.7;
+  }
+}
+
 .banner-carousel__controls {
   position: absolute;
-  left: calc(50% + min(100%, 120vh) * 0.12);
-  bottom: clamp(8px, 1.4vw, 18px);
-  transform: translateX(-50%);
+  left: 50%;
+  bottom: var(--space-3);
+  z-index: 2;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: 5px 8px;
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--surface) 88%, transparent);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(8px);
+  gap: var(--space-1);
+  transform: translateX(-50%);
 }
 
-.banner-carousel.is-single .banner-carousel__controls {
+.banner-carousel.is-single .banner-carousel__controls,
+.banner-carousel.is-single .banner-carousel__arrow {
   display: none;
 }
 
-.banner-carousel__button {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--primary-dark);
+.banner-carousel__dots {
+  display: flex;
+}
+
+/* Área de toque de 24px; a bolinha visível (6px) é o miolo (content-box). */
+.banner-carousel__dot {
+  width: 22px;
+  height: 22px;
+  padding: 8px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.45);
+  background-clip: content-box;
   cursor: pointer;
-  transition: border-color var(--duration) var(--ease), color var(--duration) var(--ease);
+  transition: width var(--duration) var(--ease), background var(--duration) var(--ease);
 }
 
-.banner-carousel__button:hover {
-  border-color: var(--primary);
-  color: var(--primary-strong);
-}
-
-.banner-carousel__button .icon {
-  width: 16px;
-  height: 16px;
+.banner-carousel__dot[aria-current='true'] {
+  width: 36px;
+  background-color: #ffffff;
 }
 
 .banner-carousel__pause {
-  margin-left: var(--space-2);
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.banner-carousel__pause:hover,
+.banner-carousel__pause:focus-visible {
+  color: #ffffff;
+}
+
+.banner-carousel__pause .icon {
+  width: 14px;
+  height: 14px;
 }
 
 .banner-carousel__icon-play,
@@ -476,26 +511,10 @@
   display: block;
 }
 
-.banner-carousel__dots {
-  display: flex;
-}
-
-/* Área de toque de 24px (tablets); a bolinha visível de 8px é o miolo (content-box). */
-.banner-carousel__dot {
-  width: 24px;
-  height: 24px;
-  padding: 8px;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: var(--border);
-  background-clip: content-box;
-  cursor: pointer;
-  transition: width var(--duration) var(--ease), background var(--duration) var(--ease);
-}
-
-.banner-carousel__dot[aria-current='true'] {
-  width: 40px;
-  background-color: var(--primary);
+/* Sombra leve nos controles para aparecerem também sobre banners claros. */
+.banner-carousel__dot,
+.banner-carousel__pause {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
 }
 
 .hero--mobile-only {
