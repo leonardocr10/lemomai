@@ -343,15 +343,14 @@
 }
 
 /* ---------- Carrossel de banners (home) ----------
-   Faixa escura da marca na largura toda; o banner fica na largura do conteúdo
-   do site (alinhado ao menu e às seções), sempre inteiro em 3:1 — sem recorte
-   nem zoom. Em 1240px de largura: ~413px de altura. */
+   Faixa na largura toda; o banner fica na largura do conteúdo do site
+   (alinhado ao menu e às seções), sempre inteiro em 3:1 — sem recorte nem
+   zoom (~1240×413). As laterais mostram a própria imagem desfocada, então o
+   fundo acompanha as cores de cada banner. */
 .banner-carousel {
   position: relative;
   overflow: hidden;
-  padding-block: var(--space-4);
-  background: radial-gradient(900px 300px at 50% 50%, rgba(93, 187, 70, 0.14), transparent 70%),
-    linear-gradient(180deg, var(--navy-deep) 0%, #06131f 100%);
+  background: #050a08;
 }
 
 .banner-carousel__track {
@@ -371,11 +370,25 @@
 }
 
 .banner-slide {
+  position: relative;
   flex: 0 0 100%;
+  overflow: hidden;
+  padding-block: var(--space-4);
   scroll-snap-align: start;
 }
 
+.banner-slide__backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(40px) saturate(1.15) brightness(0.85);
+  transform: scale(1.2);
+}
+
 .banner-slide__link {
+  position: relative;
   display: block;
   width: min(100% - 2 * var(--gutter), var(--container));
   margin-inline: auto;
@@ -391,10 +404,14 @@
   aspect-ratio: 3 / 1;
 }
 
-/* Imagem própria de celular: mantém a proporção dela. */
+/* Imagem própria de celular: mantém a proporção dela e dispensa o fundo desfocado. */
 @media (max-width: 767px) {
   .banner-slide__link img {
     aspect-ratio: auto;
+  }
+
+  .banner-slide__backdrop {
+    display: none;
   }
 }
 
@@ -452,6 +469,7 @@
   position: absolute;
   left: 50%;
   bottom: calc(var(--space-4) + var(--space-2));
+  z-index: 3;
   z-index: 2;
   display: flex;
   align-items: center;
