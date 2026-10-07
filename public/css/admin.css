@@ -367,6 +367,11 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/* Campos vizinhos com e sem dica não devem esticar label/input para igualar a altura. */
+.admin-form .field {
+  align-content: start;
+}
+
 .admin-form .field__hint {
   color: var(--muted);
   font-size: var(--fs-xs);
