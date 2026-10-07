@@ -173,12 +173,11 @@ const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR
 const png = (filename = 'banner.png') => ({ data: PNG, filename, type: 'image/png' });
 const publicFile = (url) => path.resolve(__dirname, '../public', `.${url}`);
 
-test('banners: lista os 6 iniciais com miniatura', async () => {
+test('banners: lista os 3 iniciais com miniatura', async () => {
   const client = await loggedClient();
   const list = await client.get('/admin/banners');
   assert.equal(list.status, 200);
-  const files = ['sites-sob-medida-escuro', 'projetos-crescimento-claro', 'automacao-claro',
-    'sites-sob-medida-claro', 'projetos-crescimento-escuro', 'automacao-escuro'];
+  const files = ['sites-crescimento', 'projetos-geram-crescimento', 'automacao-produtividade'];
   for (const name of files) assert.ok(list.body.includes(`/images/banners/${name}.webp`), name);
 });
 
@@ -235,10 +234,10 @@ test('banners: desativar tira o banner da home', async () => {
   const fields = { title: inputValue(form.body, 'title'), href: inputValue(form.body, 'href'), displayOrder: '1' };
   fields.alt = form.body.match(/name="alt"[^>]*>([\s\S]*?)<\/textarea>/)[1];
   assert.equal((await client.postMultipart('/admin/banners/1', fields)).status, 302);
-  assert.doesNotMatch(await (await fetch(`${base}/`)).text(), /sites-sob-medida-escuro.webp/);
+  assert.doesNotMatch(await (await fetch(`${base}/`)).text(), /sites-crescimento.webp/);
   await client.get('/admin/banners/1');
   await client.postMultipart('/admin/banners/1', { ...fields, active: 'on' });
-  assert.match(await (await fetch(`${base}/`)).text(), /sites-sob-medida-escuro.webp/);
+  assert.match(await (await fetch(`${base}/`)).text(), /sites-crescimento.webp/);
 });
 
 test('layout do painel usa o Tabler servido localmente, sem o CSS do site', async () => {

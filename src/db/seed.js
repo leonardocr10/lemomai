@@ -34,16 +34,21 @@ function importLeads(db) {
 }
 
 /**
- * Os 4 banners de exemplo da primeira versão (/images/banners/banner-N.webp)
- * foram substituídos por 6 novos. Bancos já criados trocam só esses 4;
- * banners enviados pelo painel (/uploads/...) são mantidos.
+ * Banners de exemplo do site ficam em /images/banners/. Quando um conjunto novo
+ * é publicado (src/data/mock/banners.mock.js), bancos já criados trocam os
+ * exemplos antigos pelos novos. Banners enviados pelo painel (/uploads/...)
+ * nunca são tocados, e um exemplo atual excluído pelo painel não volta.
  */
 function replaceLegacyBanners(db) {
-  const legacy = db.prepare("SELECT COUNT(*) AS n FROM banners WHERE image LIKE '/images/banners/banner-%'").get().n;
-  if (!legacy) return;
-  db.prepare("DELETE FROM banners WHERE image LIKE '/images/banners/banner-%'").run();
+  const current = require('../data/mock/banners.mock');
+  const currentImages = new Set(current.map((banner) => banner.image));
+  const legacy = db.prepare("SELECT id, image FROM banners WHERE image LIKE '/images/banners/%'").all()
+    .filter((row) => !currentImages.has(row.image));
+  if (!legacy.length) return;
+  const remove = db.prepare('DELETE FROM banners WHERE id = ?');
+  for (const row of legacy) remove.run(row.id);
   const existing = new Set(db.prepare('SELECT image FROM banners').all().map((row) => row.image));
-  for (const banner of require('../data/mock/banners.mock')) {
+  for (const banner of current) {
     if (!existing.has(banner.image)) insert(db, TABLES.banners, banner);
   }
 }

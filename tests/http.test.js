@@ -107,15 +107,15 @@ test('home: carrossel só com os banners (3:1) e um único h1; hero de texto só
   const html = await (await fetch(`${base}/`)).text();
   assert.match(html, /data-banner-carousel/);
   assert.doesNotMatch(html, /banner-slide--hero/);
-  assert.match(html, /aria-label="1 de 6"/);
-  assert.match(html, /<img src="\/images\/banners\/sites-sob-medida-escuro\.webp"/);
+  assert.match(html, /aria-label="1 de 3"/);
+  assert.match(html, /<img src="\/images\/banners\/sites-crescimento\.webp"/);
   assert.match(html, /<a class="banner-slide__link" href="\/orcamento"/);
   assert.equal(html.match(/<h1[\s>]/g).length, 1);
   assert.match(html, /<h1 class="visually-hidden"/);
   // Nenhum banner inicial tem imagem de celular: o hero de texto continua só no celular (com h2).
   assert.match(html, /class="hero hero--mobile-only"/);
   assert.match(html, /<h2 class="hero__title"/);
-  assert.match(html, /rel="preload" as="image" href="\/images\/banners\/sites-sob-medida-escuro\.webp" media="\(min-width: 768px\)"/);
+  assert.match(html, /rel="preload" as="image" href="\/images\/banners\/sites-crescimento\.webp" media="\(min-width: 768px\)"/);
 });
 
 test('logo do topo: símbolo + nome digitado, com o nome completo já no HTML (sem JS)', async () => {

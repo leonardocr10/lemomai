@@ -418,10 +418,11 @@
   }
 }
 
-/* Controles numa pílula sobre a base do banner, no centro (área sem texto nos banners). */
+/* Controles numa pílula sobre a base do banner, a 62% da largura da imagem
+   (base do notebook nos banners): fica fora do texto e dos destaques da esquerda. */
 .banner-carousel__controls {
   position: absolute;
-  left: 50%;
+  left: calc(50% + min(100%, 120vh) * 0.12);
   bottom: clamp(8px, 1.4vw, 18px);
   transform: translateX(-50%);
   display: flex;
