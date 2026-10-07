@@ -253,22 +253,21 @@ Ao salvar, o site reflete a mudança na hora (o cache é limpo). As imagens envi
 
 ## Publicar no servidor (Ubuntu + Nginx)
 
-Os scripts em `deploy/servidor/` trocam a aplicação que já roda no servidor por esta, **na mesma porta** — o Nginx (domínio e HTTPS) não muda. Eles descobrem sozinhos como a antiga roda (serviço systemd, Docker, PM2 ou `node` iniciado à mão), fazem backup completo e permitem voltar com um comando. A nova roda como serviço systemd `lenom-ai`, com o usuário `lenom` e o Node 22 em `/opt/node22` (o Node do sistema não muda). Rode como root:
+Os scripts em `deploy/servidor/` instalam a Lenom.AI **ao lado** das aplicações que já estão no servidor (ex.: Cassiano3D na porta 3000) — nenhuma delas é parada ou alterada, e os sites existentes no Nginx não são tocados. A Lenom.AI roda como serviço systemd `lenom-ai` (usuário `lenom`, Node 22 em `/opt/node22`, porta interna 3100) com um site próprio no Nginx. Rode como root:
 
 ```bash
 git clone https://github.com/leonardocr10/lemomai.git ~/lenom-deploy
 cd ~/lenom-deploy/deploy/servidor
-bash 1-backup-app-antiga.sh        # descobre a app antiga e faz backup (não para nada)
-bash 2-instalar-app-nova.sh        # instala a nova em /var/www/lenom-ai (não para nada)
-bash 3-trocar-para-app-nova.sh     # para a antiga e liga a nova na mesma porta
+bash 1-instalar.sh                       # instala e liga: http://IP-DO-SERVIDOR:8080
+bash 3-usar-dominio.sh seudominio.com.br # quando tiver domínio (com HTTPS grátis)
 ```
 
 | Script | O que faz |
 |---|---|
-| `1-backup-app-antiga.sh [porta]` | Acha o processo na porta do Nginx; copia arquivos, `.env`, banco (SQLite ou dump MySQL) e Nginx para `/root/backups-lenom/` |
-| `2-instalar-app-nova.sh` | Node 22, usuário `lenom`, código, `npm ci`, build, `.env` de produção, serviço systemd e upload de 10 MB no Nginx |
-| `3-trocar-para-app-nova.sh` | Troca as aplicações; se a nova não responder em 30 s, a antiga volta sozinha |
-| `4-atualizar-app-nova.sh` | Atualiza com o que estiver no `main` (copia o banco antes) |
-| `9-voltar-app-antiga.sh` | Volta para a aplicação antiga |
+| `1-instalar.sh` | Node 22, usuário `lenom`, código em `/var/www/lenom-ai`, `npm ci`, build, `.env` de produção, serviço systemd e site no Nginx na porta 8080 |
+| `2-atualizar.sh` | Atualiza com o que estiver no `main` (copia o banco antes) e reinicia só a Lenom.AI |
+| `3-usar-dominio.sh dominio` | Troca o acesso por IP:8080 pelo domínio, com HTTPS via Let's Encrypt |
 
-Depois da troca: `journalctl -u lenom-ai -f` (logs) e `systemctl restart lenom-ai` (reiniciar).
+Portas diferentes: `APP_PORT=3200 PUBLIC_PORT=8081 bash 1-instalar.sh`. Logs: `journalctl -u lenom-ai -f`.
+
+Sem HTTPS (`APP_URL` com `http://`), os cookies não são marcados como `Secure` para o login e os formulários funcionarem; com `https://` eles passam a ser `Secure` e o HSTS é ativado.

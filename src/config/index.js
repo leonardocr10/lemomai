@@ -28,6 +28,10 @@ const appUrl = (process.env.APP_URL || `http://localhost:${process.env.PORT || 3
 const config = {
   env,
   isProduction: env === 'production',
+  // Produção servida por HTTPS (APP_URL com https://): cookies "Secure", HSTS e
+  // upgrade-insecure-requests. Com APP_URL em http:// (ex.: acesso por IP:porta
+  // antes de ter domínio), isso fica desligado para o login e os formulários funcionarem.
+  secureContext: env === 'production' && appUrl.startsWith('https://'),
   port: int(process.env.PORT, 3000),
   appUrl,
   cookieSecret: process.env.COOKIE_SECRET || 'dev-only-secret-change-me',

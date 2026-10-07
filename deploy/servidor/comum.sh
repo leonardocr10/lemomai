@@ -1,19 +1,26 @@
 #!/usr/bin/env bash
 # Funções e configurações usadas pelos scripts de deploy da Lenom.AI.
 # Não rode este arquivo direto: ele é carregado pelos outros scripts.
+#
+# A Lenom.AI roda AO LADO das outras aplicações do servidor (ex.: Cassiano3D):
+# porta interna própria, serviço systemd próprio e site próprio no Nginx.
+# Nenhum script mexe em outra aplicação nem nos sites que já existem no Nginx.
 
 # ---------------------------------------------------------------------------
 # Configuração (pode sobrescrever por variável de ambiente ao rodar o script)
 # ---------------------------------------------------------------------------
-APP_NAME="${APP_NAME:-lenom-ai}"                         # nome do serviço systemd da app nova
-APP_USER="${APP_USER:-lenom}"                            # usuário (sem login) que roda a app nova
-APP_DIR="${APP_DIR:-/var/www/lenom-ai}"                  # onde o código novo fica
+APP_NAME="${APP_NAME:-lenom-ai}"                         # serviço systemd e site do Nginx
+APP_USER="${APP_USER:-lenom}"                            # usuário (sem login) que roda a app
+APP_DIR="${APP_DIR:-/var/www/lenom-ai}"                  # onde o código fica
+APP_PORT="${APP_PORT:-3100}"                             # porta interna (só 127.0.0.1)
+PUBLIC_PORT="${PUBLIC_PORT:-8080}"                       # porta de acesso pelo IP, até ter domínio
 REPO_URL="${REPO_URL:-https://github.com/leonardocr10/lemomai.git}"
 BRANCH="${BRANCH:-main}"
-NODE_DIR="${NODE_DIR:-/opt/node22}"                      # Node 22 só da app nova (não mexe no Node do sistema)
-BACKUP_ROOT="${BACKUP_ROOT:-/root/backups-lenom}"        # backups da aplicação antiga
-STATE_FILE="${STATE_FILE:-$BACKUP_ROOT/app-antiga.env}"  # como a antiga rodava (usado na troca e no rollback)
+NODE_DIR="${NODE_DIR:-/opt/node22}"                      # Node 22 só desta app (não mexe no Node do sistema)
+BACKUP_ROOT="${BACKUP_ROOT:-/root/backups-lenom}"
 SERVICE_FILE="/etc/systemd/system/${APP_NAME}.service"
+NGINX_SITE="/etc/nginx/sites-available/${APP_NAME}"
+NGINX_LINK="/etc/nginx/sites-enabled/${APP_NAME}"
 NODE_BIN="$NODE_DIR/bin/node"
 NPM_BIN="$NODE_DIR/bin/npm"
 
@@ -38,42 +45,23 @@ precisa_root() {
   [[ "$(id -u)" -eq 0 ]] || erro "Rode como root (ex.: sudo bash $0)."
 }
 
+# Roda um comando como o usuário da app, com o Node 22 no PATH.
+como_app() {
+  runuser -u "$APP_USER" -- env PATH="$NODE_DIR/bin:/usr/bin:/bin" HOME="/home/$APP_USER" "$@"
+}
+
 # ---------------------------------------------------------------------------
-# Portas para onde o Nginx repassa. Lê a configuração completa (nginx -T),
-# inclusive "proxy_pass http://nome" + "upstream nome { server host:PORTA; }".
-# Uma porta por linha, a mais usada primeiro.
+# Portas
 # ---------------------------------------------------------------------------
-portas_no_nginx() {
-  local conf
-  conf="$(nginx -T 2>/dev/null || cat /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*.conf 2>/dev/null || true)"
-  {
-    grep -oE 'proxy_pass[[:space:]]+https?://[^;/[:space:]]+' <<<"$conf" | grep -oE ':[0-9]+$' | tr -d ':' || true
-    awk '/^[[:space:]]*upstream[[:space:]]/ {u=1} u && /server[[:space:]]+[^;]*:[0-9]+/ {print} u && /\}/ {u=0}' <<<"$conf" |
-      grep -oE ':[0-9]+' | tr -d ':' || true
-  } | sort | uniq -c | sort -rn | awk '{print $2}'
-}
-
-porta_no_nginx() {
-  portas_no_nginx | head -1
-}
-
-# Processos que são servidor web/proxy, nunca a aplicação.
-eh_servidor_web() {
-  [[ "$1" =~ ^(nginx|apache2|httpd|caddy|haproxy|traefik|lighttpd)$ ]]
-}
-
-# PID do processo que escuta na porta (vazio se nenhum)
-pid_na_porta() {
-  ss -ltnpH "sport = :$1" 2>/dev/null | grep -oE 'pid=[0-9]+' | head -1 | cut -d= -f2
-}
-
 porta_livre() {
   [[ -z "$(ss -ltnH "sport = :$1" 2>/dev/null)" ]]
 }
 
-# ---------------------------------------------------------------------------
-# Espera a aplicação responder na porta (até ~30 s)
-# ---------------------------------------------------------------------------
+# Quem usa a porta (para mensagens de erro)
+dono_da_porta() {
+  ss -ltnpH "sport = :$1" 2>/dev/null | grep -oE 'users:\(\("[^"]+' | head -1 | cut -d'"' -f2
+}
+
 esperar_resposta() {
   local porta="$1" tentativa
   for tentativa in $(seq 1 30); do
@@ -83,73 +71,61 @@ esperar_resposta() {
   return 1
 }
 
-esperar_porta_livre() {
-  local porta="$1" tentativa
-  for tentativa in $(seq 1 15); do
-    porta_livre "$porta" && return 0
-    sleep 1
-  done
-  return 1
+# Libera a porta no firewall UFW, se ele estiver ativo.
+liberar_no_firewall() {
+  if command -v ufw >/dev/null 2>&1 && ufw status 2>/dev/null | grep -q '^Status: active'; then
+    ufw allow "$1/tcp" >/dev/null && info "Porta $1 liberada no firewall (ufw)."
+  fi
 }
 
 # ---------------------------------------------------------------------------
-# Parar / iniciar a aplicação ANTIGA conforme o jeito que ela rodava
-# (dados lidos de STATE_FILE: OLD_MANAGER, OLD_UNIT, OLD_CONTAINER, OLD_CWD,
-#  OLD_CMD, OLD_USER, OLD_PID, PORT)
+# Nginx: aplica a configuração só se o teste passar; senão desfaz.
 # ---------------------------------------------------------------------------
-parar_antiga() {
-  case "$OLD_MANAGER" in
-    systemd)
-      systemctl stop "$OLD_UNIT"
-      systemctl disable "$OLD_UNIT" >/dev/null 2>&1 || true
-      ;;
-    docker)
-      docker stop "$OLD_CONTAINER" >/dev/null
-      docker update --restart=no "$OLD_CONTAINER" >/dev/null 2>&1 || true
-      ;;
-    pm2)
-      pm2 stop "$OLD_PM2_NAME" >/dev/null && pm2 save >/dev/null
-      ;;
-    manual)
-      local pid
-      pid="$(pid_na_porta "$PORT")"
-      if [[ -n "$pid" ]]; then
-        # Encerra o grupo do processo (ex.: "npm start" + o node filho).
-        local pgid
-        pgid="$(ps -o pgid= -p "$pid" | tr -d ' ')"
-        kill -TERM -- "-$pgid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null || true
-      fi
-      ;;
-  esac
-  esperar_porta_livre "$PORT" || {
-    local pid
-    pid="$(pid_na_porta "$PORT")"
-    [[ -n "$pid" ]] && kill -KILL "$pid" 2>/dev/null || true
-    esperar_porta_livre "$PORT" || erro "A porta $PORT continua ocupada. Veja: ss -ltnp 'sport = :$PORT'"
-  }
+recarregar_nginx_ou_desfazer() {
+  local backup="$1"
+  if nginx -t 2>/tmp/lenom-nginx-test.log; then
+    systemctl reload nginx
+    return 0
+  fi
+  cat /tmp/lenom-nginx-test.log >&2
+  if [[ -n "$backup" && -f "$backup" ]]; then cp "$backup" "$NGINX_SITE"; else rm -f "$NGINX_SITE" "$NGINX_LINK"; fi
+  nginx -t >/dev/null 2>&1 && systemctl reload nginx
+  erro "O Nginx recusou a configuração da Lenom.AI; nada foi alterado (as outras aplicações seguem normais)."
 }
 
-iniciar_antiga() {
-  case "$OLD_MANAGER" in
-    systemd)
-      systemctl enable "$OLD_UNIT" >/dev/null 2>&1 || true
-      systemctl start "$OLD_UNIT"
-      ;;
-    docker)
-      docker update --restart=unless-stopped "$OLD_CONTAINER" >/dev/null 2>&1 || true
-      docker start "$OLD_CONTAINER" >/dev/null
-      ;;
-    pm2)
-      pm2 start "$OLD_PM2_NAME" >/dev/null && pm2 save >/dev/null
-      ;;
-    manual)
-      # Mesmo comando, mesma pasta e mesmo usuário de antes, em segundo plano.
-      local log="$BACKUP_ROOT/app-antiga.log"
-      if [[ "$OLD_USER" == "root" ]]; then
-        (cd "$OLD_CWD" && setsid nohup bash -c "$OLD_CMD" >>"$log" 2>&1 &)
-      else
-        (cd "$OLD_CWD" && setsid nohup runuser -u "$OLD_USER" -- bash -c "$OLD_CMD" >>"$log" 2>&1 &)
-      fi
-      ;;
-  esac
+# Bloco "location /" comum às configurações do Nginx
+nginx_location() {
+  cat <<EOF
+    client_max_body_size 10m;
+
+    location / {
+        proxy_pass http://127.0.0.1:${APP_PORT};
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+EOF
+}
+
+# ---------------------------------------------------------------------------
+# .env: grava CHAVE='valor', trocando a linha se já existir. O dotenv lê o
+# valor literal entre aspas, então usa um tipo de aspas que não apareça nele.
+# ---------------------------------------------------------------------------
+set_env() {
+  "$NODE_BIN" -e '
+    const fs = require("fs");
+    const [file, key, value] = process.argv.slice(1);
+    const quote = ["\x27", "\"", "`"].find((q) => !value.includes(q));
+    if (!quote || /[\r\n]/.test(value)) {
+      console.error(`Valor de ${key} não pode ter os três tipos de aspas nem quebra de linha.`);
+      process.exit(1);
+    }
+    const line = `${key}=${quote}${value}${quote}`;
+    let text = fs.readFileSync(file, "utf8");
+    const re = new RegExp(`^#?\\s*${key}=.*$`, "m");
+    text = re.test(text) ? text.replace(re, line) : `${text.trimEnd()}\n${line}\n`;
+    fs.writeFileSync(file, text);
+  ' "$APP_DIR/.env" "$1" "$2"
 }

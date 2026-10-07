@@ -34,7 +34,7 @@ function contentSecurityPolicy() {
       frameAncestors: ["'none'"],
       formAction: ["'self'"],
       objectSrc: ["'none'"],
-      upgradeInsecureRequests: config.isProduction ? [] : null,
+      upgradeInsecureRequests: config.secureContext ? [] : null,
     },
   };
 }
@@ -43,7 +43,7 @@ const securityHeaders = helmet({
   contentSecurityPolicy: contentSecurityPolicy(),
   crossOriginEmbedderPolicy: false,
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-  hsts: config.isProduction ? undefined : false,
+  hsts: config.secureContext ? undefined : false,
 });
 
 /** Envio de formulários: protege contra spam/abuso. */
