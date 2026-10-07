@@ -5,6 +5,7 @@
 const repositories = require('../../repositories');
 const { money, priceInput } = require('../../utils/admin-format');
 const { resourceController } = require('./resource.controller');
+const { uploadedUrl, removeUploadedFile, discardUploads } = require('../../middlewares/banner-upload');
 
 const BILLING = [
   { value: 'one-time', label: 'Pagamento único' },
@@ -115,4 +116,65 @@ const testimonials = resourceController({
   ],
 });
 
-module.exports = { plans, faq, testimonials };
+const banners = resourceController({
+  path: 'banners',
+  section: 'banners',
+  singular: 'Banner',
+  plural: 'Banners da home',
+  schema: 'banner',
+  multipart: true,
+  repo: () => repositories.banners,
+  columns: [
+    { label: 'Ordem', value: (b) => b.displayOrder, num: true },
+    { label: 'Imagem', image: (b) => b.image },
+    { label: 'Nome', value: (b) => b.title, link: true },
+    { label: 'Link', value: (b) => b.href || '—' },
+    { label: 'Celular', value: (b) => (b.mobileImage ? 'Sim' : 'Não aparece') },
+  ],
+  status,
+  defaults: { active: true, displayOrder: 0 },
+  toForm: (b) => ({ ...b }),
+  keepOnError: ['image', 'mobileImage'],
+  fields: [
+    { name: 'title', label: 'Nome (uso interno)', required: true },
+    { name: 'href', label: 'Link ao clicar', hint: 'Ex.: /orcamento, /portfolio ou https://...' },
+    {
+      name: 'alt', label: 'Texto do banner', type: 'textarea', rows: 3, required: true, full: true,
+      hint: 'Escreva o que está escrito na imagem. Leitores de tela e o Google usam este texto.',
+    },
+    {
+      name: 'image', label: 'Imagem (computador e tablet)', type: 'file', required: true,
+      hint: 'Proporção 3:1, ideal 2000×667 px. JPG, PNG ou WebP até 5 MB.',
+    },
+    {
+      name: 'mobileImage', label: 'Imagem para celular (opcional)', type: 'file', removeName: 'removeMobileImage',
+      hint: 'Vertical ou quadrada, ex.: 1080×1350 px. Sem ela, este banner não aparece no celular.',
+    },
+    { name: 'displayOrder', label: 'Ordem', type: 'number' },
+    { name: 'active', label: 'Exibir no site', type: 'checkbox' },
+  ],
+  prepare(req, item, data) {
+    const errors = { ...req.uploadErrors };
+    const image = uploadedUrl(req, 'image');
+    const mobileImage = uploadedUrl(req, 'mobileImage');
+    if (!image && !item?.image && !errors.image) errors.image = 'Envie a imagem do banner.';
+    if (!data) return { data, errors };
+    const { removeMobileImage, ...fields } = data;
+    let mobile = item?.mobileImage ?? null;
+    if (mobileImage) mobile = mobileImage;
+    else if (removeMobileImage) mobile = null;
+    return { data: { ...fields, image: image || item?.image, mobileImage: mobile }, errors };
+  },
+  afterSave(item, data) {
+    if (!item) return;
+    if (item.image !== data.image) removeUploadedFile(item.image);
+    if (item.mobileImage !== data.mobileImage) removeUploadedFile(item.mobileImage);
+  },
+  afterRemove(item) {
+    removeUploadedFile(item.image);
+    removeUploadedFile(item.mobileImage);
+  },
+  discard: discardUploads,
+});
+
+module.exports = { plans, faq, testimonials, banners };

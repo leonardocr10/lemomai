@@ -1,7 +1,8 @@
 <%#
   Campo de formulário do painel.
   params: name, label, value, errors, type ('text'|'number'|'email'|'password'|'textarea'|'select'|'checkbox'),
-          options [{ value, label }], hint, required, rows, full (ocupa a linha inteira), attrs (atributos extras, texto fixo)
+          options [{ value, label }], hint, required, rows, full (ocupa a linha inteira), attrs (atributos extras, texto fixo),
+          removeName (type 'file': nome do checkbox "remover imagem atual")
 %>
 <%
   const id = 'f-' + name;
@@ -19,6 +20,12 @@
     <label for="<%= id %>"><%= label %><% if (locals.required) { %> <span class="req" aria-hidden="true">*</span><% } %></label>
     <% if (type === 'textarea') { %>
       <textarea class="textarea" id="<%= id %>" name="<%= name %>" rows="<%= locals.rows || 4 %>"<%- error ? ' aria-invalid="true"' : '' %>><%= val %></textarea>
+    <% } else if (type === 'file') { %>
+      <% if (val) { %><img class="admin-file-preview" src="<%= val %>" alt="Imagem atual"><% } %>
+      <input class="input" id="<%= id %>" name="<%= name %>" type="file" accept="image/jpeg,image/png,image/webp"<%- error ? ' aria-invalid="true"' : '' %>>
+      <% if (val && locals.removeName) { %>
+        <label class="admin-check"><input type="checkbox" name="<%= removeName %>"> Remover imagem atual</label>
+      <% } %>
     <% } else if (type === 'select') { %>
       <select class="select" id="<%= id %>" name="<%= name %>"<%- error ? ' aria-invalid="true"' : '' %>>
         <% options.forEach((option) => { %>

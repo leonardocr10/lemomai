@@ -2,6 +2,7 @@ const express = require('express');
 const { verifyCsrf } = require('../middlewares/csrf');
 const { loginLimiter } = require('../middlewares/security');
 const { loadAdmin, requireAdmin, adminRender } = require('../middlewares/admin-auth');
+const { bannerUpload, verifyCsrfAfterUpload } = require('../middlewares/banner-upload');
 const authController = require('../controllers/admin/auth.controller');
 const { dashboard } = require('../controllers/admin/dashboard.controller');
 const resources = require('../controllers/admin/resources');
@@ -18,8 +19,19 @@ router.get('/login', authController.showLogin);
 router.post('/login', loginLimiter, urlencoded, verifyCsrf, authController.submitLogin);
 router.post('/logout', urlencoded, verifyCsrf, authController.logout);
 
-// Daqui em diante: só com sessão, e todo POST com token CSRF.
-router.use(requireAdmin, urlencoded, verifyCsrf);
+// Daqui em diante: só com sessão.
+router.use(requireAdmin);
+
+// Banners usam formulário multipart: o CSRF é conferido depois que o multer lê o corpo.
+router.get('/banners', resources.banners.list);
+router.get('/banners/novo', resources.banners.newForm);
+router.post('/banners', bannerUpload, verifyCsrfAfterUpload, resources.banners.create);
+router.get('/banners/:id', resources.banners.editForm);
+router.post('/banners/:id', bannerUpload, verifyCsrfAfterUpload, resources.banners.update);
+router.post('/banners/:id/excluir', urlencoded, verifyCsrf, resources.banners.remove);
+
+// Demais rotas: todo POST com token CSRF (corpo multipart não é lido aqui e cai no 403).
+router.use(urlencoded, verifyCsrf);
 
 router.get('/', dashboard);
 

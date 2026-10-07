@@ -164,3 +164,77 @@ test('troca de senha exige a senha atual', async () => {
   await client.get('/admin/senha');
   await client.post('/admin/senha', { currentPassword: 'nova-senha-123', newPassword: 'senha-forte-123', confirmPassword: 'senha-forte-123' });
 });
+
+const fs = require('node:fs');
+const path = require('node:path');
+
+// PNG 1×1 válido.
+const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+const png = (filename = 'banner.png') => ({ data: PNG, filename, type: 'image/png' });
+const publicFile = (url) => path.resolve(__dirname, '../public', `.${url}`);
+
+test('banners: lista os 4 iniciais com miniatura', async () => {
+  const client = await loggedClient();
+  const list = await client.get('/admin/banners');
+  assert.equal(list.status, 200);
+  for (const n of [1, 2, 3, 4]) assert.match(list.body, new RegExp(`/images/banners/banner-${n}\.webp`));
+});
+
+test('banners: criar com imagem aparece na home; excluir apaga o arquivo', async () => {
+  const client = await loggedClient();
+  await client.get('/admin/banners/novo');
+  const created = await client.postMultipart('/admin/banners',
+    { title: 'Banner de teste', alt: 'Texto alternativo do banner de teste', href: '/sobre', displayOrder: '9', active: 'on' },
+    { image: png() });
+  assert.equal(created.status, 302);
+
+  const home = await (await fetch(`${base}/`)).text();
+  assert.match(home, /Texto alternativo do banner de teste/);
+  const url = home.match(/src="(\/uploads\/banners\/[^"]+)" alt="Texto alternativo do banner de teste"/)[1];
+  assert.ok(fs.existsSync(publicFile(url)));
+
+  const list = await client.get('/admin/banners');
+  const id = list.body.match(/href="\/admin\/banners\/(\d+)">Banner de teste/)[1];
+  assert.equal((await client.post(`/admin/banners/${id}/excluir`)).status, 302);
+  assert.equal(fs.existsSync(publicFile(url)), false);
+});
+
+test('banners: arquivo que não é imagem é recusado e não fica no disco', async () => {
+  const client = await loggedClient();
+  await client.get('/admin/banners/novo');
+  const before = fs.readdirSync(path.resolve(__dirname, '../public/uploads/banners')).length;
+  const response = await client.postMultipart('/admin/banners',
+    { title: 'Falso', alt: 'Arquivo falso com extensão png', active: 'on' },
+    { image: { data: Buffer.from('isto não é uma imagem'), filename: 'falso.png', type: 'image/png' } });
+  assert.equal(response.status, 422);
+  assert.match(response.body, /Arquivo de imagem inválido/);
+  assert.equal(fs.readdirSync(path.resolve(__dirname, '../public/uploads/banners')).length, before);
+});
+
+test('banners: criar sem imagem pede a imagem', async () => {
+  const client = await loggedClient();
+  await client.get('/admin/banners/novo');
+  const response = await client.postMultipart('/admin/banners', { title: 'Sem imagem', alt: 'Banner sem imagem enviada' });
+  assert.equal(response.status, 422);
+  assert.match(response.body, /Envie a imagem do banner/);
+});
+
+test('banners: envio multipart sem CSRF é bloqueado e o arquivo descartado', async () => {
+  const client = await loggedClient();
+  const before = fs.readdirSync(path.resolve(__dirname, '../public/uploads/banners')).length;
+  const response = await client.postMultipart('/admin/banners', { title: 'X', alt: 'Sem token CSRF' }, { image: png() }, { withCsrf: false });
+  assert.equal(response.status, 403);
+  assert.equal(fs.readdirSync(path.resolve(__dirname, '../public/uploads/banners')).length, before);
+});
+
+test('banners: desativar tira o banner da home', async () => {
+  const client = await loggedClient();
+  const form = await client.get('/admin/banners/1');
+  const fields = { title: inputValue(form.body, 'title'), href: inputValue(form.body, 'href'), displayOrder: '1' };
+  fields.alt = form.body.match(/name="alt"[^>]*>([\s\S]*?)<\/textarea>/)[1];
+  assert.equal((await client.postMultipart('/admin/banners/1', fields)).status, 302);
+  assert.doesNotMatch(await (await fetch(`${base}/`)).text(), /banner-1\.webp/);
+  await client.get('/admin/banners/1');
+  await client.postMultipart('/admin/banners/1', { ...fields, active: 'on' });
+  assert.match(await (await fetch(`${base}/`)).text(), /banner-1\.webp/);
+});
