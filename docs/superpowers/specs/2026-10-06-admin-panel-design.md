@@ -75,7 +75,7 @@ Validação com `zod`; erros exibidos por campo. Ao salvar: limpa o cache
 
 Entregue de duas formas:
 
-1. `public/banner-lenom.html` — arquivo único, CSS e JS embutidos, símbolo
+1. `assets-src/banner-lenom.html` — arquivo único (fora de `public/`, porque a CSP do site bloquearia o JavaScript embutido), CSS e JS embutidos, símbolo
    embutido como SVG inline, conforme a especificação do pedido (3:1, máx.
    1200px, cqw, petróleo #0f2d4a sobre #0b1d33, "Lenom" Lexend 700 branco,
    ".AI" Courier Prime 700 verde #6fd35a, ciclo digita/pausa/apaga, cópia

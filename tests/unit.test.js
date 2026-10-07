@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-process.env.USE_MOCK_DATA = 'true';
+process.env.DATA_DRIVER = 'mock';
 
 const { buildWhatsAppUrl, normalizePhone } = require('../src/utils/whatsapp');
 const format = require('../src/utils/format');

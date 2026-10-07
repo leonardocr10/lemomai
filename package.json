@@ -5,7 +5,7 @@
   "description": "Site institucional e comercial da Lenom.AI — sistemas, sites e soluções digitais.",
   "main": "server.js",
   "engines": {
-    "node": ">=18.18"
+    "node": ">=22.13"
   },
   "scripts": {
     "dev": "nodemon server.js",
