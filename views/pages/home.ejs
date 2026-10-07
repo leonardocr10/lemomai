@@ -1,4 +1,16 @@
-<%- include('../partials/sections/hero') %>
+<%#
+  Com banners ativos, o carrossel substitui o hero. Banners sem imagem de celular
+  não aparecem no celular; se nenhum tiver, o hero de texto continua no celular.
+%>
+<% if (banners.length) { %>
+  <% const hasMobile = banners.some((banner) => banner.mobileImage); %>
+  <%- include('../partials/sections/banner-carousel', { desktopOnly: !hasMobile }) %>
+  <% if (!hasMobile) { %>
+    <%- include('../partials/sections/hero', { heroMobileOnly: true }) %>
+  <% } %>
+<% } else { %>
+  <%- include('../partials/sections/hero') %>
+<% } %>
 <%- include('../partials/sections/services') %>
 <%- include('../partials/sections/pricing') %>
 <%- include('../partials/sections/differentials') %>

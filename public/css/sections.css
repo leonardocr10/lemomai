@@ -240,6 +240,131 @@
   }
 }
 
+/* ---------- Carrossel de banners (home) ---------- */
+.banner-carousel {
+  position: relative;
+  max-width: 2000px;
+  margin-inline: auto;
+  background: var(--surface);
+}
+
+.banner-carousel__track {
+  position: relative;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.banner-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.banner-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+
+.banner-slide__link {
+  display: block;
+}
+
+.banner-slide img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.banner-carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--gutter);
+  border-bottom: 1px solid var(--border);
+}
+
+.banner-carousel.is-single .banner-carousel__controls {
+  display: none;
+}
+
+.banner-carousel__button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--primary-dark);
+  cursor: pointer;
+  transition: border-color var(--duration) var(--ease), color var(--duration) var(--ease);
+}
+
+.banner-carousel__button:hover {
+  border-color: var(--primary);
+  color: var(--primary-strong);
+}
+
+.banner-carousel__button .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.banner-carousel__pause {
+  margin-left: var(--space-3);
+}
+
+.banner-carousel__icon-play,
+.banner-carousel.is-paused .banner-carousel__icon-pause {
+  display: none;
+}
+
+.banner-carousel.is-paused .banner-carousel__icon-play {
+  display: block;
+}
+
+.banner-carousel__dots {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.banner-carousel__dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  cursor: pointer;
+  transition: width var(--duration) var(--ease), background var(--duration) var(--ease);
+}
+
+.banner-carousel__dot[aria-current='true'] {
+  width: 28px;
+  background: var(--primary);
+}
+
+.hero--mobile-only {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .banner-slide--desktop-only,
+  .banner-carousel--desktop-only {
+    display: none;
+  }
+
+  .hero--mobile-only {
+    display: block;
+  }
+}
+
 /* ---------- Page hero (páginas internas) ---------- */
 .page-hero {
   position: relative;

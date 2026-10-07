@@ -101,3 +101,14 @@ test('cabeçalhos de segurança estão presentes', async () => {
   assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
   assert.equal(response.headers.get('x-powered-by'), null);
 });
+
+test('home mostra o carrossel de banners no lugar do hero, com um único h1', async () => {
+  const html = await (await fetch(`${base}/`)).text();
+  assert.match(html, /data-banner-carousel/);
+  assert.match(html, /<a class="banner-slide__link" href="\/portfolio"/);
+  assert.match(html, /<h1 class="visually-hidden"/);
+  assert.equal(html.match(/<h1[\s>]/g).length, 1);
+  assert.match(html, /rel="preload" as="image" href="\/images\/banners\/banner-1\.webp"/);
+  // Nenhum banner inicial tem imagem de celular: o hero de texto continua para o celular.
+  assert.match(html, /class="hero hero--mobile-only"/);
+});

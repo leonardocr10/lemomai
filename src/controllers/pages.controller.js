@@ -12,7 +12,9 @@ async function home(req, res) {
   const { company } = res.locals;
   res.renderPage('home', {
     ...content,
-    preloadHero: true,
+    // Com banners, o topo é o carrossel: pré-carrega o 1º banner em vez da imagem do hero.
+    preloadHero: content.banners.length === 0,
+    preloadBanner: content.banners[0]?.image || null,
     contactProjectTypes: forms.contactProjectTypes,
     budgetRanges: forms.budgetRanges,
     seo: seo.buildSeo({
