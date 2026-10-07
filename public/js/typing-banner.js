@@ -1,5 +1,6 @@
 /**
- * Banner "Lenom.AI" digitado como máquina de escrever.
+ * "Lenom.AI" digitado como máquina de escrever (logo do topo do site e banner
+ * do login). O HTML já traz o nome completo, que aparece sem JS.
  * Ciclo: 0,7 s vazio → "Lenom" (110–220 ms/letra) → pausa 380 ms → ".AI"
  * → 3,2 s parado → apaga a 55 ms/letra → recomeça.
  */

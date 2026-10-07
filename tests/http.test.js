@@ -114,3 +114,13 @@ test('home: carrossel com o hero como 1º slide e os banners depois, com um úni
   assert.match(html, /aria-label="1 de 5"/);
   assert.match(html, /rel="preload" as="image" type="image\/avif" href="\/images\/hero\//);
 });
+
+test('logo do topo: símbolo + nome digitado, com o nome completo já no HTML (sem JS)', async () => {
+  const html = await (await fetch(`${base}/sobre`)).text();
+  const header = html.slice(html.indexOf('<header'), html.indexOf('</header>'));
+  assert.match(header, /class="brand-typing" data-typing-banner/);
+  assert.match(header, /data-typed-lenom>Lenom<\/span>/);
+  assert.match(header, /data-typed-ai>\.AI<\/span>/);
+  assert.match(html, /js\/typing-banner\.js/);
+  assert.match(html, /family=[^"]*Courier\+Prime/);
+});

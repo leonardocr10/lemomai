@@ -275,9 +275,84 @@
   align-items: center;
 }
 
-.brand img {
+/* Logo do topo: símbolo fixo + "Lenom.AI" digitado. A cópia invisível (ghost)
+   reserva a largura do nome completo para nada se mover enquanto digita. */
+.brand-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-typing__symbol {
   width: auto;
-  height: 36px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
+.brand-typing__name {
+  position: relative;
+  display: inline-block;
+  font-size: 1.65rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.brand-typing__ghost {
+  visibility: hidden;
+}
+
+.brand-typing__typed {
+  position: absolute;
+  inset: 0;
+}
+
+.brand-typing__lenom {
+  font-family: 'Lexend', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--primary-dark);
+}
+
+.brand-typing__ai {
+  font-family: 'Courier Prime', monospace;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.brand-typing__cursor {
+  display: inline-block;
+  width: 0.07em;
+  height: 0.74em;
+  margin-left: 0.05em;
+  background: var(--primary);
+  vertical-align: -0.02em;
+  animation: typing-blink 1s steps(1) infinite;
+}
+
+.brand-typing__cursor.is-typing {
+  animation: none;
+}
+
+@keyframes typing-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-typing__cursor {
+    animation: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .brand-typing__symbol {
+    height: 28px;
+  }
+
+  .brand-typing__name {
+    font-size: 1.35rem;
+  }
 }
 
 .nav {

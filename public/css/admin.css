@@ -41,7 +41,7 @@
   justify-content: center;
 }
 
-/* ---------- Banner digitado "Lenom.AI" ---------- */
+/* ---------- Banner digitado "Lenom.AI" (animação typing-blink em components.css) ---------- */
 .typing-banner {
   container-type: inline-size;
   width: 100%;
@@ -108,12 +108,6 @@
 
 .typing-banner__cursor.is-typing {
   animation: none;
-}
-
-@keyframes typing-blink {
-  50% {
-    opacity: 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
