@@ -28,6 +28,8 @@
     background var(--duration) var(--ease), border-color var(--duration) var(--ease), color var(--duration) var(--ease);
 }
 
+
+
 .btn:hover {
   transform: translateY(-2px);
 }
@@ -259,10 +261,20 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter: saturate(160%) blur(12px);
   border-bottom: 1px solid transparent;
   transition: box-shadow var(--duration) var(--ease), border-color var(--duration) var(--ease);
+  isolation: isolate;
+}
+
+/* O desfoque fica numa camada própria: backdrop-filter no próprio header faria
+   o menu do celular (position: fixed) ficar preso dentro dos 76px do header. */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: saturate(160%) blur(12px);
 }
 
 .site-header.is-scrolled {
@@ -424,8 +436,8 @@
   display: none;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   margin-left: auto;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -487,6 +499,7 @@
   }
 
   .nav__link {
+    width: 100%;
     height: 56px;
     padding: 0 var(--space-2);
     font-size: var(--fs-md);
@@ -619,6 +632,35 @@
 .service-card:hover .icon-tile {
   background: var(--gradient-primary);
   color: var(--on-primary);
+}
+
+/* Celular: cards compactos (ícone ao lado do título, sem a lista de itens). */
+@media (max-width: 560px) {
+  .service-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--space-4);
+    row-gap: var(--space-1);
+    padding: var(--space-4);
+  }
+
+  .service-card .icon-tile {
+    grid-row: span 3;
+    width: 44px;
+    height: 44px;
+  }
+
+  .service-card h3 {
+    margin-top: 0;
+  }
+
+  .service-card__features {
+    display: none;
+  }
+
+  .service-card__more {
+    margin-top: var(--space-1);
+  }
 }
 
 /* ---------- PricingCard ---------- */
@@ -1023,11 +1065,13 @@
   font-weight: 400;
 }
 
+/* 16px: abaixo disso o Safari do iPhone dá zoom ao tocar no campo. */
 .input,
 .select,
 .textarea {
   width: 100%;
   min-height: 50px;
+  font-size: 1rem;
   padding: 0.75rem 1rem;
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
@@ -1535,6 +1579,26 @@
   animation: pulse 2.6s ease-out infinite;
 }
 
+/* Com o menu do celular aberto, o menu já tem o botão de WhatsApp: o flutuante sai da frente. */
+body.is-locked .whatsapp-float {
+  visibility: hidden;
+  opacity: 0;
+}
+
+@media (max-width: 640px) {
+  .whatsapp-float {
+    right: var(--space-4);
+    bottom: max(var(--space-4), env(safe-area-inset-bottom));
+    width: 54px;
+    height: 54px;
+  }
+
+  .whatsapp-float .icon {
+    width: 27px;
+    height: 27px;
+  }
+}
+
 /* ---------- Breadcrumbs ---------- */
 .breadcrumbs ol {
   display: flex;
@@ -1603,4 +1667,20 @@
 
 figure.testimonial-card {
   margin: 0;
+}
+
+/* Celulares pequenos: botões grandes encolhem para caber numa linha; se ainda
+   assim faltar espaço, o texto quebra em vez de passar da tela. */
+@media (max-width: 400px) {
+  .btn {
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+    padding-inline: var(--space-4);
+  }
+
+  .btn--lg {
+    gap: 6px;
+    font-size: var(--fs-base);
+  }
 }

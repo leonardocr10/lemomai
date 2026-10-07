@@ -150,6 +150,12 @@
 }
 
 /* ---------- Grid ---------- */
+/* Prende textos ocultos (position: absolute) dentro da área rolável da tabela;
+   sem isso eles alargam a página inteira no celular. */
+.table-responsive {
+  position: relative;
+}
+
 .admin-sort {
   color: inherit;
   text-decoration: none;
@@ -273,4 +279,24 @@
 .admin-cropper img {
   display: block;
   max-width: 100%;
+}
+
+/* ---------- Celular ---------- */
+@media (max-width: 767px) {
+  /* 16px nos campos: abaixo disso o Safari do iPhone dá zoom ao tocar. */
+  .form-control,
+  .form-select {
+    font-size: 16px;
+  }
+
+  /* Abas de status dos leads: uma linha só, arrastável para o lado. */
+  .card-header-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .card-header-tabs .nav-link {
+    white-space: nowrap;
+  }
 }

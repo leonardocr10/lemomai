@@ -42,6 +42,7 @@
 
 .section-head__link {
   display: inline-flex;
+  padding-block: 8px;
   align-items: center;
   gap: var(--space-2);
   color: var(--primary-strong);
@@ -450,23 +451,24 @@
 
 .banner-carousel__dots {
   display: flex;
-  gap: var(--space-2);
 }
 
+/* Área de toque de 24px (tablets); a bolinha visível de 8px é o miolo (content-box). */
 .banner-carousel__dot {
-  width: 10px;
-  height: 10px;
-  padding: 0;
+  width: 24px;
+  height: 24px;
+  padding: 8px;
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--border);
+  background-clip: content-box;
   cursor: pointer;
   transition: width var(--duration) var(--ease), background var(--duration) var(--ease);
 }
 
 .banner-carousel__dot[aria-current='true'] {
-  width: 28px;
-  background: var(--primary);
+  width: 40px;
+  background-color: var(--primary);
 }
 
 .hero--mobile-only {
@@ -625,19 +627,21 @@
   margin-top: var(--space-3);
 }
 
+/* Área de toque de 24px; a bolinha visível (8px) é só o miolo (content-box). */
 .carousel-dots button {
-  width: 8px;
-  height: 8px;
-  padding: 0;
+  width: 24px;
+  height: 24px;
+  padding: 8px;
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--border);
+  background-clip: content-box;
   transition: width var(--duration) var(--ease), background var(--duration) var(--ease);
 }
 
 .carousel-dots button[aria-current='true'] {
-  width: 24px;
-  background: var(--primary);
+  width: 40px;
+  background-color: var(--primary);
 }
 
 @media (max-width: 640px) {
@@ -855,11 +859,21 @@
 
 @media (max-width: 860px) {
   .cta-banner {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .cta-banner__actions .btn {
     flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta-banner {
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .cta-banner__actions .btn {
+    flex-basis: 100%;
   }
 }
 
@@ -1015,6 +1029,22 @@ a.contact-info__item:hover {
   transition: color var(--duration) var(--ease);
 }
 
+/* Links do rodapé com altura mínima de toque no celular. */
+.footer-links a {
+  display: inline-block;
+  padding-block: 4px;
+}
+
+@media (max-width: 767px) {
+  .footer-links {
+    gap: var(--space-1);
+  }
+
+  .footer-links a {
+    padding-block: 8px;
+  }
+}
+
 .site-footer a:hover {
   color: var(--secondary);
 }
@@ -1044,6 +1074,7 @@ a.contact-info__item:hover {
 .footer-contact small {
   display: block;
   color: var(--on-dark-muted);
+  font-size: 0.75rem;
   opacity: 0.75;
 }
 
