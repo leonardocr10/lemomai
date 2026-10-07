@@ -1,0 +1,17 @@
+<section class="admin-stats">
+  <% stats.forEach((stat) => { %>
+    <a class="admin-stat" href="<%= stat.href %>">
+      <span class="admin-stat__value"><%= stat.value %></span>
+      <span class="admin-stat__label"><%= stat.label %></span>
+    </a>
+  <% }) %>
+</section>
+
+<section class="admin-card">
+  <h2>Últimos leads</h2>
+  <% if (!latestLeads.length) { %>
+    <p class="admin-empty">Nenhum lead recebido ainda.</p>
+  <% } else { %>
+    <%- include('leads/table', { leads: latestLeads }) %>
+  <% } %>
+</section>

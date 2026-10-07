@@ -10,9 +10,15 @@ async function start() {
       await getSequelize().authenticate();
       logger.info(`MySQL conectado (${config.db.host}:${config.db.port}/${config.db.name})`);
     } catch (err) {
-      logger.error('Não foi possível conectar ao MySQL. Verifique o .env ou use USE_MOCK_DATA=true.', err);
+      logger.error('Não foi possível conectar ao MySQL. Verifique o .env ou use DATA_DRIVER=sqlite.', err);
       process.exit(1);
     }
+  }
+
+  if (repositories.driver === 'sqlite') {
+    // Abre (e, na primeira vez, cria e popula) o banco interno antes de aceitar requisições.
+    require('./src/db/sqlite').getDb();
+    logger.info(`Banco interno: ${config.dataFile}`);
   }
 
   const app = createApp();

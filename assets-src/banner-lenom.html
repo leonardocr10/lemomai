@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lenom.AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&family=Courier+Prime:wght@700&display=swap">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-content: center;
+      justify-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: #0b1d33;
+      overflow-x: hidden;
+    }
+
+    .typing-banner {
+      container-type: inline-size;
+      width: min(1200px, calc(100vw - 32px));
+      aspect-ratio: 3 / 1;
+      border-radius: 14px;
+      background: #0f2d4a;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .typing-banner__inner {
+      display: flex;
+      align-items: center;
+      gap: 3cqw;
+    }
+
+    .typing-banner__symbol {
+      height: 14.5cqw;
+      width: auto;
+      flex-shrink: 0;
+    }
+
+    .typing-banner__name {
+      position: relative;
+      display: inline-block;
+      font-size: 11.5cqw;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    /* Cópia invisível do nome completo: reserva o espaço para nada se mover. */
+    .typing-banner__ghost { visibility: hidden; }
+
+    .typing-banner__typed {
+      position: absolute;
+      inset: 0;
+    }
+
+    .typing-banner__lenom {
+      font-family: 'Lexend', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+    }
+
+    .typing-banner__ai {
+      font-family: 'Courier Prime', monospace;
+      font-weight: 700;
+      color: #6fd35a;
+    }
+
+    .typing-banner__cursor {
+      display: inline-block;
+      width: 0.06em;
+      height: 0.74em;
+      margin-left: 0.05em;
+      background: #6fd35a;
+      vertical-align: -0.02em;
+      animation: typing-blink 1s steps(1) infinite;
+    }
+
+    .typing-banner__cursor.is-typing { animation: none; }
+
+    @keyframes typing-blink {
+      50% { opacity: 0; }
+    }
+
+    .replay {
+      padding: 8px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.75);
+      font: 14px/1.2 system-ui, sans-serif;
+      cursor: pointer;
+    }
+
+    .replay:hover { color: #ffffff; border-color: rgba(255, 255, 255, 0.5); }
+    .replay:focus-visible { outline: 2px solid #6fd35a; outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .typing-banner__cursor { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="typing-banner" role="img" aria-label="Lenom.AI" data-typing-banner>
+    <div class="typing-banner__inner">
+      <svg class="typing-banner__symbol" viewBox="-4 -2 80 72" aria-hidden="true" focusable="false">
+        <rect x="8" y="0" width="24" height="68" rx="8" fill="#5DBB46" transform="translate(20 34) skewX(-16) translate(-20 -34)"/>
+        <rect x="4" y="44" width="66" height="24" rx="8" fill="#FFFFFF" transform="translate(37 56) skewX(-16) translate(-37 -56)"/>
+        <g transform="translate(14 56) skewX(-16) translate(-14 -56)">
+          <rect x="3" y="44" width="22" height="24" rx="8" fill="#1FA6A0"/>
+          <rect x="14" y="44" width="11" height="24" fill="#1FA6A0"/>
+        </g>
+      </svg>
+      <span class="typing-banner__name" aria-hidden="true">
+        <span class="typing-banner__ghost"><span class="typing-banner__lenom">Lenom</span><span class="typing-banner__ai">.AI</span><span class="typing-banner__cursor"></span></span>
+        <span class="typing-banner__typed"><span class="typing-banner__lenom" data-typed-lenom></span><span class="typing-banner__ai" data-typed-ai></span><span class="typing-banner__cursor" data-cursor></span></span>
+      </span>
+    </div>
+  </div>
+
+  <button class="replay" type="button" data-replay>Digitar de novo</button>
+
+  <script>
+    /*
+     * Ciclo: 0,7 s vazio → "Lenom" (110–220 ms/letra) → pausa 380 ms → ".AI"
+     * → 3,2 s parado → apaga a 55 ms/letra → recomeça.
+     */
+    (function () {
+      const NAME = 'Lenom';
+      const SUFFIX = '.AI';
+      const TOTAL = NAME.length + SUFFIX.length;
+
+      function startTypingBanner(root) {
+        const lenom = root.querySelector('[data-typed-lenom]');
+        const ai = root.querySelector('[data-typed-ai]');
+        const cursor = root.querySelector('[data-cursor]');
+        let token = 0;
+        let timer = null;
+
+        const render = (count) => {
+          lenom.textContent = NAME.slice(0, Math.min(count, NAME.length));
+          ai.textContent = SUFFIX.slice(0, Math.max(0, count - NAME.length));
+        };
+        const typing = (on) => cursor.classList.toggle('is-typing', on);
+        const wait = (ms, run) => new Promise((resolve) => {
+          timer = setTimeout(() => resolve(run === token), ms);
+        });
+        const randomDelay = () => 110 + Math.random() * 110;
+
+        async function loop() {
+          const run = ++token;
+          clearTimeout(timer);
+          for (;;) {
+            render(0);
+            typing(false);
+            if (!(await wait(700, run))) return;
+            typing(true);
+            for (let i = 1; i <= NAME.length; i++) {
+              if (!(await wait(randomDelay(), run))) return;
+              render(i);
+            }
+            typing(false);
+            if (!(await wait(380, run))) return;
+            typing(true);
+            for (let i = NAME.length + 1; i <= TOTAL; i++) {
+              if (!(await wait(randomDelay(), run))) return;
+              render(i);
+            }
+            typing(false);
+            if (!(await wait(3200, run))) return;
+            typing(true);
+            for (let i = TOTAL - 1; i >= 0; i--) {
+              if (!(await wait(55, run))) return;
+              render(i);
+            }
+          }
+        }
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          render(TOTAL);
+          return { restart() { render(TOTAL); } };
+        }
+        loop();
+        return { restart: loop };
+      }
+
+      const banner = startTypingBanner(document.querySelector('[data-typing-banner]'));
+      document.querySelector('[data-replay]').addEventListener('click', () => banner.restart());
+    }());
+  </script>
+</body>
+</html>

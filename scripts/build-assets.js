@@ -15,6 +15,9 @@ const entries = {
   'css/main.css': 'public/css/main.css',
   'js/main.js': 'public/js/main.js',
   'js/boot.js': 'public/js/boot.js',
+  'css/admin.css': 'public/css/admin.css',
+  'js/admin.js': 'public/js/admin.js',
+  'js/typing-banner.js': 'public/js/typing-banner.js',
 };
 
 (async () => {

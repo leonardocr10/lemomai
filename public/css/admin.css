@@ -1,0 +1,470 @@
+/* ==========================================================================
+   Painel administrativo — layout. Botões, campos e alertas vêm de main.css.
+   ========================================================================== */
+.admin {
+  background: var(--background);
+}
+
+.admin--bare {
+  background: #0b1d33;
+}
+
+/* ---------- Login ---------- */
+.admin-auth {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6) 16px;
+}
+
+.admin-login {
+  width: min(520px, 100%);
+  display: grid;
+  gap: var(--space-5);
+}
+
+.admin-login__form {
+  padding: var(--space-6);
+}
+
+.admin-login__title {
+  font-size: var(--fs-xl);
+  margin-bottom: var(--space-4);
+}
+
+.admin-login__form .field {
+  margin-bottom: var(--space-4);
+}
+
+.admin-login__submit {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ---------- Banner digitado "Lenom.AI" ---------- */
+.typing-banner {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 1200px;
+  aspect-ratio: 3 / 1;
+  border-radius: 14px;
+  background: #0f2d4a;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.typing-banner__inner {
+  display: flex;
+  align-items: center;
+  gap: 3cqw;
+}
+
+.typing-banner__symbol {
+  height: 14.5cqw;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.typing-banner__name {
+  position: relative;
+  display: inline-block;
+  font-size: 11.5cqw;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.typing-banner__ghost {
+  visibility: hidden;
+}
+
+.typing-banner__typed {
+  position: absolute;
+  inset: 0;
+}
+
+.typing-banner__lenom {
+  font-family: 'Lexend', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.typing-banner__ai {
+  font-family: 'Courier Prime', monospace;
+  font-weight: 700;
+  color: #6fd35a;
+}
+
+.typing-banner__cursor {
+  display: inline-block;
+  width: 0.06em;
+  height: 0.74em;
+  margin-left: 0.05em;
+  background: #6fd35a;
+  vertical-align: -0.02em;
+  animation: typing-blink 1s steps(1) infinite;
+}
+
+.typing-banner__cursor.is-typing {
+  animation: none;
+}
+
+@keyframes typing-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-banner__cursor {
+    animation: none;
+  }
+}
+
+/* ---------- Estrutura ---------- */
+.admin-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  background: var(--navy);
+  color: var(--on-dark);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.admin-nav ul {
+  list-style: none;
+  display: grid;
+  gap: 2px;
+}
+
+.admin-nav a {
+  color: var(--on-dark-muted);
+  text-decoration: none;
+}
+
+.admin-nav nav a {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+.admin-nav nav a:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--on-dark);
+}
+
+.admin-nav nav a[aria-current='page'] {
+  background: rgba(111, 209, 87, 0.14);
+  color: var(--secondary);
+}
+
+.admin-nav__footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--fs-sm);
+}
+
+.admin-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--on-dark-muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.admin-link:hover {
+  color: var(--on-dark);
+}
+
+.admin-main {
+  padding: var(--space-6) clamp(16px, 3vw, var(--space-7));
+  min-width: 0;
+}
+
+.admin-main__header {
+  margin-bottom: var(--space-5);
+}
+
+.admin-main__header h1 {
+  font-size: var(--fs-2xl);
+}
+
+.admin-main > .alert {
+  margin-bottom: var(--space-5);
+}
+
+.admin-main__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-4);
+}
+
+.admin-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-card + .admin-card {
+  margin-top: var(--space-5);
+}
+
+.admin-card h2 {
+  font-size: var(--fs-lg);
+  margin-bottom: var(--space-4);
+}
+
+.admin-empty {
+  color: var(--muted);
+}
+
+/* ---------- Indicadores ---------- */
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.admin-stat {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.admin-stat:hover {
+  border-color: var(--primary);
+}
+
+.admin-stat__value {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  color: var(--primary-strong);
+}
+
+.admin-stat__label {
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+/* ---------- Tabelas ---------- */
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.admin-table th {
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-table .num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.admin-table tr.is-inactive td {
+  color: var(--muted);
+}
+
+.admin-row-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.admin-row-actions form {
+  margin: 0;
+}
+
+.admin-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  background: var(--surface-soft);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.admin-badge--new,
+.admin-badge--on {
+  background: var(--primary-tint);
+  color: var(--primary-strong);
+}
+
+.admin-badge--contacted {
+  background: #e0f4f3;
+  color: #146f6a;
+}
+
+.admin-badge--closed {
+  background: var(--success-tint);
+  color: var(--success);
+}
+
+.admin-badge--discarded,
+.admin-badge--off {
+  background: #eef1f4;
+  color: var(--muted);
+}
+
+.btn--small {
+  padding: 6px 14px;
+  font-size: var(--fs-sm);
+}
+
+.btn--danger {
+  --btn-bg: transparent;
+  --btn-color: var(--danger);
+  --btn-border: var(--danger);
+}
+
+/* ---------- Formulários ---------- */
+.admin-form {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.admin-form .form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Campos vizinhos com e sem dica não devem esticar label/input para igualar a altura. */
+.admin-form .field {
+  align-content: start;
+}
+
+.admin-form .field__hint {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  margin: 4px 0 0;
+}
+
+.admin-check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 500;
+}
+
+.admin-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+
+.admin-form__actions {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.admin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.admin-filters a {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--text);
+  font-size: var(--fs-sm);
+  background: var(--surface);
+}
+
+.admin-filters a[aria-current='true'] {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--on-dark);
+}
+
+.admin-pager {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: var(--space-4);
+}
+
+.admin-detail {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-2) var(--space-5);
+}
+
+.admin-detail dt {
+  color: var(--muted);
+}
+
+.admin-detail dd {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 860px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-nav {
+    position: static;
+    height: auto;
+  }
+
+  .admin-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .admin-form .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-detail {
+    grid-template-columns: 1fr;
+  }
+}

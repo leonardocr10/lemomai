@@ -1,0 +1,21 @@
+<section class="admin-card">
+  <dl class="admin-detail">
+    <dt>Recebido em</dt><dd><%= adminFmt.dateTime(lead.createdAt) %></dd>
+    <% rows.forEach(([label, value]) => { %>
+      <dt><%= label %></dt><dd><%= value %></dd>
+    <% }) %>
+  </dl>
+</section>
+<form class="admin-card admin-form" action="/admin/leads/<%= lead.id %>/status" method="post">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="form-grid">
+    <%- include('../partials/field', {
+      name: 'status', label: 'Status', type: 'select', value: lead.status, errors: {},
+      options: Object.entries(statuses).map(([value, label]) => ({ value, label })),
+    }) %>
+  </div>
+  <div class="admin-form__actions">
+    <button class="btn btn--primary" type="submit">Atualizar status</button>
+    <a class="btn btn--outline" href="/admin/leads">Voltar</a>
+  </div>
+</form>

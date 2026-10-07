@@ -2,8 +2,8 @@
 
 Site da **Lenom.AI**, empresa de desenvolvimento de sites, sistemas sob medida, landing pages, e-commerce, automação, suporte e soluções SaaS.
 
-- **Stack:** Node.js 18+ · Express 5 · EJS · Sequelize · MySQL
-- **Dados:** mock (padrão) ou MySQL, alternados por uma variável de ambiente, sem alterar views ou controllers
+- **Stack:** Node.js 22.13+ · Express 5 · EJS · SQLite nativo (`node:sqlite`) · Sequelize/MySQL opcional
+- **Dados:** banco interno SQLite (padrão, com painel `/admin`), mock ou MySQL, alternados por uma variável de ambiente, sem alterar views ou controllers
 - **Front-end:** HTML server-rendered + CSS com design tokens + JavaScript em módulos ES (sem framework e sem Bootstrap)
 
 ---
@@ -18,7 +18,7 @@ npm run dev
 
 No Windows, basta dar dois cliques em **`iniciar.bat`**: ele verifica o Node.js, instala as dependências na primeira execução, cria o `.env`, abre o navegador e sobe o servidor em modo desenvolvimento. Para modo produção (build + `npm start`), rode `iniciar.bat prod`.
 
-Acesse **http://localhost:3000**. Com `USE_MOCK_DATA=true` (padrão) o site abre sem banco de dados.
+Acesse **http://localhost:3000**. Com `DATA_DRIVER=sqlite` (padrão) o site cria sozinho o banco interno `storage/lenom.db` na primeira execução, já com o conteúdo de exemplo. O painel fica em **http://localhost:3000/admin** (veja [Painel administrativo](#painel-administrativo)).
 
 | Comando | O que faz |
 |---|---|
@@ -32,28 +32,31 @@ Acesse **http://localhost:3000**. Com `USE_MOCK_DATA=true` (padrão) o site abre
 
 ---
 
-## Alternar entre mock e MySQL
+## Fonte de dados: SQLite, mock ou MySQL
 
-A escolha acontece em **um único lugar**: `src/repositories/index.js`.
+A escolha acontece em **um único lugar**: `src/repositories/index.js`, a partir de `DATA_DRIVER` no `.env`.
 
 ```js
-const driver = config.useMockData ? 'mock' : 'mysql';
+const driver = config.dataDriver; // 'sqlite' | 'mock' | 'mysql'
 module.exports = require(`./${driver}`);
 ```
 
 ```
-Views → Controllers → Services → repositories/index.js ─┬─ repositories/mock  → src/data/mock/*.mock.js
-                                                         └─ repositories/mysql → Sequelize → MySQL
+Views → Controllers → Services → repositories/index.js ─┬─ repositories/sqlite → storage/lenom.db (padrão, editável pelo /admin)
+                                                         ├─ repositories/mock   → src/data/mock/*.mock.js (somente leitura)
+                                                         └─ repositories/mysql  → Sequelize → MySQL
 ```
 
-Os dois repositórios expõem a mesma interface (`findAll`, `findBySlug`, `get`, `getAll`, `create`) e devolvem objetos no mesmo formato. Por isso, trocar a fonte de dados não exige mudar nenhuma view, controller ou service.
+No modo `sqlite`, planos, FAQ, depoimentos, dados da empresa e leads ficam no banco interno; serviços, portfólio e seções continuam vindo de `src/data/mock`. O antigo `USE_MOCK_DATA=true/false` ainda funciona (equivale a `mock`/`mysql`).
+
+Os repositórios expõem a mesma interface (`findAll`, `findBySlug`, `get`, `getAll`, `create`) e devolvem objetos no mesmo formato. Por isso, trocar a fonte de dados não exige mudar nenhuma view, controller ou service.
 
 ### Configurar o MySQL
 
 1. Tenha um MySQL 8 (ou 5.7+) rodando.
 2. No `.env`, preencha:
    ```env
-   USE_MOCK_DATA=false
+   DATA_DRIVER=mysql
    DB_HOST=127.0.0.1
    DB_PORT=3306
    DB_NAME=lenom_ai
@@ -74,7 +77,7 @@ O seed (`database/seeds/`) lê os **mesmos arquivos de mock**, então o site mos
 CREATE DATABASE lenom_ai CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Se o servidor não conseguir conectar ao MySQL, ele encerra com uma mensagem clara. Para voltar ao modo mock, use `USE_MOCK_DATA=true`.
+Se o servidor não conseguir conectar ao MySQL, ele encerra com uma mensagem clara. Para voltar ao banco interno, use `DATA_DRIVER=sqlite`.
 
 ---
 
@@ -151,7 +154,7 @@ As respostas seguem o formato `{ ok: true, data }` ou `{ ok: false, message, err
 
 - **Validação no cliente** (HTML5 + `public/js/modules/forms.js`, com mensagens em português e máscara de telefone) e **validação no servidor** (`src/validators/lead.validator.js`). O servidor sempre revalida.
 - **Sem JavaScript**, os formulários fazem POST para `/contato` e `/orcamento` e são renderizados de novo com os erros. **Com JavaScript**, são enviados via `fetch` para a API e o resultado aparece em um toast.
-- **Persistência:** no modo mock, os leads vão para `storage/leads.json`. No modo MySQL, vão para a tabela `leads`.
+- **Persistência:** no modo `sqlite` (padrão), os leads vão para o banco interno e aparecem em `/admin/leads`. No modo mock, vão para `storage/leads.json` (importado uma vez ao criar o banco interno). No modo MySQL, vão para a tabela `leads`.
 - **Anexos:** ficam em `storage/uploads/`, fora da pasta pública. Há lista de extensões e MIME types permitidos e limite de tamanho (`UPLOAD_MAX_MB`).
 - **Anti-spam:** campo honeypot (o bot recebe um sucesso falso e nada é salvo) e rate limit por IP.
 - **E-mail:** `EmailService` com `MAIL_DRIVER=log` (padrão, apenas registra no log) ou `smtp` (nodemailer). Envia um aviso para `MAIL_TO_LEADS` e uma confirmação ao cliente.
@@ -211,21 +214,36 @@ Para trocar a marca, substitua os arquivos em `assets-src/brand/` mantendo os no
 
 ## Antes de publicar
 
-- [ ] Trocar telefone, WhatsApp, e-mail e redes em `src/data/mock/company.mock.js` (ou na tabela `company_settings`)
-- [ ] **Substituir os depoimentos ilustrativos** (`testimonials.mock.js`) por depoimentos reais e autorizados
+- [ ] Definir `ADMIN_PASSWORD` no `.env` (obrigatório em produção para ativar o `/admin`)
+- [ ] Trocar telefone, WhatsApp, e-mail e redes em **/admin → Empresa**
+- [ ] **Substituir os depoimentos ilustrativos** em **/admin → Depoimentos** por depoimentos reais e autorizados
 - [ ] Trocar as ilustrações SVG do portfólio (`public/images/portfolio/`) por screenshots reais
 - [ ] Revisar os textos legais com um profissional (política de privacidade, termos e cookies)
 - [ ] Definir `NODE_ENV=production`, `APP_URL`, `COOKIE_SECRET` e `TRUST_PROXY=true` (se houver proxy reverso)
 - [ ] Configurar SMTP (`MAIL_DRIVER=smtp`) e o destinatário dos leads
 - [ ] Rodar `npm run build`
 
-## Painel administrativo (próxima etapa)
+## Painel administrativo
 
-A arquitetura já está preparada para o `/admin`:
+Acesse **/admin**. O administrador é criado na primeira visita com `ADMIN_USER` e `ADMIN_PASSWORD` do `.env`:
 
-- **Dados:** todas as tabelas (`services`, `plans`, `plan_features`, `portfolio_projects`, `testimonials`, `faq`, `leads`, `company_settings`, `site_sections`) existem com os campos `active` e `display_order` para publicar e ordenar.
-- **Leitura/escrita:** acrescente métodos `create/update/delete` aos repositórios MySQL e crie services de administração. As views públicas não mudam.
-- **Cache:** ao salvar configurações ou seções, chame `forget('company')` ou `forget('sections')` (`src/utils/cache.js`).
-- **Leads:** `repositories.leads.findAll()` já existe, e o status segue o fluxo `new → contacted → proposal → won/lost`.
-- **Uploads públicos:** use `public/uploads/` para as imagens do portfólio enviadas pelo painel.
-- O `robots.txt` já bloqueia `/admin`.
+- **Desenvolvimento:** se `ADMIN_PASSWORD` estiver vazio, o acesso inicial é `admin` / `admin` (aparece um aviso no log).
+- **Produção:** sem `ADMIN_PASSWORD`, o painel fica desativado (responde 404). Nunca há senha padrão no ar.
+- Depois do primeiro acesso, troque a senha em **/admin → Trocar senha**. Mudar o `.env` depois disso não altera a senha já criada.
+
+| Tela | O que faz |
+|---|---|
+| Planos e preços | Nome, preço, tipo de cobrança, itens inclusos, selo, destaque, ordem e se aparece no site |
+| FAQ | Perguntas e respostas, ordem e publicação |
+| Depoimentos | Autor, cargo, empresa, texto, nota, ordem e publicação |
+| Empresa | Telefone, WhatsApp, e-mail, redes sociais, endereço e horário |
+| Leads | Contatos e orçamentos recebidos, filtro e mudança de status (novo, em contato, fechado, descartado) |
+| Trocar senha | Exige a senha atual e encerra as outras sessões |
+
+Ao salvar, o site reflete a mudança na hora (o cache é limpo).
+
+**Segurança:** senha com hash `scrypt`, sessão em cookie assinado e `httpOnly` válida por 8 horas, proteção CSRF em todos os formulários, limite de 10 tentativas de login erradas por IP a cada 15 minutos e páginas marcadas como `noindex` (o `robots.txt` também bloqueia `/admin`).
+
+**Banco:** o arquivo `storage/lenom.db` fica fora do git. Para fazer backup, copie o arquivo com o servidor parado. Apagar o arquivo recria o banco com o conteúdo de exemplo.
+
+**Banner animado:** a tela de login mostra o nome "Lenom.AI" sendo digitado. Uma versão avulsa, em arquivo único, está em `assets-src/banner-lenom.html` (abra direto no navegador).
