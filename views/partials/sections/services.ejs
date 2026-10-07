@@ -1,7 +1,10 @@
 <% const s = sections.services; %>
 <section class="section section--white" id="servicos" aria-labelledby="servicos-title">
-  <div class="container split">
-    <%- include('../../components/section-title', { eyebrow: s.eyebrow, title: s.title, highlight: s.highlight, subtitle: s.subtitle, id: 'servicos-title' }) %>
+  <div class="container">
+    <div class="section-head">
+      <%- include('../../components/section-title', { eyebrow: s.eyebrow, title: s.title, highlight: s.highlight, subtitle: s.subtitle, id: 'servicos-title' }) %>
+      <a class="section-head__link" href="/servicos">Ver todos os serviços <%- include('../../components/icon', { name: 'arrow-right' }) %></a>
+    </div>
     <div class="services-grid">
       <% services.forEach((service) => { %>
         <%- include('../../components/service-card', { service }) %>

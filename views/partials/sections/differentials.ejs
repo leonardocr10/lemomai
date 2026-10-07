@@ -1,7 +1,7 @@
 <% const s = sections.differentials; %>
 <section class="section section--white" id="diferenciais" aria-labelledby="diferenciais-title">
-  <div class="container split">
-    <%- include('../../components/section-title', { eyebrow: s.eyebrow, title: s.title, highlight: s.highlight, id: 'diferenciais-title' }) %>
+  <div class="container">
+    <%- include('../../components/section-title', { eyebrow: s.eyebrow, title: s.title, highlight: s.highlight, center: true, id: 'diferenciais-title' }) %>
     <ul class="features-grid">
       <% s.items.forEach((item) => { %>
         <li class="feature" data-reveal>

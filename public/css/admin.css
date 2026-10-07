@@ -118,6 +118,8 @@
 .typing-banner__ai {
   font-family: 'Courier Prime', monospace;
   font-weight: 700;
+  letter-spacing: -0.09em;
+  margin-left: -0.22em;
   color: #6fd35a;
 }
 
