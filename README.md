@@ -233,6 +233,7 @@ Acesse **/admin**. O administrador é criado na primeira visita com `ADMIN_USER`
 
 | Tela | O que faz |
 |---|---|
+| Banners da home | Carrossel do topo da home: imagem 3:1 (ideal 2000×667 px), imagem opcional para celular (ex.: 1080×1350 px; sem ela o banner não aparece no celular), link, texto alternativo, ordem e publicação. Sem banners ativos, a home volta a mostrar o hero de texto |
 | Planos e preços | Nome, preço, tipo de cobrança, itens inclusos, selo, destaque, ordem e se aparece no site |
 | FAQ | Perguntas e respostas, ordem e publicação |
 | Depoimentos | Autor, cargo, empresa, texto, nota, ordem e publicação |
@@ -240,7 +241,7 @@ Acesse **/admin**. O administrador é criado na primeira visita com `ADMIN_USER`
 | Leads | Contatos e orçamentos recebidos, filtro e mudança de status (novo, em contato, fechado, descartado) |
 | Trocar senha | Exige a senha atual e encerra as outras sessões |
 
-Ao salvar, o site reflete a mudança na hora (o cache é limpo).
+Ao salvar, o site reflete a mudança na hora (o cache é limpo). As imagens enviadas ficam em `public/uploads/banners/` (fora do git; inclua essa pasta no backup junto com `storage/lenom.db`).
 
 **Segurança:** senha com hash `scrypt`, sessão em cookie assinado e `httpOnly` válida por 8 horas, proteção CSRF em todos os formulários, limite de 10 tentativas de login erradas por IP a cada 15 minutos e páginas marcadas como `noindex` (o `robots.txt` também bloqueia `/admin`).
 
