@@ -1,0 +1,24 @@
+<%# Seletor "Escolher da galeria" do cadastro de banner (public/js/admin.js busca em /admin/galeria.json). %>
+<div class="modal modal-blur fade" id="gallery-modal" tabindex="-1" aria-hidden="true" aria-labelledby="gallery-modal-title">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="gallery-modal-title">Escolher da galeria</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="input-icon mb-3">
+          <span class="input-icon-addon"><i class="ti ti-search icon" aria-hidden="true"></i></span>
+          <input type="search" class="form-control" placeholder="Buscar pelo nome do arquivo…" aria-label="Buscar na galeria" data-gallery-search>
+        </div>
+        <div class="admin-gallery-grid admin-gallery-grid--picker" data-gallery-results role="listbox" aria-label="Imagens da galeria"></div>
+        <p class="text-secondary text-center my-4" data-gallery-empty hidden>Nenhuma imagem encontrada.</p>
+        <div class="text-center mt-3"><button type="button" class="btn" data-gallery-more hidden>Carregar mais</button></div>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-link me-auto" href="/admin/galeria" target="_blank" rel="noopener">Abrir a galeria completa ↗</a>
+        <button type="button" class="btn" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>

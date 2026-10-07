@@ -1,9 +1,10 @@
 <%#
   Upload de imagem: arrastar e soltar ou clicar, prévia, dimensões, aviso de proporção,
   recorte (Cropper) e remover. Comportamento em public/js/admin.js; sem JS vira um input comum.
-  params: id, name, val (URL atual), error, aria, ratio, crop, removeName
+  params: id, name, val (URL atual), error, aria, ratio, crop, removeName, gallery (botão "Escolher da galeria")
 %>
-<div class="admin-dropzone<%= error ? ' is-invalid' : '' %>" data-dropzone data-ratio="<%= locals.ratio || '' %>" data-crop="<%= locals.crop || '' %>">
+<div class="admin-dropzone<%= error ? ' is-invalid' : '' %>" data-dropzone data-field="<%= name %>" data-ratio="<%= locals.ratio || '' %>" data-crop="<%= locals.crop || '' %>">
+  <% if (locals.gallery) { %><input type="hidden" name="<%= name %>FromGallery" value="" data-dropzone-gallery-value><% } %>
   <input class="form-control" id="<%= id %>" name="<%= name %>" type="file"
          accept="image/jpeg,image/png,image/webp" data-dropzone-input<%- aria %>>
   <label class="admin-dropzone__empty" for="<%= id %>" data-dropzone-empty hidden>
@@ -11,6 +12,11 @@
     <strong>Arraste a imagem aqui ou clique para escolher</strong>
     <span class="text-secondary small">JPG, PNG ou WebP, até 5 MB</span>
   </label>
+  <% if (locals.gallery) { %>
+    <button type="button" class="btn btn-sm admin-dropzone__gallery" data-gallery-open hidden>
+      <i class="ti ti-library-photo icon" aria-hidden="true"></i> Escolher da galeria
+    </button>
+  <% } %>
   <div data-dropzone-filled<%= val ? '' : ' hidden' %>>
     <img class="admin-dropzone__preview" src="<%= val %>" alt="Prévia da imagem" data-dropzone-preview>
     <div class="d-flex flex-wrap align-items-center gap-2 mt-2">

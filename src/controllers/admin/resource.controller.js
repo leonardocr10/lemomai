@@ -73,7 +73,7 @@ function resourceController(def) {
     let data = result.success ? result.data : null;
     // Ganchos opcionais: prepare (arquivos enviados), afterSave (limpeza), discard (descarta uploads).
     if (def.prepare) {
-      const prepared = def.prepare(req, item, data);
+      const prepared = await def.prepare(req, item, data);
       errors = { ...errors, ...prepared.errors };
       data = prepared.data;
     }
@@ -92,7 +92,7 @@ function resourceController(def) {
       }
       return fail({ [def.uniqueField]: 'Já existe um cadastro com este valor.' });
     }
-    def.afterSave?.(item, data);
+    await def.afterSave?.(item, data, req);
     adminService.saved();
     return res.redirect(302, `${base}?salvo=1`);
   }

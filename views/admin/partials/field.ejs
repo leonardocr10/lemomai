@@ -33,7 +33,7 @@
         <% }) %>
       </select>
     <% } else if (type === 'file') { %>
-      <%- include('dropzone', { id, name, val, error, aria, ratio: locals.ratio, crop: locals.crop, removeName: locals.removeName }) %>
+      <%- include('dropzone', { id, name, val, error, aria, ratio: locals.ratio, crop: locals.crop, removeName: locals.removeName, gallery: locals.gallery }) %>
     <% } else if (locals.prefix) { %>
       <div class="input-group">
         <span class="input-group-text"><%= prefix %></span>

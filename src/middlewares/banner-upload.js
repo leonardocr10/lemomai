@@ -33,11 +33,16 @@ function fileFilter(req, file, cb) {
   return cb(null, false);
 }
 
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: MAX_BYTES, files: FIELDS.length, fields: 20, fieldSize: 20 * 1024 },
-}).fields(FIELDS.map((name) => ({ name, maxCount: 1 })));
+const GALLERY_MAX_FILES = 10;
+
+function multerFor(fields) {
+  const files = fields.reduce((total, field) => total + field.maxCount, 0);
+  return multer({
+    storage,
+    fileFilter,
+    limits: { fileSize: MAX_BYTES, files, fields: 20, fieldSize: 20 * 1024 },
+  }).fields(fields);
+}
 
 function hasImageSignature(filePath) {
   const header = Buffer.alloc(12);
@@ -61,25 +66,42 @@ function discardUploads(req) {
   req.files = {};
 }
 
-function bannerUpload(req, res, next) {
-  upload(req, res, (err) => {
-    req.uploadErrors = req.uploadErrors || {};
-    if (err instanceof multer.MulterError) {
-      discardUploads(req);
-      req.uploadErrors[err.field || 'image'] =
-        err.code === 'LIMIT_FILE_SIZE' ? 'A imagem deve ter no máximo 5 MB.' : 'Envio de arquivo inválido.';
+/** Middleware de upload para os campos dados; confere a assinatura de cada arquivo. */
+function uploader(fields, defaultField) {
+  const upload = multerFor(fields);
+  return (req, res, next) => {
+    upload(req, res, (err) => {
+      req.uploadErrors = req.uploadErrors || {};
+      if (err instanceof multer.MulterError) {
+        discardUploads(req);
+        const messages = {
+          LIMIT_FILE_SIZE: 'Cada imagem deve ter no máximo 5 MB.',
+          LIMIT_FILE_COUNT: `Envie no máximo ${GALLERY_MAX_FILES} imagens por vez.`,
+        };
+        req.uploadErrors[err.field || defaultField] = messages[err.code] || 'Envio de arquivo inválido.';
+        return next();
+      }
+      if (err) return next(err);
+      for (const [field, files] of Object.entries(req.files || {})) {
+        const valid = files.filter((file) => {
+          if (hasImageSignature(file.path)) return true;
+          fs.rmSync(file.path, { force: true });
+          req.uploadErrors[field] = 'Arquivo de imagem inválido. Use JPG, PNG ou WebP.';
+          return false;
+        });
+        if (valid.length) req.files[field] = valid;
+        else delete req.files[field];
+      }
       return next();
-    }
-    if (err) return next(err);
-    for (const [field, [file]] of Object.entries(req.files || {})) {
-      if (hasImageSignature(file.path)) continue;
-      fs.rmSync(file.path, { force: true });
-      delete req.files[field];
-      req.uploadErrors[field] = 'Arquivo de imagem inválido. Use JPG, PNG ou WebP.';
-    }
-    return next();
-  });
+    });
+  };
 }
+
+/** Formulário de banner: imagem principal e imagem de celular. */
+const bannerUpload = uploader(FIELDS.map((name) => ({ name, maxCount: 1 })), 'image');
+
+/** Galeria: várias imagens de uma vez no campo "files". */
+const galleryUpload = uploader([{ name: 'files', maxCount: GALLERY_MAX_FILES }], 'files');
 
 /** CSRF conferido depois do multer (o token vem no corpo multipart); descarta os arquivos se falhar. */
 function verifyCsrfAfterUpload(req, res, next) {
@@ -101,4 +123,24 @@ function removeUploadedFile(url) {
   fs.rmSync(path.join(UPLOAD_DIR, path.basename(url)), { force: true });
 }
 
-module.exports = { bannerUpload, verifyCsrfAfterUpload, discardUploads, uploadedUrl, removeUploadedFile };
+/** Arquivos aceitos na requisição (para registrar na galeria). */
+function uploadedFiles(req, field) {
+  return (req.files?.[field] || []).map((file) => ({
+    url: URL_PREFIX + file.filename,
+    path: file.path,
+    name: file.originalname,
+    size: file.size,
+    mime: file.mimetype,
+  }));
+}
+
+module.exports = {
+  bannerUpload,
+  galleryUpload,
+  verifyCsrfAfterUpload,
+  discardUploads,
+  uploadedUrl,
+  uploadedFiles,
+  removeUploadedFile,
+  GALLERY_MAX_FILES,
+};

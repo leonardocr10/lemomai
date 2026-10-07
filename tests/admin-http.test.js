@@ -181,12 +181,12 @@ test('banners: lista os 3 iniciais com miniatura', async () => {
   for (const name of files) assert.ok(list.body.includes(`/images/banners/${name}.webp`), name);
 });
 
-test('banners: criar com imagem aparece na home; excluir apaga o arquivo', async () => {
+test('banners: imagem enviada vai para a galeria; excluir o banner mantém a imagem; galeria só exclui sem uso', async () => {
   const client = await loggedClient();
   await client.get('/admin/banners/novo');
   const created = await client.postMultipart('/admin/banners',
     { title: 'Banner de teste', alt: 'Texto alternativo do banner de teste', href: '/sobre', displayOrder: '9', active: 'on' },
-    { image: png() });
+    { image: png('meu-banner-teste.png') });
   assert.equal(created.status, 302);
 
   const home = await (await fetch(`${base}/`)).text();
@@ -194,10 +194,78 @@ test('banners: criar com imagem aparece na home; excluir apaga o arquivo', async
   const url = home.match(/src="(\/uploads\/banners\/[^"]+)" alt="Texto alternativo do banner de teste"/)[1];
   assert.ok(fs.existsSync(publicFile(url)));
 
+  // Entrou na galeria, com nome original e dimensões; busca pelo nome.
+  const found = await (await fetch(`${base}/admin/galeria.json?q=meu-banner`, { headers: { cookie: [...client.cookies].map(([k, v]) => `${k}=${v}`).join('; ') } })).json();
+  assert.equal(found.total, 1);
+  assert.equal(found.data[0].url, url);
+  assert.equal(found.data[0].name, 'meu-banner-teste.png');
+  assert.equal(found.data[0].width, 1);
+
+  const gallery = await client.get('/admin/galeria?q=meu-banner');
+  assert.ok(gallery.body.includes("Em uso (1)"));
+  const mediaId = gallery.body.match(/\/admin\/galeria\/(\d+)\/excluir/)[1];
+  assert.equal((await client.post(`/admin/galeria/${mediaId}/excluir`)).location, '/admin/galeria?erro=emUso');
+  assert.ok(fs.existsSync(publicFile(url)), 'imagem em uso não é apagada');
+
   const list = await client.get('/admin/banners');
   const id = list.body.match(/href="\/admin\/banners\/(\d+)">Banner de teste/)[1];
   assert.equal((await client.post(`/admin/banners/${id}/excluir`)).status, 302);
-  assert.equal(fs.existsSync(publicFile(url)), false);
+  assert.ok(fs.existsSync(publicFile(url)), 'excluir o banner mantém a imagem na galeria');
+
+  await client.get('/admin/galeria');
+  assert.equal((await client.post(`/admin/galeria/${mediaId}/excluir`)).location, '/admin/galeria?excluida=1');
+  assert.equal(fs.existsSync(publicFile(url)), false, 'sem uso: excluir da galeria apaga o arquivo');
+});
+
+test('galeria: envio de várias imagens e banner criado escolhendo da galeria, em largura toda', async () => {
+  const client = await loggedClient();
+  await client.get('/admin/galeria');
+  const form = new FormData();
+  form.append('_csrf', (await client.get('/admin/galeria')).body.match(/name="_csrf" value="([^"]+)"/)[1]);
+  form.append('files', new Blob([PNG], { type: 'image/png' }), 'galeria-a.png');
+  form.append('files', new Blob([PNG], { type: 'image/png' }), 'galeria-b.png');
+  const cookie = [...client.cookies].map(([k, v]) => `${k}=${v}`).join('; ');
+  const sent = await fetch(`${base}/admin/galeria`, { method: 'POST', headers: { cookie }, body: form, redirect: 'manual' });
+  assert.equal(sent.headers.get('location'), '/admin/galeria?enviadas=2');
+
+  const found = await (await fetch(`${base}/admin/galeria.json?q=galeria-a`, { headers: { cookie } })).json();
+  const url = found.data[0].url;
+
+  await client.get('/admin/banners/novo');
+  const created = await client.postMultipart('/admin/banners', {
+    title: 'Da galeria', alt: 'Banner escolhido da galeria de imagens', href: '/contato',
+    displayOrder: '8', active: 'on', fullWidth: 'on', imageFromGallery: url,
+  });
+  assert.equal(created.status, 302);
+  const home = await (await fetch(`${base}/`)).text();
+  const slide = home.slice(home.lastIndexOf('<li', home.indexOf('Banner escolhido da galeria')), home.indexOf('Banner escolhido da galeria'));
+  assert.match(slide, /banner-slide--full/);
+  assert.ok(slide.includes(url));
+
+  // URL fora da galeria é recusada.
+  await client.get('/admin/banners/novo');
+  const bad = await client.postMultipart('/admin/banners', {
+    title: 'Falso', alt: 'Imagem que não está na galeria', imageFromGallery: '/uploads/banners/nao-existe.png',
+  });
+  assert.equal(bad.status, 422);
+  assert.match(bad.body, /Imagem da galeria não encontrada/);
+
+  // Limpeza: tira o banner e as imagens de teste da galeria/disco.
+  const list = await client.get('/admin/banners');
+  const id = list.body.match(/href="\/admin\/banners\/(\d+)">Da galeria/)[1];
+  await client.post(`/admin/banners/${id}/excluir`);
+  for (const name of ['galeria-a', 'galeria-b']) {
+    const page = await client.get(`/admin/galeria?q=${name}`);
+    const mediaId = page.body.match(/\/admin\/galeria\/(\d+)\/excluir/)[1];
+    await client.post(`/admin/galeria/${mediaId}/excluir`);
+  }
+});
+
+test('galeria: erro na URL só aceita códigos conhecidos', async () => {
+  const client = await loggedClient();
+  assert.doesNotMatch((await client.get('/admin/galeria?erro=<b>oi</b>')).body, /&lt;b&gt;oi|<b>oi/);
+  assert.match((await client.get('/admin/galeria?erro=emUso')).body, /está em uso por um banner/);
+  assert.equal((await client.get('/admin/galeria?erro=constructor')).status, 200);
 });
 
 test('banners: arquivo que não é imagem é recusado e não fica no disco', async () => {

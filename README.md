@@ -235,7 +235,8 @@ Acesse **/admin**. O administrador é criado na primeira visita com `ADMIN_USER`
 
 | Tela | O que faz |
 |---|---|
-| Banners da home | Carrossel do topo da home: imagem 3:1 (ideal 2000×667 px), imagem opcional para celular (ex.: 1080×1350 px; sem ela o banner não aparece no celular), link, texto alternativo, ordem e publicação. Sem banners ativos, a home volta a mostrar o hero de texto |
+| Banners da home | Carrossel do topo da home: imagem 3:1 (ideal 2000×667 px), imagem opcional para celular (ex.: 1080×1350 px; sem ela o banner não aparece no celular), link, texto alternativo, opção **Ocupar a largura toda da tela**, ordem e publicação, com **pré-visualização** ao vivo. A imagem pode ser enviada ou **escolhida da galeria**. Sem banners ativos, a home volta a mostrar o hero de texto |
+| Galeria | Todas as imagens enviadas (pelo banner ou direto, até 10 por vez), com busca pelo nome, dimensões e indicação de uso. Excluir um banner não apaga a imagem; a galeria só exclui imagens que nenhum banner usa |
 | Planos e preços | Nome, preço, tipo de cobrança, itens inclusos, selo, destaque, ordem e se aparece no site |
 | FAQ | Perguntas e respostas, ordem e publicação |
 | Depoimentos | Autor, cargo, empresa, texto, nota, ordem e publicação |

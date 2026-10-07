@@ -88,6 +88,10 @@ const schemas = {
     active: checkbox,
     displayOrder,
     removeMobileImage: checkbox,
+    fullWidth: checkbox,
+    // URL de uma imagem já existente na galeria (conferida no controller).
+    imageFromGallery: z.string().trim().max(300).optional().default('').transform((v) => v || null),
+    mobileImageFromGallery: z.string().trim().max(300).optional().default('').transform((v) => v || null),
   }),
 
   company: z.object({

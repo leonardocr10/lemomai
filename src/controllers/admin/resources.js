@@ -6,7 +6,8 @@
 const repositories = require('../../repositories');
 const { money, priceInput } = require('../../utils/admin-format');
 const { resourceController } = require('./resource.controller');
-const { uploadedUrl, removeUploadedFile, discardUploads } = require('../../middlewares/banner-upload');
+const { uploadedUrl, uploadedFiles, discardUploads } = require('../../middlewares/banner-upload');
+const mediaService = require('../../services/media.service');
 
 const BILLING = [
   { value: 'one-time', label: 'Pagamento único' },
@@ -137,6 +138,18 @@ const testimonials = resourceController({
   sidebar: ['active', 'displayOrder'],
 });
 
+/** Escolha de imagem num campo do banner: arquivo enviado > imagem da galeria > atual. */
+async function pickImage(req, field, current, errors) {
+  const uploaded = uploadedUrl(req, field);
+  if (uploaded) return uploaded;
+  const fromGallery = req.body?.[`${field}FromGallery`];
+  if (fromGallery) {
+    if (await mediaService.findByUrl(fromGallery)) return fromGallery;
+    errors[field] = 'Imagem da galeria não encontrada. Escolha de novo.';
+  }
+  return current;
+}
+
 const banners = resourceController({
   path: 'banners',
   section: 'banners',
@@ -144,6 +157,7 @@ const banners = resourceController({
   plural: 'Banners da home',
   schema: 'banner',
   multipart: true,
+  preview: true,
   repo: () => repositories.banners,
   searchColumns: ['title', 'alt', 'href'],
   searchPlaceholder: 'Buscar banner…',
@@ -152,9 +166,10 @@ const banners = resourceController({
     { label: 'Imagem', image: (b) => b.image },
     { label: 'Nome', value: (b) => b.title, link: true, sort: 'title' },
     { label: 'Link', value: (b) => b.href || '—', sort: 'href' },
+    { label: 'Largura', value: (b) => (b.fullWidth ? 'Toda a tela' : 'Conteúdo'), sort: 'fullWidth', nowrap: true },
     { label: 'Celular', value: (b) => (b.mobileImage ? 'Sim' : 'Não aparece'), nowrap: true },
   ],
-  defaults: { active: true, displayOrder: 0 },
+  defaults: { active: true, displayOrder: 0, fullWidth: false },
   toForm: (b) => ({ ...b }),
   keepOnError: ['image', 'mobileImage'],
   fields: [
@@ -166,42 +181,41 @@ const banners = resourceController({
     },
     {
       name: 'image', label: 'Imagem para computador e tablet', type: 'file', required: true, full: true,
-      ratio: '3', crop: '3', hint: 'Proporção 3:1, ideal 2000×667 px. JPG, PNG ou WebP até 5 MB.',
+      ratio: '3', crop: '3', gallery: true, hint: 'Proporção 3:1, ideal 2000×667 px. JPG, PNG ou WebP até 5 MB.',
     },
     {
       name: 'mobileImage', label: 'Imagem para celular (opcional)', type: 'file', full: true,
-      ratio: 'portrait', crop: '0.8,1,free', removeName: 'removeMobileImage',
+      ratio: 'portrait', crop: '0.8,1,free', gallery: true, removeName: 'removeMobileImage',
       hint: 'Vertical ou quadrada, ex.: 1080×1350 px. Sem ela, este banner não aparece no celular.',
     },
     ORDER_FIELD,
+    {
+      name: 'fullWidth', label: 'Ocupar a largura toda da tela', type: 'switch',
+      hint: 'Desligado: na largura do conteúdo, com as laterais na cor do banner. Ligado: de ponta a ponta (mais alto em telas largas).',
+    },
     ACTIVE_FIELD,
   ],
   sections: [
     { title: 'Banner', fields: ['title', 'href', 'alt'] },
-    { title: 'Imagem principal', fields: ['image'] },
+    { title: 'Imagem principal', fields: ['image'], preview: true },
     { title: 'Imagem para celular', fields: ['mobileImage'] },
   ],
-  sidebar: ['active', 'displayOrder'],
-  prepare(req, item, data) {
+  sidebar: ['active', 'fullWidth', 'displayOrder'],
+  async prepare(req, item, data) {
     const errors = { ...req.uploadErrors };
-    const image = uploadedUrl(req, 'image');
-    const mobileImage = uploadedUrl(req, 'mobileImage');
-    if (!image && !item?.image && !errors.image) errors.image = 'Envie a imagem do banner.';
+    const image = await pickImage(req, 'image', item?.image ?? null, errors);
+    let mobileImage = await pickImage(req, 'mobileImage', item?.mobileImage ?? null, errors);
+    if (!image && !errors.image) errors.image = 'Envie a imagem do banner ou escolha uma da galeria.';
     if (!data) return { data, errors };
-    const { removeMobileImage, ...fields } = data;
-    let mobile = item?.mobileImage ?? null;
-    if (mobileImage) mobile = mobileImage;
-    else if (removeMobileImage) mobile = null;
-    return { data: { ...fields, image: image || item?.image, mobileImage: mobile }, errors };
+    const { removeMobileImage, imageFromGallery, mobileImageFromGallery, ...fields } = data;
+    const mobileChanged = uploadedUrl(req, 'mobileImage') || mobileImageFromGallery;
+    if (removeMobileImage && !mobileChanged) mobileImage = null;
+    return { data: { ...fields, image, mobileImage }, errors };
   },
-  afterSave(item, data) {
-    if (!item) return;
-    if (item.image !== data.image) removeUploadedFile(item.image);
-    if (item.mobileImage !== data.mobileImage) removeUploadedFile(item.mobileImage);
-  },
-  afterRemove(item) {
-    removeUploadedFile(item.image);
-    removeUploadedFile(item.mobileImage);
+  // Imagens enviadas entram na galeria; arquivos não são apagados ao trocar
+  // ou excluir o banner (ficam na galeria para reaproveitar).
+  async afterSave(item, data, req) {
+    await mediaService.register([...uploadedFiles(req, 'image'), ...uploadedFiles(req, 'mobileImage')]);
   },
   discard: discardUploads,
 });

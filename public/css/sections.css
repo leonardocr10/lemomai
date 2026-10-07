@@ -404,6 +404,22 @@
   aspect-ratio: 3 / 1;
 }
 
+/* "Ocupar a largura toda" (opção do banner no painel): imagem inteira de ponta
+   a ponta, em 3:1 natural (sem recorte), sem as laterais desfocadas. */
+.banner-slide--full {
+  padding-block: 0;
+}
+
+.banner-slide--full .banner-slide__backdrop {
+  display: none;
+}
+
+.banner-slide--full .banner-slide__link {
+  width: 100%;
+  border-radius: 0;
+  box-shadow: none;
+}
+
 /* Imagem própria de celular: mantém a proporção dela e dispensa o fundo desfocado. */
 @media (max-width: 767px) {
   .banner-slide__link img {
