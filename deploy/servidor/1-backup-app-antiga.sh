@@ -21,14 +21,27 @@ precisa ss "Instale com: apt install -y iproute2"
 NGINX_PORT="$(porta_no_nginx || true)"
 PORT="${1:-$NGINX_PORT}"
 if [[ -z "$PORT" ]]; then
-  read -r -p "Não achei o proxy_pass no Nginx. Qual a porta da aplicação antiga? " PORT
+  aviso "Não achei no Nginx para qual porta ele repassa (proxy_pass)."
+  echo "Processos Node escutando neste servidor (a porta da app é a que vem depois dos dois-pontos):"
+  ss -ltnpH 2>/dev/null | grep -E '"(node|nodejs|npm)"' | awk '{print "    " $4 "   " $6}' || true
+  read -r -p "Qual a porta da aplicação antiga (NÃO use 80/443, essas são do Nginx)? " PORT
 fi
 [[ "$PORT" =~ ^[0-9]+$ ]] || erro "Porta inválida: '$PORT'"
 
 PID="$(pid_na_porta "$PORT")"
 [[ -n "$PID" ]] || erro "Nenhum processo escutando na porta $PORT. Confira com: ss -ltnp"
 
+# Segurança: a porta precisa ser da aplicação, não do servidor web.
+COMM="$(ps -o comm= -p "$PID" | tr -d ' ')"
+if eh_servidor_web "$COMM"; then
+  erro "A porta $PORT é do $COMM (servidor web), não da aplicação. Nada foi copiado. Rode de novo informando a porta da app: bash $0 PORTA   (veja: ss -ltnp | grep node)"
+fi
+
 OLD_CWD="$(readlink "/proc/$PID/cwd")"
+case "$OLD_CWD" in
+  / | /root | /home | /usr | /var | /etc | /opt)
+    erro "O processo $PID ($COMM) roda na pasta '$OLD_CWD', que não parece a pasta de uma aplicação. Nada foi copiado. Confira a porta (ss -ltnp) e rode: bash $0 PORTA" ;;
+esac
 OLD_USER="$(ps -o user= -p "$PID" | tr -d ' ')"
 OLD_EXE="$(readlink "/proc/$PID/exe")"
 mapfile -d '' ARGS <"/proc/$PID/cmdline"
@@ -93,7 +106,11 @@ mkdir -p "$DEST"
 chmod 700 "$BACKUP_ROOT"
 
 echo
-info "Copiando arquivos da aplicação (sem node_modules)..."
+TAMANHO_MB="$(du -sm --exclude=node_modules --exclude=.git "$OLD_CWD" 2>/dev/null | cut -f1 || true)"
+if [[ "${TAMANHO_MB:-0}" -gt 2048 ]]; then
+  confirmar "A pasta $OLD_CWD tem ${TAMANHO_MB} MB (sem node_modules). Copiar mesmo assim?" || exit 1
+fi
+info "Copiando arquivos da aplicação (${TAMANHO_MB:-?} MB, sem node_modules)..."
 tar -czf "$DEST/app-antiga.tar.gz" --exclude='node_modules' --exclude='.git' \
   -C "$(dirname "$OLD_CWD")" "$(basename "$OLD_CWD")"
 
