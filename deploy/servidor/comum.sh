@@ -5,13 +5,17 @@
 # ---------------------------------------------------------------------------
 # Configuração (pode sobrescrever por variável de ambiente ao rodar o script)
 # ---------------------------------------------------------------------------
-APP_NAME="${APP_NAME:-lenom-ai}"                         # nome do processo novo no PM2
+APP_NAME="${APP_NAME:-lenom-ai}"                         # nome do serviço systemd da app nova
+APP_USER="${APP_USER:-lenom}"                            # usuário (sem login) que roda a app nova
 APP_DIR="${APP_DIR:-/var/www/lenom-ai}"                  # onde o código novo fica
 REPO_URL="${REPO_URL:-https://github.com/leonardocr10/lemomai.git}"
 BRANCH="${BRANCH:-main}"
-BACKUP_ROOT="${BACKUP_ROOT:-$HOME/backups-lenom}"        # backups da aplicação antiga
-STATE_FILE="${STATE_FILE:-$BACKUP_ROOT/app-antiga.env}"  # dados para voltar à antiga (rollback)
-NODE_MIN="22.13.0"                                       # node:sqlite exige Node 22.13+
+NODE_DIR="${NODE_DIR:-/opt/node22}"                      # Node 22 só da app nova (não mexe no Node do sistema)
+BACKUP_ROOT="${BACKUP_ROOT:-/root/backups-lenom}"        # backups da aplicação antiga
+STATE_FILE="${STATE_FILE:-$BACKUP_ROOT/app-antiga.env}"  # como a antiga rodava (usado na troca e no rollback)
+SERVICE_FILE="/etc/systemd/system/${APP_NAME}.service"
+NODE_BIN="$NODE_DIR/bin/node"
+NPM_BIN="$NODE_DIR/bin/npm"
 
 # ---------------------------------------------------------------------------
 # Saída
@@ -30,68 +34,26 @@ precisa() {
   command -v "$1" >/dev/null 2>&1 || erro "Comando '$1' não encontrado. $2"
 }
 
-# ---------------------------------------------------------------------------
-# PM2: lê dados de um processo pelo nome (pasta, script, porta, node usado)
-# Saída: cwd<TAB>script<TAB>porta<TAB>interpretador<TAB>status
-# ---------------------------------------------------------------------------
-pm2_info() {
-  pm2 jlist 2>/dev/null | node -e '
-    let raw = "";
-    process.stdin.on("data", (d) => (raw += d)).on("end", () => {
-      // Avisos do PM2 também começam com "[" ("[PM2] ..."): procura o início real da lista JSON.
-      const start = raw.search(/\[\s*(\{|\])/);
-      const list = JSON.parse(raw.slice(start));
-      const app = list.find((p) => p.name === process.argv[1]);
-      if (!app) process.exit(2);
-      const e = app.pm2_env || {};
-      const port = (e.env && e.env.PORT) || e.PORT || "";
-      const interp = e.exec_interpreter && e.exec_interpreter !== "node" ? e.exec_interpreter : "";
-      console.log([e.pm_cwd, e.pm_exec_path, port, interp, e.status].join("\t"));
-    });
-  ' "$1"
+precisa_root() {
+  [[ "$(id -u)" -eq 0 ]] || erro "Rode como root (ex.: sudo bash $0)."
 }
 
+# ---------------------------------------------------------------------------
 # Porta para onde o Nginx repassa (proxy_pass http://127.0.0.1:PORTA)
+# ---------------------------------------------------------------------------
 porta_no_nginx() {
-  grep -rhoE 'proxy_pass\s+https?://(127\.0\.0\.1|localhost|0\.0\.0\.0):[0-9]+' /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null \
+  grep -rhoE 'proxy_pass\s+https?://(127\.0\.0\.1|localhost|0\.0\.0\.0|\[::1\]):[0-9]+' \
+    /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null \
     | grep -oE '[0-9]+$' | sort | uniq -c | sort -rn | awk 'NR==1 {print $2}'
 }
 
-# ---------------------------------------------------------------------------
-# Node 22.13+ para a aplicação nova (sem mexer no Node que a antiga usa)
-# Define NODE_BIN e NPM_BIN.
-# ---------------------------------------------------------------------------
-versao_ok() {
-  # $1 >= $2 ?
-  [ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -1)" = "$2" ]
+# PID do processo que escuta na porta (vazio se nenhum)
+pid_na_porta() {
+  ss -ltnpH "sport = :$1" 2>/dev/null | grep -oE 'pid=[0-9]+' | head -1 | cut -d= -f2
 }
 
-preparar_node() {
-  local atual=""
-  if command -v node >/dev/null 2>&1; then atual="$(node -v | tr -d v)"; fi
-  if [[ -n "$atual" ]] && versao_ok "$atual" "$NODE_MIN"; then
-    NODE_BIN="$(command -v node)"
-    NPM_BIN="$(command -v npm)"
-    info "Node $atual do sistema atende (mínimo $NODE_MIN)."
-    return
-  fi
-
-  aviso "Node do sistema é ${atual:-inexistente}; a aplicação nova precisa de $NODE_MIN+."
-  info "Instalando Node 22 só para a aplicação nova via nvm (o Node do sistema, usado pela antiga, não muda)."
-  export NVM_DIR="$HOME/.nvm"
-  if [[ ! -s "$NVM_DIR/nvm.sh" ]]; then
-    curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-  fi
-  # shellcheck disable=SC1091
-  . "$NVM_DIR/nvm.sh"
-  nvm install 22 >/dev/null
-  NODE_BIN="$(nvm which 22)"
-  NPM_BIN="$(dirname "$NODE_BIN")/npm"
-  info "Usando $("$NODE_BIN" -v) em $NODE_BIN"
-}
-
-npm_novo() {
-  PATH="$(dirname "$NODE_BIN"):$PATH" "$NPM_BIN" "$@"
+porta_livre() {
+  [[ -z "$(ss -ltnH "sport = :$1" 2>/dev/null)" ]]
 }
 
 # ---------------------------------------------------------------------------
@@ -104,4 +66,75 @@ esperar_resposta() {
     sleep 1
   done
   return 1
+}
+
+esperar_porta_livre() {
+  local porta="$1" tentativa
+  for tentativa in $(seq 1 15); do
+    porta_livre "$porta" && return 0
+    sleep 1
+  done
+  return 1
+}
+
+# ---------------------------------------------------------------------------
+# Parar / iniciar a aplicação ANTIGA conforme o jeito que ela rodava
+# (dados lidos de STATE_FILE: OLD_MANAGER, OLD_UNIT, OLD_CONTAINER, OLD_CWD,
+#  OLD_CMD, OLD_USER, OLD_PID, PORT)
+# ---------------------------------------------------------------------------
+parar_antiga() {
+  case "$OLD_MANAGER" in
+    systemd)
+      systemctl stop "$OLD_UNIT"
+      systemctl disable "$OLD_UNIT" >/dev/null 2>&1 || true
+      ;;
+    docker)
+      docker stop "$OLD_CONTAINER" >/dev/null
+      docker update --restart=no "$OLD_CONTAINER" >/dev/null 2>&1 || true
+      ;;
+    pm2)
+      pm2 stop "$OLD_PM2_NAME" >/dev/null && pm2 save >/dev/null
+      ;;
+    manual)
+      local pid
+      pid="$(pid_na_porta "$PORT")"
+      if [[ -n "$pid" ]]; then
+        # Encerra o grupo do processo (ex.: "npm start" + o node filho).
+        local pgid
+        pgid="$(ps -o pgid= -p "$pid" | tr -d ' ')"
+        kill -TERM -- "-$pgid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null || true
+      fi
+      ;;
+  esac
+  esperar_porta_livre "$PORT" || {
+    local pid
+    pid="$(pid_na_porta "$PORT")"
+    [[ -n "$pid" ]] && kill -KILL "$pid" 2>/dev/null || true
+    esperar_porta_livre "$PORT" || erro "A porta $PORT continua ocupada. Veja: ss -ltnp 'sport = :$PORT'"
+  }
+}
+
+iniciar_antiga() {
+  case "$OLD_MANAGER" in
+    systemd)
+      systemctl enable "$OLD_UNIT" >/dev/null 2>&1 || true
+      systemctl start "$OLD_UNIT"
+      ;;
+    docker)
+      docker update --restart=unless-stopped "$OLD_CONTAINER" >/dev/null 2>&1 || true
+      docker start "$OLD_CONTAINER" >/dev/null
+      ;;
+    pm2)
+      pm2 start "$OLD_PM2_NAME" >/dev/null && pm2 save >/dev/null
+      ;;
+    manual)
+      # Mesmo comando, mesma pasta e mesmo usuário de antes, em segundo plano.
+      local log="$BACKUP_ROOT/app-antiga.log"
+      if [[ "$OLD_USER" == "root" ]]; then
+        (cd "$OLD_CWD" && setsid nohup bash -c "$OLD_CMD" >>"$log" 2>&1 &)
+      else
+        (cd "$OLD_CWD" && setsid nohup runuser -u "$OLD_USER" -- bash -c "$OLD_CMD" >>"$log" 2>&1 &)
+      fi
+      ;;
+  esac
 }
