@@ -25,12 +25,32 @@ const acceptPrivacy = z
   .any()
   .refine((value) => value === 'on' || value === 'true' || value === true, 'É necessário aceitar a Política de Privacidade.');
 
+/** Opcional, mas se vier preenchido precisa ser válido. */
+const optionalEmail = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .max(160)
+  .optional()
+  .transform((value) => value || null)
+  .refine((value) => value === null || z.email().safeParse(value).success, 'Informe um e-mail válido.');
+const optionalOneOf = (options, message) =>
+  z
+    .string()
+    .optional()
+    .transform((value) => value || null)
+    .refine((value) => value === null || values(options).includes(value), message);
+
+/**
+ * Contato rápido: só nome, WhatsApp, mensagem e o aceite são obrigatórios.
+ * E-mail, empresa, tipo de projeto e orçamento ajudam, mas não travam o envio.
+ */
 const contactSchema = z.object({
   name,
   company: optionalString(120),
-  email,
+  email: optionalEmail,
   whatsapp: phone,
-  projectType: oneOf(forms.contactProjectTypes, 'Selecione o tipo de projeto.'),
+  projectType: optionalOneOf(forms.contactProjectTypes, 'Tipo de projeto inválido.'),
   budgetRange: z
     .string()
     .optional()

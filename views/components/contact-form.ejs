@@ -1,6 +1,8 @@
 <%#
   ContactForm — params: values, errors, success
   Sem JS: POST /contato (server-rendered). Com JS: enviado para /api/contact via fetch.
+  Só nome, WhatsApp, mensagem e o aceite são obrigatórios; o resto fica em
+  "Mais detalhes (opcional)", que já vem aberto se algum desses campos tiver valor ou erro.
 %>
 <%
   const v = locals.values || {};
@@ -8,6 +10,7 @@
   const hasErrors = Object.keys(e).length > 0;
   const fieldClass = (name) => 'field' + (e[name] ? ' has-error' : '');
   const invalid = (name) => e[name] ? 'aria-invalid="true" aria-describedby="contact-' + name + '-error"' : '';
+  const extraOpen = ['company', 'projectType', 'budgetRange'].some((name) => v[name] || e[name]);
 %>
 <form class="form-card" action="/contato#formulario" method="post" novalidate
       data-ajax-form data-endpoint="/api/contact" data-format="json" id="formulario" aria-labelledby="contact-form-title">
@@ -29,22 +32,8 @@
     <div class="<%= fieldClass('name') %>">
       <label for="contact-name">Nome <span class="req" aria-hidden="true">*</span></label>
       <input class="input" id="contact-name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="120"
-             placeholder="Seu nome completo" value="<%= v.name || '' %>" <%- invalid('name') %>>
+             placeholder="Seu nome" value="<%= v.name || '' %>" <%- invalid('name') %>>
       <p class="field__error" id="contact-name-error" data-error-for="name"><%= e.name || '' %></p>
-    </div>
-
-    <div class="<%= fieldClass('company') %>">
-      <label for="contact-company">Empresa <span class="optional">(opcional)</span></label>
-      <input class="input" id="contact-company" name="company" type="text" autocomplete="organization" maxlength="120"
-             placeholder="Nome da empresa" value="<%= v.company || '' %>" <%- invalid('company') %>>
-      <p class="field__error" id="contact-company-error" data-error-for="company"><%= e.company || '' %></p>
-    </div>
-
-    <div class="<%= fieldClass('email') %>">
-      <label for="contact-email">E-mail <span class="req" aria-hidden="true">*</span></label>
-      <input class="input" id="contact-email" name="email" type="email" autocomplete="email" required maxlength="160"
-             placeholder="voce@empresa.com.br" value="<%= v.email || '' %>" <%- invalid('email') %>>
-      <p class="field__error" id="contact-email-error" data-error-for="email"><%= e.email || '' %></p>
     </div>
 
     <div class="<%= fieldClass('whatsapp') %>">
@@ -54,34 +43,53 @@
       <p class="field__error" id="contact-whatsapp-error" data-error-for="whatsapp"><%= e.whatsapp || '' %></p>
     </div>
 
-    <div class="<%= fieldClass('projectType') %>">
-      <label for="contact-projectType">Tipo de projeto <span class="req" aria-hidden="true">*</span></label>
-      <select class="select" id="contact-projectType" name="projectType" required <%- invalid('projectType') %>>
-        <option value="">Selecione</option>
-        <% contactProjectTypes.forEach((option) => { %>
-          <option value="<%= option.value %>"<%= v.projectType === option.value ? ' selected' : '' %>><%= option.label %></option>
-        <% }) %>
-      </select>
-      <p class="field__error" id="contact-projectType-error" data-error-for="projectType"><%= e.projectType || '' %></p>
-    </div>
-
-    <div class="<%= fieldClass('budgetRange') %>">
-      <label for="contact-budgetRange">Orçamento estimado <span class="optional">(opcional)</span></label>
-      <select class="select" id="contact-budgetRange" name="budgetRange" <%- invalid('budgetRange') %>>
-        <option value="">Ainda não sei</option>
-        <% budgetRanges.forEach((option) => { %>
-          <option value="<%= option.value %>"<%= v.budgetRange === option.value ? ' selected' : '' %>><%= option.label %></option>
-        <% }) %>
-      </select>
-      <p class="field__error" id="contact-budgetRange-error" data-error-for="budgetRange"><%= e.budgetRange || '' %></p>
-    </div>
-
     <div class="<%= fieldClass('message') %> field--full">
-      <label for="contact-message">Mensagem <span class="req" aria-hidden="true">*</span></label>
+      <label for="contact-message">Como podemos ajudar? <span class="req" aria-hidden="true">*</span></label>
       <textarea class="textarea" id="contact-message" name="message" required minlength="10" maxlength="3000"
-                placeholder="Conte um pouco sobre sua empresa e o que você precisa" <%- invalid('message') %>><%= v.message || '' %></textarea>
+                placeholder="Ex.: quero um site para minha clínica, com agendamento pelo WhatsApp" <%- invalid('message') %>><%= v.message || '' %></textarea>
       <p class="field__error" id="contact-message-error" data-error-for="message"><%= e.message || '' %></p>
     </div>
+
+    <div class="<%= fieldClass('email') %> field--full">
+      <label for="contact-email">E-mail <span class="optional">(opcional, para receber a confirmação)</span></label>
+      <input class="input" id="contact-email" name="email" type="email" autocomplete="email" maxlength="160"
+             placeholder="voce@empresa.com.br" value="<%= v.email || '' %>" <%- invalid('email') %>>
+      <p class="field__error" id="contact-email-error" data-error-for="email"><%= e.email || '' %></p>
+    </div>
+
+    <details class="form-more field--full"<%= extraOpen ? ' open' : '' %>>
+      <summary>Mais detalhes <span class="optional">(opcional)</span></summary>
+      <div class="form-grid">
+        <div class="<%= fieldClass('company') %>">
+          <label for="contact-company">Empresa</label>
+          <input class="input" id="contact-company" name="company" type="text" autocomplete="organization" maxlength="120"
+                 placeholder="Nome da empresa" value="<%= v.company || '' %>" <%- invalid('company') %>>
+          <p class="field__error" id="contact-company-error" data-error-for="company"><%= e.company || '' %></p>
+        </div>
+
+        <div class="<%= fieldClass('projectType') %>">
+          <label for="contact-projectType">Tipo de projeto</label>
+          <select class="select" id="contact-projectType" name="projectType" <%- invalid('projectType') %>>
+            <option value="">Ainda não sei</option>
+            <% contactProjectTypes.forEach((option) => { %>
+              <option value="<%= option.value %>"<%= v.projectType === option.value ? ' selected' : '' %>><%= option.label %></option>
+            <% }) %>
+          </select>
+          <p class="field__error" id="contact-projectType-error" data-error-for="projectType"><%= e.projectType || '' %></p>
+        </div>
+
+        <div class="<%= fieldClass('budgetRange') %> field--full">
+          <label for="contact-budgetRange">Orçamento estimado</label>
+          <select class="select" id="contact-budgetRange" name="budgetRange" <%- invalid('budgetRange') %>>
+            <option value="">Ainda não sei</option>
+            <% budgetRanges.forEach((option) => { %>
+              <option value="<%= option.value %>"<%= v.budgetRange === option.value ? ' selected' : '' %>><%= option.label %></option>
+            <% }) %>
+          </select>
+          <p class="field__error" id="contact-budgetRange-error" data-error-for="budgetRange"><%= e.budgetRange || '' %></p>
+        </div>
+      </div>
+    </details>
 
     <div class="<%= fieldClass('acceptPrivacy') %> field--full">
       <label class="checkbox" for="contact-acceptPrivacy">
@@ -93,7 +101,7 @@
 
     <div class="form-actions field--full">
       <button class="btn btn--primary btn--lg" type="submit">
-        <%- include('icon', { name: 'send' }) %><span>Enviar solicitação</span>
+        <%- include('icon', { name: 'send' }) %><span>Enviar mensagem</span>
       </button>
       <small>Resposta em até 1 dia útil.</small>
     </div>

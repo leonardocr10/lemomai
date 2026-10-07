@@ -31,7 +31,7 @@ function spamResult(input, meta) {
 
 async function persistAndNotify(lead, emailFields) {
   const saved = await repositories.leads.create(lead);
-  logger.info(`Lead #${saved.id} recebido (${saved.source}) — ${saved.email}`);
+  logger.info(`Lead #${saved.id} recebido (${saved.source}) — ${saved.email || saved.phone}`);
 
   const company = await companyService.getSettings();
   // E-mails não bloqueiam a resposta em caso de falha (EmailService já trata erros).

@@ -71,10 +71,12 @@ const EmailService = {
   async notifyNewLead(lead, fields) {
     const title = lead.source === 'quote' ? 'Nova solicitação de orçamento' : 'Novo contato pelo site';
     const { text, html } = renderFields(title, fields);
-    return send({ to: config.mail.leadsTo, subject: `[Site] ${title} — ${lead.name}`, text, html, replyTo: lead.email });
+    return send({ to: config.mail.leadsTo, subject: `[Site] ${title} — ${lead.name}`, text, html, replyTo: lead.email || undefined });
   },
 
   async sendLeadConfirmation(lead, companyName) {
+    // O formulário de contato aceita envio sem e-mail (só WhatsApp): nada a confirmar.
+    if (!lead.email) return null;
     const firstName = lead.name.split(' ')[0];
     const text = `Olá, ${firstName}!\n\nRecebemos sua mensagem e nossa equipe retornará em breve.\n\nEquipe ${companyName}`;
     const html = `<p style="font-family:Arial,sans-serif">Olá, ${escapeHtml(firstName)}!</p>

@@ -83,8 +83,9 @@ test('POST com CSRF válido e dados inválidos retorna 422 com erros por campo',
   });
   assert.equal(response.status, 422);
   const body = await response.json();
-  assert.ok(body.errors.email);
+  assert.ok(body.errors.whatsapp);
   assert.ok(body.errors.message);
+  assert.equal(body.errors.email, undefined, 'e-mail é opcional no contato');
 });
 
 test('sitemap inclui páginas dinâmicas e robots bloqueia fora de produção', async () => {
@@ -125,4 +126,32 @@ test('logo do topo: símbolo + nome digitado, com o nome completo já no HTML (s
   assert.match(header, /data-typed-ai>\.AI<\/span>/);
   assert.match(html, /js\/typing-banner\.js/);
   assert.match(html, /family=[^"]*Courier\+Prime/);
+});
+
+test('menu: Início, Serviços, Planos e preços, Portfólio, Sobre, Contato', async () => {
+  const html = await (await fetch(`${base}/sobre`)).text();
+  const nav = html.slice(html.indexOf('id="menu-principal"'), html.indexOf('</nav>', html.indexOf('id="menu-principal"')));
+  const labels = [...nav.matchAll(/class="nav__link[^"]*"[^>]*>([^<]+)</g)].map((m) => m[1].trim());
+  assert.deepEqual(labels, ['Início', 'Serviços', 'Planos e preços', 'Portfólio', 'Sobre', 'Contato']);
+});
+
+test('home: portfólio e "como funciona" antes dos planos; botão de voltar ao topo', async () => {
+  const html = await (await fetch(`${base}/`)).text();
+  const order = ['id="servicos"', 'id="portfolio"', 'id="como-funciona"', 'id="precos"', 'id="diferenciais"', 'id="depoimentos"', 'id="faq"', 'id="contato"']
+    .map((marker) => html.indexOf(marker));
+  assert.ok(order.every((position) => position > 0), 'todas as seções existem');
+  assert.deepEqual(order, [...order].sort((a, b) => a - b));
+  assert.match(html, /data-back-to-top/);
+});
+
+test('contato: envio só com nome, WhatsApp e mensagem é aceito (API)', async () => {
+  const page = await fetch(`${base}/contato`);
+  const cookie = page.headers.getSetCookie().map((c) => c.split(';')[0]).join('; ');
+  const token = (await page.text()).match(/name="_csrf" value="([^"]+)"/)[1];
+  const response = await fetch(`${base}/api/contact`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-csrf-token': token, cookie },
+    body: JSON.stringify({ name: 'Cliente Rápido', whatsapp: '(11) 98888-1111', message: 'Quero conversar sobre um site.', acceptPrivacy: true }),
+  });
+  assert.equal(response.status, 201);
 });

@@ -36,6 +36,8 @@ function setError(form, name, message) {
   const { errorEl, wrapper } = fieldWrapper(form, name);
   if (errorEl) errorEl.textContent = message || '';
   wrapper?.classList.toggle('has-error', Boolean(message));
+  // Erro num campo dentro de "Mais detalhes": abre a seção para a pessoa ver.
+  if (message) wrapper?.closest('details')?.setAttribute('open', '');
   form.querySelectorAll(`[name="${name}"]`).forEach((input) => {
     if (message) {
       input.setAttribute('aria-invalid', 'true');

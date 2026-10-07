@@ -287,6 +287,15 @@
   align-items: center;
   gap: var(--space-5);
   height: var(--header-h);
+  transition: height var(--duration) var(--ease);
+}
+
+/* Computador: ao rolar, o cabeçalho fica mais baixo e libera espaço de leitura.
+   (No celular a altura fica fixa porque o menu aberto começa logo abaixo dele.) */
+@media (min-width: 1081px) {
+  .site-header.is-scrolled .site-header__inner {
+    height: 60px;
+  }
 }
 
 .brand {
@@ -1683,4 +1692,96 @@ figure.testimonial-card {
     gap: 6px;
     font-size: var(--fs-base);
   }
+}
+
+/* ---------- Voltar ao topo ---------- */
+.back-to-top {
+  position: fixed;
+  right: calc(var(--space-5) + 8px);
+  bottom: calc(var(--space-5) + 72px);
+  z-index: 149;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--primary-dark);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity var(--duration) var(--ease), transform var(--duration) var(--ease), visibility var(--duration);
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.back-to-top:hover {
+  border-color: var(--primary);
+  color: var(--primary-strong);
+}
+
+.back-to-top__icon {
+  width: 20px;
+  height: 20px;
+  transform: rotate(-90deg);
+}
+
+body.is-locked .back-to-top {
+  visibility: hidden;
+  opacity: 0;
+}
+
+@media (max-width: 640px) {
+  .back-to-top {
+    right: calc(var(--space-4) + 5px);
+    bottom: calc(var(--space-4) + 64px);
+  }
+}
+
+/* ---------- Formulário: "Mais detalhes (opcional)" ---------- */
+.form-more {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+}
+
+.form-more summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 32px;
+  color: var(--primary-dark);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.form-more summary::-webkit-details-marker {
+  display: none;
+}
+
+.form-more summary::before {
+  content: '+';
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary-tint);
+  color: var(--primary-strong);
+  font-weight: 700;
+}
+
+.form-more[open] summary::before {
+  content: '−';
+}
+
+.form-more[open] > .form-grid {
+  margin-top: var(--space-4);
 }

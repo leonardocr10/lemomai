@@ -50,11 +50,26 @@ test('validateContact aceita dados válidos e normaliza e-mail', () => {
 });
 
 test('validateContact retorna mensagens em português por campo', () => {
-  const result = validateContact({ projectType: 'invalido' });
+  const result = validateContact({ projectType: 'invalido', email: 'nao-e-email' });
   assert.equal(result.success, false);
   assert.equal(result.errors.name, 'Informe seu nome.');
-  assert.equal(result.errors.projectType, 'Selecione o tipo de projeto.');
+  assert.equal(result.errors.whatsapp, 'Informe um telefone com DDD.');
+  assert.equal(result.errors.projectType, 'Tipo de projeto inválido.');
+  assert.equal(result.errors.email, 'Informe um e-mail válido.');
   assert.ok(result.errors.acceptPrivacy);
+});
+
+test('validateContact: só nome, WhatsApp, mensagem e aceite são obrigatórios', () => {
+  const result = validateContact({
+    name: 'Ana',
+    whatsapp: '(11) 91234-5678',
+    message: 'Preciso de um site para minha loja.',
+    acceptPrivacy: 'on',
+  });
+  assert.equal(result.success, true);
+  assert.equal(result.data.email, null);
+  assert.equal(result.data.projectType, null);
+  assert.equal(result.data.company, null);
 });
 
 test('validateQuote exige prazo e faixa de investimento das opções', () => {
