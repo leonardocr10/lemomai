@@ -1,0 +1,34 @@
+<%
+  const fields = [
+    { name: 'companyName', label: 'Nome da empresa', required: true },
+    { name: 'legalName', label: 'Razão social' },
+    { name: 'tagline', label: 'Frase de apresentação', full: true },
+    { name: 'email', label: 'E-mail de contato', type: 'email', required: true },
+    { name: 'phone', label: 'Telefone (exibido no site)' },
+    { name: 'whatsapp', label: 'WhatsApp', hint: 'Com DDD. Ex.: 11987654321' },
+    { name: 'whatsappMessage', label: 'Mensagem inicial do WhatsApp', type: 'textarea', rows: 2, full: true },
+    { name: 'instagram', label: 'Instagram (link)' },
+    { name: 'linkedin', label: 'LinkedIn (link)' },
+    { name: 'youtube', label: 'YouTube (link)' },
+    { name: 'address', label: 'Endereço' },
+    { name: 'city', label: 'Cidade' },
+    { name: 'state', label: 'UF' },
+    { name: 'serviceArea', label: 'Área de atendimento' },
+    { name: 'businessHoursLabel', label: 'Horário (texto exibido)', hint: 'Ex.: Segunda a sexta, das 9h às 18h' },
+    { name: 'openingHours', label: 'Horário (formato Google)', hint: 'Ex.: Mo-Fr 09:00-18:00' },
+  ];
+%>
+<form class="admin-card admin-form" action="/admin/empresa" method="post" novalidate>
+  <% if (Object.keys(errors).length) { %>
+    <div class="alert alert--error" role="alert"><span>Verifique os campos destacados.</span></div>
+  <% } %>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="form-grid">
+    <% fields.forEach((field) => { %>
+      <%- include('partials/field', { ...field, value: values[field.name], errors }) %>
+    <% }) %>
+  </div>
+  <div class="admin-form__actions">
+    <button class="btn btn--primary" type="submit">Salvar</button>
+  </div>
+</form>

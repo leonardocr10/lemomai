@@ -5,6 +5,9 @@ const { loadAdmin, requireAdmin, adminRender } = require('../middlewares/admin-a
 const authController = require('../controllers/admin/auth.controller');
 const { dashboard } = require('../controllers/admin/dashboard.controller');
 const resources = require('../controllers/admin/resources');
+const company = require('../controllers/admin/company.controller');
+const leads = require('../controllers/admin/leads.controller');
+const password = require('../controllers/admin/password.controller');
 
 const router = express.Router();
 const urlencoded = express.urlencoded({ extended: false, limit: '100kb' });
@@ -29,5 +32,15 @@ for (const [path, controller] of RESOURCES) {
   router.post(`/${path}/:id`, controller.update);
   router.post(`/${path}/:id/excluir`, controller.remove);
 }
+
+router.get('/empresa', company.show);
+router.post('/empresa', company.update);
+
+router.get('/leads', leads.list);
+router.get('/leads/:id', leads.show);
+router.post('/leads/:id/status', leads.updateStatus);
+
+router.get('/senha', password.show);
+router.post('/senha', password.update);
 
 module.exports = router;

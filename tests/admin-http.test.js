@@ -118,3 +118,49 @@ test('ID inexistente responde 404', async () => {
   assert.equal((await client.get('/admin/planos/99999')).status, 404);
   assert.equal((await client.get('/admin/planos/abc')).status, 404);
 });
+
+test('dados da empresa: salvar telefone reflete no site', async () => {
+  const client = await loggedClient();
+  const form = await client.get('/admin/empresa');
+  assert.equal(form.status, 200);
+  const names = ['companyName', 'legalName', 'tagline', 'email', 'whatsapp', 'instagram', 'linkedin', 'youtube',
+    'address', 'city', 'state', 'serviceArea', 'openingHours', 'businessHoursLabel'];
+  const fields = Object.fromEntries(names.map((n) => [n, inputValue(form.body, n)]));
+  fields.whatsappMessage = form.body.match(/name="whatsappMessage"[^>]*>([\s\S]*?)<\/textarea>/)[1];
+  const response = await client.post('/admin/empresa', { ...fields, phone: '(21) 99999-1234' });
+  assert.equal(response.status, 302);
+  assert.match(await (await fetch(`${base}/contato`)).text(), /\(21\) 99999-1234/);
+});
+
+test('lead enviado pelo site aparece no painel e muda de status', async () => {
+  const visitor = createClient(base);
+  await visitor.get('/contato');
+  await visitor.post('/contato', {
+    name: 'Cliente Painel', email: 'cliente@painel.com', whatsapp: '(11) 98888-7777',
+    projectType: 'landing-page', message: 'Quero uma landing page.', acceptPrivacy: 'on',
+  });
+  const client = await loggedClient();
+  const list = await client.get('/admin/leads');
+  assert.match(list.body, /Cliente Painel/);
+  const id = list.body.match(/href="\/admin\/leads\/(\d+)">Cliente Painel/)[1];
+  const detail = await client.get(`/admin/leads/${id}`);
+  assert.match(detail.body, /Quero uma landing page\./);
+  const changed = await client.post(`/admin/leads/${id}/status`, { status: 'contacted' });
+  assert.equal(changed.status, 302);
+  assert.match((await client.get('/admin/leads?status=contacted')).body, /Cliente Painel/);
+  assert.doesNotMatch((await client.get('/admin/leads?status=new')).body, /Cliente Painel/);
+});
+
+test('troca de senha exige a senha atual', async () => {
+  const client = await loggedClient();
+  await client.get('/admin/senha');
+  const wrong = await client.post('/admin/senha', { currentPassword: 'x', newPassword: 'nova-senha-123', confirmPassword: 'nova-senha-123' });
+  assert.equal(wrong.status, 422);
+  assert.match(wrong.body, /Senha atual incorreta/);
+  const ok = await client.post('/admin/senha', { currentPassword: 'senha-forte-123', newPassword: 'nova-senha-123', confirmPassword: 'nova-senha-123' });
+  assert.equal(ok.status, 302);
+  assert.equal((await createClient(base).login('dono', 'nova-senha-123')).status, 302);
+  // Volta a senha original para não afetar os outros testes.
+  await client.get('/admin/senha');
+  await client.post('/admin/senha', { currentPassword: 'nova-senha-123', newPassword: 'senha-forte-123', confirmPassword: 'senha-forte-123' });
+});

@@ -80,6 +80,36 @@ const schemas = {
     active: checkbox,
     displayOrder,
   }),
+
+  company: z.object({
+    companyName: text(120, 'Informe o nome da empresa.'),
+    legalName: optional(160),
+    tagline: optional(200),
+    email: z.string({ error: 'Informe um e-mail válido.' }).trim().toLowerCase().pipe(z.email('Informe um e-mail válido.')),
+    phone: optional(30),
+    whatsapp: z.string().optional().default('').transform((v) => v.replace(/\D/g, ''))
+      .refine((v) => v === '' || (v.length >= 10 && v.length <= 13), 'Use DDD + número, ex.: 11987654321.'),
+    whatsappMessage: optional(500),
+    instagram: link,
+    linkedin: link,
+    youtube: link,
+    address: optional(200),
+    city: optional(80),
+    state: z.string().trim().toUpperCase().max(2, 'Use a sigla, ex.: SP.').optional().default(''),
+    serviceArea: optional(120),
+    openingHours: optional(80),
+    businessHoursLabel: optional(120),
+  }),
+
+  leadStatus: z.object({
+    status: z.enum(['new', 'contacted', 'closed', 'discarded'], { error: 'Status inválido.' }),
+  }),
+
+  password: z.object({
+    currentPassword: z.string({ error: 'Informe a senha atual.' }).min(1, 'Informe a senha atual.'),
+    newPassword: z.string({ error: 'Informe a nova senha.' }).min(8, 'A nova senha precisa ter pelo menos 8 caracteres.').max(200),
+    confirmPassword: z.string().optional().default(''),
+  }).refine((d) => d.newPassword === d.confirmPassword, { path: ['confirmPassword'], message: 'As senhas não conferem.' }),
 };
 
 function validateAdmin(name, input) {

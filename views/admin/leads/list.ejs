@@ -1,0 +1,20 @@
+<nav class="admin-filters" aria-label="Filtrar por status">
+  <a href="/admin/leads"<%- !status ? ' aria-current="true"' : '' %>>Todos</a>
+  <% Object.entries(statuses).forEach(([value, label]) => { %>
+    <a href="/admin/leads?status=<%= value %>"<%- status === value ? ' aria-current="true"' : '' %>><%= label %></a>
+  <% }) %>
+</nav>
+<section class="admin-card">
+  <% if (!leads.length) { %>
+    <p class="admin-empty">Nenhum lead<%= status ? ' com este status' : '' %>.</p>
+  <% } else { %>
+    <%- include('table', { leads }) %>
+    <% if (pages > 1) { const q = status ? '&status=' + status : ''; %>
+      <nav class="admin-pager" aria-label="Paginação">
+        <% if (page > 1) { %><a class="btn btn--outline btn--small" href="/admin/leads?pagina=<%= page - 1 %><%= q %>">← Anteriores</a><% } %>
+        <span>Página <%= page %> de <%= pages %></span>
+        <% if (page < pages) { %><a class="btn btn--outline btn--small" href="/admin/leads?pagina=<%= page + 1 %><%= q %>">Próximos →</a><% } %>
+      </nav>
+    <% } %>
+  <% } %>
+</section>
