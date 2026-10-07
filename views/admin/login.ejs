@@ -1,23 +1,41 @@
-<div class="admin-login">
-  <%- include('partials/typing-banner') %>
-  <form class="form-card admin-login__form" action="/admin/login" method="post" novalidate>
-    <h1 class="admin-login__title">Entrar no painel</h1>
-    <% if (errors.form) { %>
-      <div class="alert alert--error" role="alert"><span><%= errors.form %></span></div>
-    <% } %>
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    <div class="field<%= errors.username ? ' has-error' : '' %>">
-      <label for="login-username">Usuário</label>
-      <input class="input" id="login-username" name="username" type="text" autocomplete="username" required autofocus
-             value="<%= values.username || '' %>">
-      <p class="field__error"><%= errors.username || '' %></p>
+<div class="container container-tight py-4">
+  <div class="mb-4">
+    <%- include('partials/typing-banner') %>
+  </div>
+  <div class="card card-md">
+    <div class="card-body">
+      <h1 class="h2 text-center mb-4">Entrar no painel</h1>
+      <% if (errors.form) { %>
+        <div class="alert alert-danger" role="alert">
+          <div class="d-flex align-items-center gap-2"><i class="ti ti-alert-circle icon alert-icon" aria-hidden="true"></i><div><%= errors.form %></div></div>
+        </div>
+      <% } %>
+      <form action="/admin/login" method="post" novalidate autocomplete="on">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="mb-3">
+          <label class="form-label" for="login-username">Usuário</label>
+          <div class="input-icon">
+            <span class="input-icon-addon"><i class="ti ti-user icon" aria-hidden="true"></i></span>
+            <input class="form-control<%= errors.username ? ' is-invalid' : '' %>" id="login-username" name="username" type="text"
+                   autocomplete="username" required autofocus value="<%= values.username || '' %>">
+          </div>
+          <% if (errors.username) { %><div class="invalid-feedback d-block"><%= errors.username %></div><% } %>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="login-password">Senha</label>
+          <div class="input-icon">
+            <span class="input-icon-addon"><i class="ti ti-lock icon" aria-hidden="true"></i></span>
+            <input class="form-control<%= errors.password ? ' is-invalid' : '' %>" id="login-password" name="password" type="password"
+                   autocomplete="current-password" required>
+          </div>
+          <% if (errors.password) { %><div class="invalid-feedback d-block"><%= errors.password %></div><% } %>
+        </div>
+        <div class="form-footer">
+          <button class="btn btn-primary w-100" type="submit"><i class="ti ti-login-2 icon" aria-hidden="true"></i> Entrar</button>
+        </div>
+      </form>
     </div>
-    <div class="field<%= errors.password ? ' has-error' : '' %>">
-      <label for="login-password">Senha</label>
-      <input class="input" id="login-password" name="password" type="password" autocomplete="current-password" required>
-      <p class="field__error"><%= errors.password || '' %></p>
-    </div>
-    <button class="btn btn--primary admin-login__submit" type="submit">Entrar</button>
-  </form>
+  </div>
+  <p class="text-center text-secondary mt-3 small"><a href="/" class="text-reset">← Voltar ao site</a></p>
 </div>
 <script src="<%= asset('js/typing-banner.js') %>" defer></script>

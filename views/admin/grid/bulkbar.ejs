@@ -1,0 +1,19 @@
+<%#
+  Ações em massa. Os checkboxes da tabela apontam para #bulk-form (atributo form=).
+  params: grid, buttons [{ action, label, icon, cls, confirm }], slot (HTML extra antes dos botões, opcional)
+%>
+<form id="bulk-form" action="<%= grid.base %>/lote" method="post" hidden>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+</form>
+<div class="card-header admin-bulkbar bg-primary-lt flex-wrap align-items-center gap-2" data-bulkbar>
+  <strong><span data-bulk-count>0</span> selecionado(s)</strong>
+  <div class="btn-list ms-auto align-items-center">
+    <% if (locals.slot) { %><%- slot %><% } %>
+    <% buttons.forEach((button) => { %>
+      <button type="submit" form="bulk-form" name="action" value="<%= button.action %>" class="btn btn-sm <%= button.cls || '' %>"
+              <% if (button.confirm) { %>data-confirm="<%= button.confirm %>"<% } %>>
+        <i class="ti ti-<%= button.icon %> icon" aria-hidden="true"></i> <%= button.label %>
+      </button>
+    <% }) %>
+  </div>
+</div>

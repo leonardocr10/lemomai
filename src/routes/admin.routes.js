@@ -26,6 +26,7 @@ router.use(requireAdmin);
 router.get('/banners', resources.banners.list);
 router.get('/banners/novo', resources.banners.newForm);
 router.post('/banners', bannerUpload, verifyCsrfAfterUpload, resources.banners.create);
+router.post('/banners/lote', urlencoded, verifyCsrf, resources.banners.bulk);
 router.get('/banners/:id', resources.banners.editForm);
 router.post('/banners/:id', bannerUpload, verifyCsrfAfterUpload, resources.banners.update);
 router.post('/banners/:id/excluir', urlencoded, verifyCsrf, resources.banners.remove);
@@ -40,6 +41,7 @@ for (const [path, controller] of RESOURCES) {
   router.get(`/${path}`, controller.list);
   router.get(`/${path}/novo`, controller.newForm);
   router.post(`/${path}`, controller.create);
+  router.post(`/${path}/lote`, controller.bulk);
   router.get(`/${path}/:id`, controller.editForm);
   router.post(`/${path}/:id`, controller.update);
   router.post(`/${path}/:id/excluir`, controller.remove);

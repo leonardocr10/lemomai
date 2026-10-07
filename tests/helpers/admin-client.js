@@ -24,8 +24,13 @@ function createClient(base) {
     return { status: response.status, location: response.headers.get('location'), body };
   }
 
-  async function post(path, fields = {}, { withCsrf = true } = {}) {
-    const form = new URLSearchParams({ ...(withCsrf ? { _csrf: csrf } : {}), ...fields });
+  async function post(path, fields = {}, options = {}) {
+    return postRaw(path, new URLSearchParams(fields), options);
+  }
+
+  /** POST urlencoded a partir de URLSearchParams (permite campos repetidos). */
+  async function postRaw(path, form, { withCsrf = true } = {}) {
+    if (withCsrf) form.set('_csrf', csrf);
     const response = await fetch(base + path, {
       method: 'POST',
       headers: { cookie: cookie(), 'content-type': 'application/x-www-form-urlencoded' },
@@ -52,7 +57,7 @@ function createClient(base) {
     return post('/admin/login', { username, password });
   }
 
-  return { get, post, postMultipart, login, cookies: jar };
+  return { get, post, postRaw, postMultipart, login, cookies: jar };
 }
 
 module.exports = { createClient };

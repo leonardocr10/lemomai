@@ -9,26 +9,67 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@600;700&family=Courier+Prime:wght@700&display=swap">
-  <link rel="stylesheet" href="<%= asset('css/main.css') %>">
+  <link rel="stylesheet" href="<%= vendorAsset('tabler/css/tabler.min.css') %>">
+  <link rel="stylesheet" href="<%= vendorAsset('tabler-icons/tabler-icons.min.css') %>">
+  <% if (locals.useCropper) { %><link rel="stylesheet" href="<%= vendorAsset('cropper/cropper.min.css') %>"><% } %>
   <link rel="stylesheet" href="<%= asset('css/admin.css') %>">
+  <script src="<%= vendorAsset('tabler/js/tabler.min.js') %>" defer></script>
+  <% if (locals.useCropper) { %><script src="<%= vendorAsset('cropper/cropper.min.js') %>" defer></script><% } %>
   <script src="<%= asset('js/admin.js') %>" defer></script>
 </head>
-<body class="admin<%= locals.layout === 'bare' ? ' admin--bare' : '' %>">
-  <% if (locals.layout === 'bare') { %>
-    <main class="admin-auth"><%- body %></main>
-  <% } else { %>
-    <div class="admin-shell">
-      <%- include('partials/nav') %>
-      <main class="admin-main" id="conteudo">
-        <header class="admin-main__header">
-          <h1><%= title %></h1>
-        </header>
-        <% if (notice) { %>
-          <div class="alert alert--success" role="status"><span><%= notice %></span></div>
-        <% } %>
-        <%- body %>
-      </main>
-    </div>
-  <% } %>
+<% if (locals.layout === 'bare') { %>
+<body class="admin admin--bare d-flex flex-column">
+  <div class="page page-center">
+    <%- body %>
+  </div>
 </body>
+<% } else { %>
+<body class="admin">
+  <div class="page">
+    <%- include('partials/nav') %>
+    <div class="page-wrapper">
+      <div class="page-header d-print-none">
+        <div class="container-xl">
+          <div class="row g-2 align-items-center">
+            <div class="col">
+              <% if (locals.pretitle) { %><div class="page-pretitle"><%= pretitle %></div><% } %>
+              <h1 class="page-title"><%= title %></h1>
+            </div>
+            <% if (locals.actions && actions.length) { %>
+              <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                  <% actions.forEach((action) => { %>
+                    <a href="<%= action.href %>" class="btn <%= action.variant || 'btn-primary' %>"<%- action.external ? ' target="_blank" rel="noopener"' : '' %>>
+                      <% if (action.icon) { %><i class="ti ti-<%= action.icon %> icon" aria-hidden="true"></i><% } %>
+                      <%= action.label %>
+                    </a>
+                  <% }) %>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="container-xl">
+          <% if (notice) { %>
+            <div class="alert alert-success alert-dismissible" role="status" data-autohide>
+              <div class="d-flex align-items-center gap-2">
+                <i class="ti ti-circle-check icon alert-icon" aria-hidden="true"></i>
+                <div><%= notice %></div>
+              </div>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+          <% } %>
+          <%- body %>
+        </div>
+      </div>
+      <footer class="footer footer-transparent d-print-none">
+        <div class="container-xl text-secondary small">Painel Lenom.AI</div>
+      </footer>
+    </div>
+  </div>
+  <%- include('partials/confirm-modal') %>
+</body>
+<% } %>
 </html>

@@ -1,17 +1,51 @@
-<section class="admin-stats">
+<div class="row row-deck row-cards mb-3">
   <% stats.forEach((stat) => { %>
-    <a class="admin-stat" href="<%= stat.href %>">
-      <span class="admin-stat__value"><%= stat.value %></span>
-      <span class="admin-stat__label"><%= stat.label %></span>
-    </a>
+    <div class="col-sm-6 col-lg">
+      <a class="card card-sm card-link card-link-pop" href="<%= stat.href %>">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <span class="avatar <%= stat.color %>"><i class="ti ti-<%= stat.icon %> icon" aria-hidden="true"></i></span>
+            </div>
+            <div class="col">
+              <div class="h2 mb-0"><%= stat.value %></div>
+              <div class="text-secondary"><%= stat.label %></div>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
   <% }) %>
-</section>
+</div>
 
-<section class="admin-card">
-  <h2>Últimos leads</h2>
-  <% if (!latestLeads.length) { %>
-    <p class="admin-empty">Nenhum lead recebido ainda.</p>
-  <% } else { %>
-    <%- include('leads/table', { leads: latestLeads }) %>
-  <% } %>
-</section>
+<div class="row row-cards">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">Últimos leads</h2>
+        <div class="card-actions"><a href="/admin/leads" class="btn btn-sm">Ver todos</a></div>
+      </div>
+      <% if (!latestLeads.length) { %>
+        <div class="empty">
+          <div class="empty-icon"><i class="ti ti-inbox icon" aria-hidden="true"></i></div>
+          <p class="empty-title">Nenhum lead recebido ainda</p>
+          <p class="empty-subtitle text-secondary">Os contatos e orçamentos enviados pelo site aparecem aqui.</p>
+        </div>
+      <% } else { %>
+        <%- include('leads/table', { leads: latestLeads }) %>
+      <% } %>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header"><h2 class="card-title">Atalhos</h2></div>
+      <div class="list-group list-group-flush">
+        <% shortcuts.forEach((shortcut) => { %>
+          <a href="<%= shortcut.href %>" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+            <i class="ti ti-<%= shortcut.icon %> icon text-primary" aria-hidden="true"></i> <%= shortcut.label %>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+</div>

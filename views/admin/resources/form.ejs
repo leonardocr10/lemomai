@@ -1,15 +1,41 @@
-<form class="admin-card admin-form" action="<%= action %>" method="post" novalidate<%- def.multipart ? ' enctype="multipart/form-data"' : '' %>>
-  <% if (Object.keys(errors).length) { %>
-    <div class="alert alert--error" role="alert"><span>Verifique os campos destacados.</span></div>
-  <% } %>
+<form action="<%= action %>" method="post" novalidate<%- def.multipart ? ' enctype="multipart/form-data"' : '' %>>
   <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-  <div class="form-grid">
-    <% def.fields.forEach((field) => { %>
-      <%- include('../partials/field', { ...field, value: values[field.name], errors }) %>
-    <% }) %>
-  </div>
-  <div class="admin-form__actions">
-    <button class="btn btn--primary" type="submit">Salvar</button>
-    <a class="btn btn--outline" href="/admin/<%= def.path %>">Cancelar</a>
+  <% if (Object.keys(errors).length) { %>
+    <div class="alert alert-danger" role="alert">
+      <div class="d-flex align-items-center gap-2"><i class="ti ti-alert-circle icon alert-icon" aria-hidden="true"></i><div>Verifique os campos destacados.</div></div>
+    </div>
+  <% } %>
+  <div class="row row-cards">
+    <div class="col-lg-8">
+      <% layout.sections.forEach((section) => { %>
+        <div class="card mb-3">
+          <div class="card-header"><h2 class="card-title"><%= section.title %></h2></div>
+          <div class="card-body">
+            <div class="row g-3">
+              <% section.fields.forEach((field) => { %>
+                <%- include('../partials/field', { ...field, value: values[field.name], errors }) %>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+    <div class="col-lg-4">
+      <div class="card admin-form-aside">
+        <div class="card-header"><h2 class="card-title">Publicação</h2></div>
+        <div class="card-body">
+          <div class="row g-3">
+            <% layout.sidebar.forEach((field) => { %>
+              <%- include('../partials/field', { ...field, full: true, value: values[field.name], errors }) %>
+            <% }) %>
+          </div>
+        </div>
+        <div class="card-footer d-flex gap-2">
+          <button class="btn btn-primary flex-fill" type="submit"><i class="ti ti-device-floppy icon" aria-hidden="true"></i> Salvar</button>
+          <a class="btn" href="/admin/<%= def.path %>">Cancelar</a>
+        </div>
+      </div>
+    </div>
   </div>
 </form>
+<% if (def.multipart) { %><%- include('../partials/cropper-modal') %><% } %>

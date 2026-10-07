@@ -1,0 +1,23 @@
+<%#
+  Barra da lista: busca (GET) + itens por página. Mantém ordenação e filtros extras.
+  params: grid, extra ({ nome: valor } enviados junto, ex.: status)
+%>
+<% const extra = locals.extra || {}; %>
+<form class="d-flex flex-wrap align-items-center gap-2 w-100" method="get" action="<%= grid.base %>" role="search">
+  <% Object.entries(extra).forEach(([name, value]) => { if (value) { %><input type="hidden" name="<%= name %>" value="<%= value %>"><% } }) %>
+  <% if (grid.state.sort) { %><input type="hidden" name="sort" value="<%= grid.state.sort %>"><% } %>
+  <input type="hidden" name="dir" value="<%= grid.state.dir %>">
+  <div class="input-icon flex-grow-1 admin-grid-search">
+    <span class="input-icon-addon"><i class="ti ti-search icon" aria-hidden="true"></i></span>
+    <input type="search" class="form-control" name="q" value="<%= grid.state.q %>" maxlength="100"
+           placeholder="<%= grid.searchPlaceholder || 'Buscar…' %>" aria-label="Buscar">
+  </div>
+  <button type="submit" class="btn">Buscar</button>
+  <% if (grid.state.q) { %><a class="btn btn-ghost-secondary" href="<%= grid.url({ q: '', page: 1 }) %>">Limpar</a><% } %>
+  <div class="ms-auto d-flex align-items-center gap-2 text-secondary">
+    <label for="grid-per" class="text-nowrap">Por página</label>
+    <select id="grid-per" name="per" class="form-select form-select-sm w-auto" data-autosubmit>
+      <% grid.perPage.forEach((n) => { %><option value="<%= n %>"<%= n === grid.state.per ? ' selected' : '' %>><%= n %></option><% }) %>
+    </select>
+  </div>
+</form>

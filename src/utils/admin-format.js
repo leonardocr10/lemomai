@@ -6,6 +6,14 @@ const dateTime = (value) =>
 
 const leadStatus = (status) => LEAD_STATUS[status] || status;
 
+const LEAD_BADGE = {
+  new: 'bg-green-lt',
+  contacted: 'bg-azure-lt',
+  closed: 'bg-teal-lt',
+  discarded: 'bg-secondary-lt',
+};
+const leadBadge = (status) => LEAD_BADGE[status] || 'bg-secondary-lt';
+
 const money = (value) =>
   (value === null || value === undefined
     ? 'Sob consulta'
@@ -17,4 +25,4 @@ const priceInput = (value) =>
     ? ''
     : new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value));
 
-module.exports = { LEAD_STATUS, dateTime, leadStatus, money, priceInput };
+module.exports = { LEAD_STATUS, dateTime, leadStatus, leadBadge, money, priceInput };

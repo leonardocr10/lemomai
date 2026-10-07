@@ -1,0 +1,36 @@
+<%#
+  Upload de imagem: arrastar e soltar ou clicar, prévia, dimensões, aviso de proporção,
+  recorte (Cropper) e remover. Comportamento em public/js/admin.js; sem JS vira um input comum.
+  params: id, name, val (URL atual), error, aria, ratio, crop, removeName
+%>
+<div class="admin-dropzone<%= error ? ' is-invalid' : '' %>" data-dropzone data-ratio="<%= locals.ratio || '' %>" data-crop="<%= locals.crop || '' %>">
+  <input class="form-control" id="<%= id %>" name="<%= name %>" type="file"
+         accept="image/jpeg,image/png,image/webp" data-dropzone-input<%- aria %>>
+  <label class="admin-dropzone__empty" for="<%= id %>" data-dropzone-empty hidden>
+    <i class="ti ti-cloud-upload icon" aria-hidden="true"></i>
+    <strong>Arraste a imagem aqui ou clique para escolher</strong>
+    <span class="text-secondary small">JPG, PNG ou WebP, até 5 MB</span>
+  </label>
+  <div data-dropzone-filled<%= val ? '' : ' hidden' %>>
+    <img class="admin-dropzone__preview" src="<%= val %>" alt="Prévia da imagem" data-dropzone-preview>
+    <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+      <span class="text-secondary small" data-dropzone-meta><%= val ? 'Imagem atual' : '' %></span>
+      <div class="btn-list ms-auto" data-dropzone-actions hidden>
+        <% if (locals.crop) { %>
+          <button type="button" class="btn btn-sm" data-dropzone-crop><i class="ti ti-crop icon" aria-hidden="true"></i> Recortar</button>
+        <% } %>
+        <label class="btn btn-sm mb-0" for="<%= id %>"><i class="ti ti-replace icon" aria-hidden="true"></i> Trocar</label>
+        <% if (locals.removeName) { %>
+          <button type="button" class="btn btn-sm btn-ghost-danger" data-dropzone-remove><i class="ti ti-trash icon" aria-hidden="true"></i> Remover</button>
+        <% } %>
+      </div>
+    </div>
+    <div class="alert alert-warning mt-2 mb-0 py-2" role="status" data-dropzone-warning hidden></div>
+  </div>
+  <% if (locals.removeName && val) { %>
+    <label class="form-check m-0" data-dropzone-remove-field>
+      <input class="form-check-input" type="checkbox" name="<%= removeName %>" data-dropzone-remove-flag>
+      <span class="form-check-label">Remover imagem atual</span>
+    </label>
+  <% } %>
+</div>

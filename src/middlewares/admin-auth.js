@@ -7,6 +7,10 @@ const config = require('../config');
 const auth = require('../services/auth.service');
 const { asset } = require('../utils/assets');
 const adminFmt = require('../utils/admin-format');
+const { version: tablerVersion } = require('@tabler/core/package.json');
+
+/** /vendor/... com versão do pacote na URL (cache invalidado ao atualizar o Tabler). */
+const vendorAsset = (file) => `/vendor/${file}?v=${tablerVersion}`;
 
 const COOKIE = 'lenom_admin';
 
@@ -46,6 +50,7 @@ function adminRender(req, res, next) {
   res.set('X-Robots-Tag', 'noindex, nofollow');
   res.locals.asset = asset;
   res.locals.adminFmt = adminFmt;
+  res.locals.vendorAsset = vendorAsset;
   res.renderAdmin = (view, locals = {}) => {
     const data = { section: null, notice: null, ...locals };
     res.render(path.join('admin', view), data, (err, body) => {

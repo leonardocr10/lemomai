@@ -238,3 +238,70 @@ test('banners: desativar tira o banner da home', async () => {
   await client.postMultipart('/admin/banners/1', { ...fields, active: 'on' });
   assert.match(await (await fetch(`${base}/`)).text(), /banner-1\.webp/);
 });
+
+test('layout do painel usa o Tabler servido localmente, sem o CSS do site', async () => {
+  const client = await loggedClient();
+  const page = await client.get('/admin');
+  assert.match(page.body, /href="\/vendor\/tabler\/css\/tabler\.min\.css\?v=/);
+  assert.doesNotMatch(page.body, /css\/main\.css/);
+  assert.equal((await fetch(`${base}/vendor/tabler/css/tabler.min.css`)).status, 200);
+  assert.equal((await fetch(`${base}/vendor/cropper/cropper.min.js`)).status, 200);
+  const login = await createClient(base).get('/admin/login');
+  assert.match(login.body, /tabler\.min\.css/);
+});
+
+test('grid: busca, ordenação e paginação pela URL', async () => {
+  const client = await loggedClient();
+  const search = await client.get('/admin/planos?q=landing');
+  assert.match(search.body, />Landing Page</);
+  assert.doesNotMatch(search.body, />Essencial</);
+
+  const prices = (html) => [...html.matchAll(/R\$\s([\d.]+),\d\d/g)].map((m) => Number(m[1].replace(/\./g, '')));
+  const sorted = prices((await client.get('/admin/planos?sort=price&dir=desc')).body);
+  assert.ok(sorted.length > 3);
+  assert.deepEqual(sorted, [...sorted].sort((a, b) => b - a));
+  assert.match((await client.get('/admin/planos?sort=price&dir=desc')).body, /aria-sort="descending"/);
+
+  const first = await client.get('/admin/planos?per=10&sort=name');
+  assert.match(first.body, /Mostrando <strong>1–\d+<\/strong> de <strong>\d+<\/strong>/);
+  // Página além da última volta para a última página existente.
+  const beyond = await client.get('/admin/planos?per=10&page=99&sort=name');
+  assert.equal(beyond.status, 302);
+  assert.equal(beyond.location, '/admin/planos?sort=name&per=10');
+
+  // Coluna de ordenação inválida é ignorada (volta para a ordem padrão).
+  assert.equal((await client.get('/admin/planos?sort=password_hash')).status, 200);
+});
+
+test('ações em massa: desativar, ativar e excluir; sem CSRF é bloqueado', async () => {
+  const client = await loggedClient();
+  await client.get('/admin/faq/novo');
+  for (const n of [1, 2]) {
+    await client.post('/admin/faq', { question: `Pergunta em massa ${n}?`, answer: 'Resposta em massa.', displayOrder: '90', active: 'on' });
+  }
+  const list = await client.get('/admin/faq?q=em+massa');
+  const ids = [...list.body.matchAll(/name="ids" value="(\d+)"/g)].map((m) => m[1]);
+  assert.equal(ids.length, 2);
+
+  const deactivated = await bulk(client, '/admin/faq/lote', 'deactivate', ids);
+  assert.equal(deactivated.status, 302);
+  assert.match(deactivated.location, /lote=2&acao=deactivate/);
+  assert.doesNotMatch(await (await fetch(`${base}/`)).text(), /Pergunta em massa 1/);
+
+  await bulk(client, '/admin/faq/lote', 'activate', ids);
+  assert.match(await (await fetch(`${base}/`)).text(), /Pergunta em massa 1/);
+
+  const blocked = await bulk(client, '/admin/faq/lote', 'delete', ids, { withCsrf: false });
+  assert.equal(blocked.status, 403);
+
+  const deleted = await bulk(client, '/admin/faq/lote', 'delete', [...ids, 'abc', '-3']);
+  assert.match(deleted.location, /lote=2&acao=delete/);
+  assert.doesNotMatch((await client.get('/admin/faq?q=em+massa')).body, /Pergunta em massa/);
+});
+
+/** POST de ação em massa com ids repetidos (ids=1&ids=2), como o formulário envia. */
+function bulk(client, path, action, ids, { withCsrf = true } = {}) {
+  const form = new URLSearchParams({ action });
+  for (const id of ids) form.append('ids', id);
+  return client.postRaw(path, form, { withCsrf });
+}
