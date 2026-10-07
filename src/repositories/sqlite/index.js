@@ -137,6 +137,7 @@ module.exports = {
   plans: table(TABLES.plans),
   faq: table(TABLES.faq),
   testimonials: table(TABLES.testimonials),
+  banners: table(TABLES.banners),
   company,
   leads,
   admin,

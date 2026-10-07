@@ -12,6 +12,7 @@ const testimonialsData = require('../../data/mock/testimonials.mock');
 const faqData = require('../../data/mock/faq.mock');
 const companyData = require('../../data/mock/company.mock');
 const sectionsData = require('../../data/mock/sections.mock');
+const bannersData = require('../../data/mock/banners.mock');
 
 const byOrder = (a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0);
 const clone = (value) => structuredClone(value);
@@ -74,6 +75,7 @@ module.exports = {
   portfolio: collection(portfolioData),
   testimonials: collection(testimonialsData),
   faq: collection(faqData),
+  banners: collection(bannersData),
   company: {
     async get() {
       return clone(companyData);

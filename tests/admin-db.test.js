@@ -54,3 +54,12 @@ test('empresa e leads', async () => {
   assert.equal(await repositories.leads.count({ status: 'contacted' }), 1);
   assert.equal((await repositories.leads.findAll({ status: 'contacted' })).length, 1);
 });
+
+test('banco novo traz os 4 banners iniciais', async () => {
+  const banners = await repositories.banners.findAll();
+  assert.equal(banners.length, 4);
+  for (const banner of banners) {
+    assert.match(banner.image, /^\/images\/banners\//);
+    assert.ok(banner.alt.length > 10);
+  }
+});

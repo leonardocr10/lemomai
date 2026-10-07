@@ -39,6 +39,7 @@ function seed(db, { withLeads = true } = {}) {
     seedCollection(db, TABLES.plans, require('../data/mock/plans.mock'));
     seedCollection(db, TABLES.faq, require('../data/mock/faq.mock'));
     seedCollection(db, TABLES.testimonials, require('../data/mock/testimonials.mock'));
+    seedCollection(db, TABLES.banners, require('../data/mock/banners.mock'));
     if (isEmpty(db, 'company_settings')) {
       const { id, ...company } = require('../data/mock/company.mock');
       db.prepare('INSERT INTO company_settings (id, data) VALUES (1, ?)').run(JSON.stringify(company));

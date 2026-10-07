@@ -42,6 +42,8 @@ module.exports = {
   portfolio: collection('PortfolioProject'),
   testimonials: collection('Testimonial'),
   faq: collection('Faq'),
+  // Banners existem só no banco interno (sqlite); no MySQL a home usa o hero de texto.
+  banners: { findAll: async () => [] },
 
   company: {
     async get() {
