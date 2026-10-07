@@ -39,12 +39,27 @@ precisa_root() {
 }
 
 # ---------------------------------------------------------------------------
-# Porta para onde o Nginx repassa (proxy_pass http://127.0.0.1:PORTA)
+# Portas para onde o Nginx repassa. Lê a configuração completa (nginx -T),
+# inclusive "proxy_pass http://nome" + "upstream nome { server host:PORTA; }".
+# Uma porta por linha, a mais usada primeiro.
 # ---------------------------------------------------------------------------
+portas_no_nginx() {
+  local conf
+  conf="$(nginx -T 2>/dev/null || cat /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*.conf 2>/dev/null || true)"
+  {
+    grep -oE 'proxy_pass[[:space:]]+https?://[^;/[:space:]]+' <<<"$conf" | grep -oE ':[0-9]+$' | tr -d ':' || true
+    awk '/^[[:space:]]*upstream[[:space:]]/ {u=1} u && /server[[:space:]]+[^;]*:[0-9]+/ {print} u && /\}/ {u=0}' <<<"$conf" |
+      grep -oE ':[0-9]+' | tr -d ':' || true
+  } | sort | uniq -c | sort -rn | awk '{print $2}'
+}
+
 porta_no_nginx() {
-  grep -rhoE 'proxy_pass\s+https?://(127\.0\.0\.1|localhost|0\.0\.0\.0|\[::1\]):[0-9]+' \
-    /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null \
-    | grep -oE '[0-9]+$' | sort | uniq -c | sort -rn | awk 'NR==1 {print $2}'
+  portas_no_nginx | head -1
+}
+
+# Processos que são servidor web/proxy, nunca a aplicação.
+eh_servidor_web() {
+  [[ "$1" =~ ^(nginx|apache2|httpd|caddy|haproxy|traefik|lighttpd)$ ]]
 }
 
 # PID do processo que escuta na porta (vazio se nenhum)
