@@ -343,12 +343,15 @@
 }
 
 /* ---------- Carrossel de banners (home) ----------
-   Banner na largura toda da tela. As imagens são 3:1 (2000×667) com margem
-   livre de ~11% em cima e ~9% embaixo; em telas largas a altura pode baixar
-   até a proporção 3.75:1, recortando só essa margem (o texto nunca é cortado). */
+   Faixa escura da marca na largura toda; o banner fica na largura do conteúdo
+   do site (alinhado ao menu e às seções), sempre inteiro em 3:1 — sem recorte
+   nem zoom. Em 1240px de largura: ~413px de altura. */
 .banner-carousel {
   position: relative;
   overflow: hidden;
+  padding-block: var(--space-4);
+  background: radial-gradient(900px 300px at 50% 50%, rgba(93, 187, 70, 0.14), transparent 70%),
+    linear-gradient(180deg, var(--navy-deep) 0%, #06131f 100%);
 }
 
 .banner-carousel__track {
@@ -374,20 +377,24 @@
 
 .banner-slide__link {
   display: block;
+  width: min(100% - 2 * var(--gutter), var(--container));
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
 }
 
 .banner-slide__link img {
   display: block;
   width: 100%;
-  height: clamp(100vw / 3.75, 45vh, 100vw / 3);
-  object-fit: cover;
-  object-position: 50% 55%;
+  height: auto;
+  aspect-ratio: 3 / 1;
 }
 
 /* Imagem própria de celular: mantém a proporção dela. */
 @media (max-width: 767px) {
   .banner-slide__link img {
-    height: auto;
+    aspect-ratio: auto;
   }
 }
 
@@ -444,7 +451,7 @@
 .banner-carousel__controls {
   position: absolute;
   left: 50%;
-  bottom: var(--space-3);
+  bottom: calc(var(--space-4) + var(--space-2));
   z-index: 2;
   display: flex;
   align-items: center;
