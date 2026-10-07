@@ -3,6 +3,7 @@
  * o restante do código consome apenas este objeto.
  */
 require('dotenv').config({ quiet: true });
+const path = require('node:path');
 
 const bool = (value, fallback = false) =>
   value === undefined || value === '' ? fallback : String(value).toLowerCase() === 'true';
@@ -10,6 +11,16 @@ const int = (value, fallback) => {
   const parsed = Number.parseInt(value, 10);
   return Number.isNaN(parsed) ? fallback : parsed;
 };
+
+const DRIVERS = ['sqlite', 'mock', 'mysql'];
+/** DATA_DRIVER tem prioridade; USE_MOCK_DATA continua aceito por compatibilidade. */
+function dataDriver() {
+  const driver = String(process.env.DATA_DRIVER || '').toLowerCase();
+  if (DRIVERS.includes(driver)) return driver;
+  if (process.env.USE_MOCK_DATA === 'true') return 'mock';
+  if (process.env.USE_MOCK_DATA === 'false') return 'mysql';
+  return 'sqlite';
+}
 
 const env = process.env.NODE_ENV || 'development';
 const appUrl = (process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`).replace(/\/+$/, '');
@@ -21,7 +32,12 @@ const config = {
   appUrl,
   cookieSecret: process.env.COOKIE_SECRET || 'dev-only-secret-change-me',
   trustProxy: bool(process.env.TRUST_PROXY),
-  useMockData: bool(process.env.USE_MOCK_DATA, true),
+  dataDriver: dataDriver(),
+  dataFile: process.env.DATA_FILE || path.resolve(__dirname, '../../storage/lenom.db'),
+  admin: {
+    user: process.env.ADMIN_USER || 'admin',
+    password: process.env.ADMIN_PASSWORD || '',
+  },
 
   db: {
     host: process.env.DB_HOST || '127.0.0.1',

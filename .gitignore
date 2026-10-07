@@ -13,3 +13,4 @@ Thumbs.db
 .claude/
 # Originais exportados do ChatGPT (copias versionadas em assets-src/)
 Imagem do ChatGPT*.png
+storage/lenom.db*
