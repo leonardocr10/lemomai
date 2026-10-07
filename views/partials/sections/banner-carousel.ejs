@@ -1,23 +1,23 @@
 <%#
-  Carrossel do topo da home: 1º slide = hero de texto (com o h1 da página);
-  depois, os banners gerenciados em /admin/banners. O texto dos banners está
+  Carrossel do topo da home: banners gerenciados em /admin/banners, todos em 3:1
+  ocupando a largura (limitado pela altura da tela). O texto dos banners está
   na imagem, por isso o alt repete esse texto. Banners sem imagem de celular
   não aparecem no celular.
+  params: banners, desktopOnly (nenhum banner tem imagem de celular)
 %>
-<% const total = banners.length + 1; %>
-<section class="banner-carousel" aria-roledescription="carrossel" aria-label="Destaques" data-banner-carousel>
+<% const total = banners.length; %>
+<section class="banner-carousel<%= locals.desktopOnly ? ' banner-carousel--desktop-only' : '' %>"
+         aria-roledescription="carrossel" aria-label="Destaques" data-banner-carousel>
   <ul class="banner-carousel__track" data-banner-track>
-    <li class="banner-slide banner-slide--hero" aria-roledescription="slide" aria-label="1 de <%= total %>" data-banner-slide>
-      <%- include('hero') %>
-    </li>
     <% banners.forEach((banner, index) => { %>
       <li class="banner-slide<%= banner.mobileImage ? '' : ' banner-slide--desktop-only' %>"
-          aria-roledescription="slide" aria-label="<%= index + 2 %> de <%= total %>" data-banner-slide>
+          aria-roledescription="slide" aria-label="<%= index + 1 %> de <%= total %>" data-banner-slide>
         <% const tag = banner.href ? 'a' : 'div'; %>
         <<%= tag %> class="banner-slide__link"<% if (banner.href) { %> href="<%= banner.href %>"<% } %>>
           <picture>
             <% if (banner.mobileImage) { %><source media="(max-width: 767px)" srcset="<%= banner.mobileImage %>"><% } %>
-            <img src="<%= banner.image %>" alt="<%= banner.alt %>" width="2000" height="667" decoding="async" loading="lazy">
+            <img src="<%= banner.image %>" alt="<%= banner.alt %>" width="2000" height="667" decoding="async"
+                 <%- index === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %>>
           </picture>
         </<%= tag %>>
       </li>

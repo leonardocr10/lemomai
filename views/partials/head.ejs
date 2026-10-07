@@ -39,6 +39,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@600;700;800&family=Courier+Prime:wght@700&display=swap">
+<% if (locals.preloadBanner) { %>
+<link rel="preload" as="image" href="<%= preloadBanner %>" media="(min-width: 768px)" fetchpriority="high">
+<% } %>
 <% if (locals.preloadHero) { %>
 <link rel="preload" as="image" type="image/avif" href="/images/hero/hero-devices-1100.avif" imagesrcset="/images/hero/hero-devices-720.avif 720w, /images/hero/hero-devices-1100.avif 1100w" imagesizes="(max-width: 1080px) 100vw, 55vw" fetchpriority="high">
 <% } %>

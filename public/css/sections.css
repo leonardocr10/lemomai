@@ -240,12 +240,14 @@
   }
 }
 
-/* ---------- Carrossel de banners (home) ---------- */
+/* ---------- Carrossel de banners (home) ----------
+   Todos os slides em 3:1 (o tamanho ideal dos banners, 2000×667), ocupando a
+   largura da tela. A largura é limitada a 210vh para o banner nunca passar de
+   ~70% da altura da tela em monitores muito largos. */
 .banner-carousel {
   position: relative;
-  max-width: 2000px;
+  width: min(100%, 2000px, 210vh);
   margin-inline: auto;
-  background: var(--surface);
 }
 
 .banner-carousel__track {
@@ -264,50 +266,37 @@
   display: none;
 }
 
-/* Slides com alturas diferentes (hero x banner 3:1): o banner fica centralizado
-   sobre um fundo claro parecido com o dos próprios banners. */
 .banner-slide {
   flex: 0 0 100%;
-  display: flex;
-  align-items: center;
   scroll-snap-align: start;
-  background: linear-gradient(180deg, #ffffff 0%, var(--surface-soft) 100%);
-}
-
-.banner-slide--hero {
-  display: block;
-  background: none;
-}
-
-.banner-slide--hero > .hero {
-  height: 100%;
 }
 
 .banner-slide__link {
   display: block;
-  width: 100%;
 }
 
 .banner-slide img {
   display: block;
   width: 100%;
   height: auto;
+  aspect-ratio: 3 / 1;
+  object-fit: cover;
 }
 
-/* Controles sobrepostos no canto superior direito: sempre na primeira dobra
-   (o hero é mais alto que a tela) e fora do texto dos slides. */
+/* Imagem própria de celular: mantém a proporção dela. */
+@media (max-width: 767px) {
+  .banner-slide img {
+    aspect-ratio: auto;
+  }
+}
+
+/* Controles numa faixa fina logo abaixo do banner: não cobrem o texto das imagens. */
 .banner-carousel__controls {
-  position: absolute;
-  top: var(--space-4);
-  right: var(--gutter);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-2);
-  padding: 6px 10px;
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(8px);
+  padding: var(--space-2) var(--gutter);
 }
 
 .banner-carousel.is-single .banner-carousel__controls {
@@ -334,8 +323,8 @@
 }
 
 .banner-carousel__button .icon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 .banner-carousel__pause {
@@ -372,9 +361,18 @@
   background: var(--primary);
 }
 
+.hero--mobile-only {
+  display: none;
+}
+
 @media (max-width: 767px) {
-  .banner-slide--desktop-only {
+  .banner-slide--desktop-only,
+  .banner-carousel--desktop-only {
     display: none;
+  }
+
+  .hero--mobile-only {
+    display: block;
   }
 }
 

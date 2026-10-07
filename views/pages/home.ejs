@@ -1,6 +1,16 @@
-<%# Com banners ativos, o topo vira um carrossel: o hero é o 1º slide e os banners vêm depois. %>
+<%#
+  Topo da home: com banners ativos, carrossel de imagens 3:1 (largura toda).
+  Banners sem imagem de celular não aparecem no celular; se nenhum tiver,
+  o celular vê o hero de texto. O h1 da página fica fora dos dois, oculto
+  visualmente, para existir em qualquer tamanho de tela.
+%>
 <% if (banners.length) { %>
-  <%- include('../partials/sections/banner-carousel') %>
+  <% const hasMobile = banners.some((banner) => banner.mobileImage); %>
+  <h1 class="visually-hidden"><%= sections.hero.titleStart %> <%= sections.hero.titleHighlight %></h1>
+  <%- include('../partials/sections/banner-carousel', { desktopOnly: !hasMobile }) %>
+  <% if (!hasMobile) { %>
+    <%- include('../partials/sections/hero', { heroMobileOnly: true }) %>
+  <% } %>
 <% } else { %>
   <%- include('../partials/sections/hero') %>
 <% } %>

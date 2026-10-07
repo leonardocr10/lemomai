@@ -102,17 +102,19 @@ test('cabeçalhos de segurança estão presentes', async () => {
   assert.equal(response.headers.get('x-powered-by'), null);
 });
 
-test('home: carrossel com o hero como 1º slide e os banners depois, com um único h1', async () => {
+test('home: carrossel só com os banners (3:1) e um único h1; hero de texto só no celular', async () => {
   const html = await (await fetch(`${base}/`)).text();
   assert.match(html, /data-banner-carousel/);
-  const heroAt = html.indexOf('banner-slide--hero');
-  const bannerAt = html.indexOf('/images/banners/banner-1.webp');
-  assert.ok(heroAt > 0 && bannerAt > heroAt, 'hero vem antes dos banners');
-  assert.match(html, /<a class="banner-slide__link" href="\/portfolio"/);
+  assert.doesNotMatch(html, /banner-slide--hero/);
+  assert.match(html, /aria-label="1 de 6"/);
+  assert.match(html, /<img src="\/images\/banners\/sites-sob-medida-escuro\.webp"/);
+  assert.match(html, /<a class="banner-slide__link" href="\/orcamento"/);
   assert.equal(html.match(/<h1[\s>]/g).length, 1);
-  assert.match(html, /<h1 class="hero__title"/);
-  assert.match(html, /aria-label="1 de 5"/);
-  assert.match(html, /rel="preload" as="image" type="image\/avif" href="\/images\/hero\//);
+  assert.match(html, /<h1 class="visually-hidden"/);
+  // Nenhum banner inicial tem imagem de celular: o hero de texto continua só no celular (com h2).
+  assert.match(html, /class="hero hero--mobile-only"/);
+  assert.match(html, /<h2 class="hero__title"/);
+  assert.match(html, /rel="preload" as="image" href="\/images\/banners\/sites-sob-medida-escuro\.webp" media="\(min-width: 768px\)"/);
 });
 
 test('logo do topo: símbolo + nome digitado, com o nome completo já no HTML (sem JS)', async () => {
