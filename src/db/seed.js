@@ -53,6 +53,28 @@ function replaceLegacyBanners(db) {
   }
 }
 
+/**
+ * Galeria: toda imagem usada por um banner precisa estar lá. Na primeira vez
+ * (ou depois de trocar os banners de exemplo) registra as que faltam.
+ */
+function syncGalleryWithBanners(db) {
+  const { imageSizeFromFile } = require('../utils/image-size');
+  const publicDir = path.resolve(__dirname, '../../public');
+  const urls = db.prepare('SELECT image AS url FROM banners UNION SELECT mobile_image FROM banners WHERE mobile_image IS NOT NULL').all()
+    .map((row) => row.url).filter(Boolean);
+  const exists = db.prepare('SELECT 1 FROM media WHERE url = ?');
+  const add = db.prepare('INSERT INTO media (url, name, width, height, size, mime) VALUES (?, ?, ?, ?, ?, ?)');
+  for (const url of urls) {
+    if (exists.get(url)) continue;
+    const file = path.join(publicDir, url);
+    const dims = imageSizeFromFile(file);
+    const size = fs.existsSync(file) ? fs.statSync(file).size : null;
+    const ext = path.extname(url).toLowerCase();
+    const mime = { '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg' }[ext] || null;
+    add.run(url, path.basename(url), dims?.width ?? null, dims?.height ?? null, size, mime);
+  }
+}
+
 function seed(db, { withLeads = true } = {}) {
   db.exec('BEGIN');
   try {
@@ -61,6 +83,7 @@ function seed(db, { withLeads = true } = {}) {
     seedCollection(db, TABLES.testimonials, require('../data/mock/testimonials.mock'));
     seedCollection(db, TABLES.banners, require('../data/mock/banners.mock'));
     replaceLegacyBanners(db);
+    syncGalleryWithBanners(db);
     if (isEmpty(db, 'company_settings')) {
       const { id, ...company } = require('../data/mock/company.mock');
       db.prepare('INSERT INTO company_settings (id, data) VALUES (1, ?)').run(JSON.stringify(company));

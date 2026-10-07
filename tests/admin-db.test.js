@@ -111,3 +111,27 @@ test('migração troca banners de exemplo antigos pelos atuais e mantém os envi
   seed(db, { withLeads: false });
   assert.equal(db.prepare('SELECT COUNT(*) AS n FROM banners').get().n, 3);
 });
+
+test('galeria começa com as imagens dos banners, com dimensões', async () => {
+  const { items, total } = await repositories.media.findPage({});
+  assert.equal(total, 3);
+  for (const item of items) {
+    assert.match(item.url, /^\/images\/banners\//);
+    assert.equal(item.width, 2000);
+    assert.equal(item.height, 667);
+  }
+  const banner = (await repositories.banners.findAll())[0];
+  assert.equal(banner.fullWidth, false);
+  assert.equal(await repositories.media.usageCount(banner.image), 1);
+  assert.equal(await repositories.media.usageCount('/uploads/banners/nao-usada.webp'), 0);
+});
+
+test('migração acrescenta full_width em banco antigo sem a coluna', () => {
+  const { DatabaseSync } = require('node:sqlite');
+  const { migrate } = require('../src/db/schema');
+  const db = new DatabaseSync(':memory:');
+  db.exec('CREATE TABLE banners (id INTEGER PRIMARY KEY, title TEXT, alt TEXT, href TEXT, image TEXT, mobile_image TEXT, active INTEGER, display_order INTEGER)');
+  migrate(db);
+  migrate(db);
+  assert.ok(db.prepare('PRAGMA table_info(banners)').all().some((c) => c.name === 'full_width'));
+});

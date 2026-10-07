@@ -1,0 +1,70 @@
+<% if (error) { %>
+  <div class="alert alert-danger" role="alert">
+    <div class="d-flex align-items-center gap-2"><i class="ti ti-alert-circle icon alert-icon" aria-hidden="true"></i><div><%= error %></div></div>
+  </div>
+<% } %>
+
+<form class="card mb-3" action="/admin/galeria" method="post" enctype="multipart/form-data" novalidate>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="card-body">
+    <label class="admin-gallery-upload" data-gallery-upload>
+      <input class="admin-gallery-upload__input" type="file" name="files" accept="image/jpeg,image/png,image/webp" multiple data-gallery-upload-input>
+      <i class="ti ti-cloud-upload icon" aria-hidden="true"></i>
+      <strong data-gallery-upload-label>Arraste imagens aqui ou clique para escolher</strong>
+      <span class="text-secondary small">Até <%= maxFiles %> por vez · JPG, PNG ou WebP · até 5 MB cada · banner ideal 2000×667 px</span>
+    </label>
+  </div>
+  <div class="card-footer d-flex justify-content-end">
+    <button class="btn btn-primary" type="submit"><i class="ti ti-upload icon" aria-hidden="true"></i> Enviar para a galeria</button>
+  </div>
+</form>
+
+<div class="card">
+  <div class="card-header">
+    <%- include('../grid/toolbar', { grid }) %>
+  </div>
+  <% if (!items.length) { %>
+    <div class="empty">
+      <div class="empty-icon"><i class="ti ti-<%= grid.state.q ? 'search-off' : 'photo-off' %> icon" aria-hidden="true"></i></div>
+      <p class="empty-title"><%= grid.state.q ? 'Nada encontrado' : 'Galeria vazia' %></p>
+      <p class="empty-subtitle text-secondary">
+        <%= grid.state.q ? `Nenhuma imagem com "${grid.state.q}" no nome.` : 'Envie imagens acima ou pelo cadastro de banners.' %>
+      </p>
+    </div>
+  <% } else { %>
+    <div class="card-body">
+      <div class="admin-gallery-grid">
+        <% items.forEach((item) => { %>
+          <figure class="admin-gallery-item">
+            <a class="admin-gallery-item__thumb" href="<%= item.url %>" target="_blank" rel="noopener" title="Abrir imagem em tamanho real">
+              <img src="<%= item.url %>" alt="" loading="lazy">
+            </a>
+            <figcaption>
+              <strong class="text-truncate d-block" title="<%= item.name %>"><%= item.name %></strong>
+              <span class="text-secondary small">
+                <%= item.width && item.height ? `${item.width}×${item.height}` : '—' %>
+                · <%= item.size ? (item.size > 1048576 ? (item.size / 1048576).toFixed(1) + ' MB' : Math.round(item.size / 1024) + ' KB') : '—' %>
+                · <%= adminFmt.dateTime(item.createdAt) %>
+              </span>
+              <div class="d-flex align-items-center gap-2 mt-2">
+                <% if (item.usage) { %>
+                  <span class="badge bg-green-lt">Em uso (<%= item.usage %>)</span>
+                <% } else { %>
+                  <span class="badge bg-secondary-lt">Sem uso</span>
+                <% } %>
+                <form class="ms-auto" action="/admin/galeria/<%= item.id %>/excluir" method="post" data-confirm="Excluir esta imagem da galeria?">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                  <button class="btn btn-sm btn-ghost-danger btn-icon" type="submit" aria-label="Excluir <%= item.name %>"
+                          <%- item.usage ? 'disabled title="Em uso por um banner"' : '' %>>
+                    <i class="ti ti-trash icon" aria-hidden="true"></i>
+                  </button>
+                </form>
+              </div>
+            </figcaption>
+          </figure>
+        <% }) %>
+      </div>
+    </div>
+    <%- include('../grid/pagination', { grid, count: items.length }) %>
+  <% } %>
+</div>

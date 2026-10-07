@@ -1,0 +1,21 @@
+<%#
+  Pré-visualização do topo da home no computador: acompanha a imagem escolhida
+  e o interruptor "Ocupar a largura toda" (public/js/admin.js).
+%>
+<div class="card mt-3 admin-preview-card">
+  <div class="card-header"><h2 class="card-title">Pré-visualização</h2></div>
+  <div class="card-body">
+    <div class="admin-banner-preview<%= values.fullWidth ? ' is-full' : '' %>" data-banner-preview aria-hidden="true">
+      <div class="admin-banner-preview__header"><span class="admin-banner-preview__logo"></span><span></span><span></span><span></span><span class="admin-banner-preview__cta"></span></div>
+      <div class="admin-banner-preview__band">
+        <img class="admin-banner-preview__backdrop" src="<%= values.image || '' %>" alt="" data-preview-backdrop>
+        <img class="admin-banner-preview__image" src="<%= values.image || '' %>" alt="" data-preview-image>
+      </div>
+      <div class="admin-banner-preview__strip"><span></span><span></span><span></span><span></span></div>
+      <div class="admin-banner-preview__content"><span></span><span></span></div>
+    </div>
+    <p class="text-secondary small mt-2 mb-0" data-preview-caption>
+      <%= values.fullWidth ? 'Largura toda: de ponta a ponta da tela.' : 'Largura do conteúdo, com as laterais na cor do banner.' %>
+    </p>
+  </div>
+</div>

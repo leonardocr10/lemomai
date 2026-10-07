@@ -8,7 +8,7 @@ const { TABLES } = require('../../db/schema');
 const { encodeRow, decodeRow, toSnake } = require('../../db/rows');
 const mock = require('../mock');
 
-const ORDER = 'ORDER BY display_order ASC, id ASC';
+const DEFAULT_ORDER = 'ORDER BY display_order ASC, id ASC';
 
 /** Busca "contém" com LIKE: %, _ e ! digitados são tratados como texto (escape = !). */
 const likeTerm = (q) => `%${String(q).replace(/[!%_]/g, (char) => `!${char}`)}%`;
@@ -19,6 +19,7 @@ const searchClause = (columns, q) => ({
 
 function table(def) {
   const decode = (row) => decodeRow(def, row);
+  const ORDER = def.order || DEFAULT_ORDER;
   const findById = async (id) => decode(getDb().prepare(`SELECT * FROM ${def.table} WHERE id = ?`).get(Number(id)));
   return {
     async findAll(filters = {}) {
@@ -179,6 +180,16 @@ module.exports = {
   faq: table(TABLES.faq),
   testimonials: table(TABLES.testimonials),
   banners: table(TABLES.banners),
+  media: {
+    ...table(TABLES.media),
+    async findByUrl(url) {
+      return decodeRow(TABLES.media, getDb().prepare('SELECT * FROM media WHERE url = ?').get(String(url)));
+    },
+    /** Quantos banners usam a imagem (como principal ou de celular). */
+    async usageCount(url) {
+      return getDb().prepare('SELECT COUNT(*) AS n FROM banners WHERE image = ? OR mobile_image = ?').get(String(url), String(url)).n;
+    },
+  },
   company,
   leads,
   admin,

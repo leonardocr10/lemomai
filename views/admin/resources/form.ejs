@@ -35,7 +35,8 @@
           <a class="btn" href="/admin/<%= def.path %>">Cancelar</a>
         </div>
       </div>
+      <% if (def.preview) { %><%- include('../partials/banner-preview', { values }) %><% } %>
     </div>
   </div>
 </form>
-<% if (def.multipart) { %><%- include('../partials/cropper-modal') %><% } %>
+<% if (def.multipart) { %><%- include('../partials/cropper-modal') %><%- include('../partials/gallery-modal') %><% } %>

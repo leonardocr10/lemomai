@@ -2,7 +2,8 @@ const express = require('express');
 const { verifyCsrf } = require('../middlewares/csrf');
 const { loginLimiter } = require('../middlewares/security');
 const { loadAdmin, requireAdmin, adminRender } = require('../middlewares/admin-auth');
-const { bannerUpload, verifyCsrfAfterUpload } = require('../middlewares/banner-upload');
+const { bannerUpload, galleryUpload, verifyCsrfAfterUpload } = require('../middlewares/banner-upload');
+const gallery = require('../controllers/admin/gallery.controller');
 const authController = require('../controllers/admin/auth.controller');
 const { dashboard } = require('../controllers/admin/dashboard.controller');
 const resources = require('../controllers/admin/resources');
@@ -30,6 +31,12 @@ router.post('/banners/lote', urlencoded, verifyCsrf, resources.banners.bulk);
 router.get('/banners/:id', resources.banners.editForm);
 router.post('/banners/:id', bannerUpload, verifyCsrfAfterUpload, resources.banners.update);
 router.post('/banners/:id/excluir', urlencoded, verifyCsrf, resources.banners.remove);
+
+// Galeria: envio multipart (CSRF depois do multer) e busca em JSON para o seletor.
+router.get('/galeria', gallery.list);
+router.get('/galeria.json', gallery.search);
+router.post('/galeria', galleryUpload, verifyCsrfAfterUpload, gallery.upload);
+router.post('/galeria/:id/excluir', urlencoded, verifyCsrf, gallery.remove);
 
 // Demais rotas: todo POST com token CSRF (corpo multipart não é lido aqui e cai no 403).
 router.use(urlencoded, verifyCsrf);

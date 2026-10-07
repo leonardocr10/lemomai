@@ -10,7 +10,7 @@
          aria-roledescription="carrossel" aria-label="Destaques" data-banner-carousel>
   <ul class="banner-carousel__track" data-banner-track>
     <% banners.forEach((banner, index) => { %>
-      <li class="banner-slide<%= banner.mobileImage ? '' : ' banner-slide--desktop-only' %>"
+      <li class="banner-slide<%= banner.mobileImage ? '' : ' banner-slide--desktop-only' %><%= banner.fullWidth ? ' banner-slide--full' : '' %>"
           aria-roledescription="slide" aria-label="<%= index + 1 %> de <%= total %>" data-banner-slide>
         <%# Fundo do slide: a própria imagem desfocada (mesmo arquivo, sem novo download), para as laterais terem as cores do banner. %>
         <img class="banner-slide__backdrop" src="<%= banner.image %>" alt="" aria-hidden="true" decoding="async"<%- index === 0 ? '' : ' loading="lazy"' %>>
