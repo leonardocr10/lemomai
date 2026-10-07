@@ -2,7 +2,7 @@ const auth = require('../../services/auth.service');
 const { validateAdmin } = require('../../validators/admin.validator');
 
 const render = (res, status, { errors = {}, notice = null } = {}) =>
-  res.status(status).renderAdmin('password', { title: 'Trocar senha', section: 'password', errors, notice });
+  res.status(status).renderAdmin('password', { title: 'Trocar senha', pretitle: 'Segurança', section: 'password', errors, notice });
 
 function show(req, res) {
   render(res, 200, { notice: req.query.salvo ? 'Senha alterada. Outras sessões abertas foram encerradas.' : null });

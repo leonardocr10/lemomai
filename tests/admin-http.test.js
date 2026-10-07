@@ -305,3 +305,32 @@ function bulk(client, path, action, ids, { withCsrf = true } = {}) {
   for (const id of ids) form.append('ids', id);
   return client.postRaw(path, form, { withCsrf });
 }
+
+test('leads: busca, abas de status e mudança de status em massa', async () => {
+  const visitor = createClient(base);
+  for (const name of ['Lead Massa Um', 'Lead Massa Dois']) {
+    await visitor.get('/contato');
+    await visitor.post('/contato', {
+      name, email: `${name.replace(/\s/g, '').toLowerCase()}@teste.com`, whatsapp: '(11) 97777-6666',
+      projectType: 'saas', message: 'Mensagem de teste em massa.', acceptPrivacy: 'on',
+    });
+  }
+  const client = await loggedClient();
+  const list = await client.get('/admin/leads?q=lead+massa');
+  assert.match(list.body, /Lead Massa Um/);
+  assert.doesNotMatch(list.body, /Cliente Painel/);
+  const ids = [...list.body.matchAll(/name="ids" value="(\d+)"/g)].map((m) => m[1]);
+  assert.equal(ids.length, 2);
+
+  const form = new URLSearchParams({ action: 'status', status: 'closed' });
+  ids.forEach((id) => form.append('ids', id));
+  const response = await client.postRaw('/admin/leads/lote', form);
+  assert.equal(response.status, 302);
+  const closed = await client.get('/admin/leads?status=closed&q=lead+massa');
+  assert.equal([...closed.body.matchAll(/name="ids" value="(\d+)"/g)].length, 2);
+  assert.match(closed.body, /aria-current="page"[^>]*>\s*Fechado/);
+
+  const invalid = new URLSearchParams({ action: 'status', status: 'hackeado' });
+  ids.forEach((id) => invalid.append('ids', id));
+  assert.equal((await client.postRaw('/admin/leads/lote', invalid)).status, 400);
+});

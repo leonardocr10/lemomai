@@ -51,6 +51,7 @@ router.get('/empresa', company.show);
 router.post('/empresa', company.update);
 
 router.get('/leads', leads.list);
+router.post('/leads/lote', leads.bulk);
 router.get('/leads/:id', leads.show);
 router.post('/leads/:id/status', leads.updateStatus);
 

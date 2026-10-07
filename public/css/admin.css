@@ -190,6 +190,10 @@
   color: var(--tblr-secondary);
 }
 
+.admin-message {
+  white-space: pre-wrap;
+}
+
 /* ---------- Dropzone de imagem ---------- */
 .admin-dropzone {
   position: relative;

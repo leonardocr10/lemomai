@@ -3,7 +3,14 @@ const adminService = require('../../services/admin.service');
 const { validateAdmin } = require('../../validators/admin.validator');
 
 const render = (res, status, { values, errors, notice = null }) =>
-  res.status(status).renderAdmin('company', { title: 'Dados da empresa', section: 'company', values, errors, notice });
+  res.status(status).renderAdmin('company', {
+    title: 'Dados da empresa',
+    pretitle: 'Contato, redes e endereço exibidos no site',
+    section: 'company',
+    values,
+    errors,
+    notice,
+  });
 
 async function show(req, res, next) {
   try {
