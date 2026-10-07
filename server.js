@@ -17,7 +17,7 @@ async function start() {
 
   const app = createApp();
   const server = app.listen(config.port, () => {
-    logger.info(`LC Serviços rodando em ${config.appUrl} (${config.env}) — dados: ${repositories.driver}`);
+    logger.info(`Lenom.AI rodando em ${config.appUrl} (${config.env}) — dados: ${repositories.driver}`);
   });
 
   const shutdown = (signal) => {

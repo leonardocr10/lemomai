@@ -1,0 +1,9 @@
+Lenom.AI — opção 4a "Facetas"
+
+Petróleo   #0F2D4A
+Verde      #5DBB46
+Verde claro (sobre fundo escuro) #6FD157
+Verde-água #1FA6A0
+Branco     #FFFFFF
+
+Tipografia: Lexend Bold (Google Fonts), espaçamento -3%

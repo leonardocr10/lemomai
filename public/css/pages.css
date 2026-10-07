@@ -63,7 +63,7 @@
 }
 
 .check-grid .icon {
-  color: var(--primary);
+  color: var(--primary-strong);
 }
 
 @media (max-width: 960px) {
@@ -267,7 +267,7 @@
 }
 
 .saas-includes .icon {
-  color: var(--primary);
+  color: var(--primary-strong);
 }
 
 @media (max-width: 960px) {

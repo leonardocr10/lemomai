@@ -37,7 +37,7 @@ function errorHandler(err, req, res, next) {
   const view = status === 404 ? 'errors/404' : status >= 500 ? 'errors/500' : 'errors/error';
   const render = () =>
     res.status(status).renderPage(view, {
-      seo: { title: `${status === 404 ? 'Página não encontrada' : 'Erro'} | LC Serviços`, noindex: true },
+      seo: { title: `${status === 404 ? 'Página não encontrada' : 'Erro'} | Lenom.AI`, noindex: true },
       status,
       title: status === 404 ? 'Página não encontrada' : 'Algo deu errado',
       message: publicMessage,

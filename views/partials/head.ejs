@@ -8,7 +8,7 @@
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="<%= seo.canonical %>">
 <% } %>
-<meta name="theme-color" content="#061a3a">
+<meta name="theme-color" content="#0f2d4a">
 <meta name="format-detection" content="telephone=no">
 
 <%# Open Graph / redes sociais %>
@@ -29,16 +29,16 @@
 <meta name="twitter:image" content="<%= seo.image %>">
 <% } %>
 
-<%# Ícones %>
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<%# Ícones (?v= força navegadores a trocar o favicon antigo em cache) %>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=lenom">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png?v=lenom">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=lenom">
 <link rel="manifest" href="/site.webmanifest">
 
 <%# Fontes e recursos críticos %>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@600;700;800&display=swap">
 <link rel="preload" as="image" type="image/webp" href="/images/brand/logo-horizontal.webp">
 <% if (locals.preloadHero) { %>
 <link rel="preload" as="image" type="image/avif" href="/images/hero/hero-devices-1100.avif" imagesrcset="/images/hero/hero-devices-720.avif 720w, /images/hero/hero-devices-1100.avif 1100w" imagesizes="(max-width: 1080px) 100vw, 55vw" fetchpriority="high">

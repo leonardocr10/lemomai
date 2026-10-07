@@ -37,7 +37,7 @@ for (const path of PAGES) {
     const response = await fetch(base + path);
     assert.equal(response.status, 200);
     const html = await response.text();
-    assert.match(html, /<title>[^<]+LC Serviços<\/title>/);
+    assert.match(html, /<title>[^<]*Lenom\.AI[^<]*<\/title>/);
     assert.match(html, /<meta name="description"/);
     assert.match(html, /<link rel="canonical"/);
     assert.match(html, /property="og:image"/);

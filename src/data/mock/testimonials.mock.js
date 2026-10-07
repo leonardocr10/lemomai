@@ -10,7 +10,7 @@ module.exports = [
     role: 'Empresa de varejo',
     company: '',
     content:
-      'A LC Serviços entendeu exatamente como nossa operação funcionava e entregou um sistema que simplificou o dia a dia da equipe.',
+      'A Lenom.AI entendeu exatamente como nossa operação funcionava e entregou um sistema que simplificou o dia a dia da equipe.',
     rating: 5,
     avatar: null,
     active: true,

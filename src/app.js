@@ -39,7 +39,7 @@ function createApp() {
       if (filePath.includes(`${path.sep}uploads${path.sep}`)) res.set('X-Content-Type-Options', 'nosniff');
     },
   }));
-  app.get('/favicon.ico', (req, res) => res.redirect(301, '/favicon-32.png'));
+  app.get('/favicon.ico', (req, res) => res.redirect(302, '/favicon-32.png?v=lenom'));
 
   app.use(cookieParser(config.cookieSecret));
   app.use(issueCsrfToken);

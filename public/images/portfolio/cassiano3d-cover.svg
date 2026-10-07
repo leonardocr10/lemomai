@@ -1,82 +1,82 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="Loja virtual Cassiano3D">
 <defs>
 <radialGradient id="glow" cx="75%" cy="20%" r="80%">
-<stop offset="0" stop-color="#0b7cff" stop-opacity=".55"/>
-<stop offset="1" stop-color="#061a3a" stop-opacity="0"/>
+<stop offset="0" stop-color="#5dbb46" stop-opacity=".55"/>
+<stop offset="1" stop-color="#0f2d4a" stop-opacity="0"/>
 </radialGradient>
 <linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
-<stop offset="0" stop-color="#00d8ff"/>
-<stop offset="1" stop-color="#0b7cff"/>
+<stop offset="0" stop-color="#1fa6a0"/>
+<stop offset="1" stop-color="#5dbb46"/>
 </linearGradient>
 <linearGradient id="area" x1="0" x2="0" y1="0" y2="1">
-<stop offset="0" stop-color="#0b7cff" stop-opacity=".35"/>
-<stop offset="1" stop-color="#0b7cff" stop-opacity="0"/>
+<stop offset="0" stop-color="#5dbb46" stop-opacity=".35"/>
+<stop offset="1" stop-color="#5dbb46" stop-opacity="0"/>
 </linearGradient>
 <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
 <feDropShadow dx="0" dy="24" stdDeviation="30" flood-color="#000" flood-opacity=".35"/>
 </filter>
 </defs>
-<rect width="1600" height="1000" fill="#061a3a"/>
+<rect width="1600" height="1000" fill="#0f2d4a"/>
 <rect width="1600" height="1000" fill="url(#glow)"/>
-<path d="M-20 820 C 300 720, 520 960, 860 820 S 1360 600, 1640 700" stroke="#00d8ff" stroke-opacity=".5" stroke-width="3" fill="none"/>
+<path d="M-20 820 C 300 720, 520 960, 860 820 S 1360 600, 1640 700" stroke="#1fa6a0" stroke-opacity=".5" stroke-width="3" fill="none"/>
 <g filter="url(#shadow)">
 <rect x="110" y="90" width="1380" height="820" rx="22" fill="#ffffff" />
-<rect x="110" y="90" width="1380" height="56" rx="22" fill="#eef3fb" />
-<rect x="110" y="124" width="1380" height="22" rx="0" fill="#eef3fb" />
+<rect x="110" y="90" width="1380" height="56" rx="22" fill="#eef5f0" />
+<rect x="110" y="124" width="1380" height="22" rx="0" fill="#eef5f0" />
 <circle cx="146" cy="118" r="8" fill="#ff5f57"/><circle cx="172" cy="118" r="8" fill="#febc2e"/><circle cx="198" cy="118" r="8" fill="#28c840"/>
 <rect x="520" y="104" width="560" height="28" rx="14" fill="#ffffff" />
 </g>
 <g transform="translate(110 146)"><rect x="0" y="0" width="1380" height="90" rx="0" fill="#ffffff" />
-<text x="60" y="58" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#061a3a" text-anchor="start">Cassiano3D</text>
+<text x="60" y="58" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" fill="#0f2d4a" text-anchor="start">Cassiano3D</text>
 <rect x="420" y="38" width="90" height="14" rx="7" fill="#94a3b8" /><rect x="540" y="38" width="90" height="14" rx="7" fill="#94a3b8" /><rect x="660" y="38" width="90" height="14" rx="7" fill="#94a3b8" />
 <rect x="1150" y="24" width="170" height="44" rx="22" fill="url(#grad)" /><text x="1235" y="53" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="#ffffff" text-anchor="middle">Carrinho</text>
-<rect x="60" y="120" width="1260" height="150" rx="18" fill="#061a3a" />
+<rect x="60" y="120" width="1260" height="150" rx="18" fill="#0f2d4a" />
 <text x="100" y="190" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="800" fill="#ffffff" text-anchor="start">Produtos 3D personalizados</text>
-<rect x="100" y="220" width="380" height="14" rx="7" fill="#00d8ff" />
+<rect x="100" y="220" width="380" height="14" rx="7" fill="#1fa6a0" />
 <g transform="translate(1120 130)">
-<polygon points="0,36 60,0 120,36 60,72" fill="#00d8ff"/>
-<polygon points="0,36 60,72 60,132 0,96" fill="#0b2a5c"/>
-<polygon points="120,36 60,72 60,132 120,96" fill="#0b7cff"/>
+<polygon points="0,36 60,0 120,36 60,72" fill="#1fa6a0"/>
+<polygon points="0,36 60,72 60,132 0,96" fill="#163f5f"/>
+<polygon points="120,36 60,72 60,132 120,96" fill="#5dbb46"/>
 </g>
-<rect x="60" y="300" width="290" height="400" rx="16" fill="#f6f9ff" />
-<rect x="80" y="320" width="250" height="220" rx="12" fill="#e6f1ff" />
+<rect x="60" y="300" width="290" height="400" rx="16" fill="#f5f9f6" />
+<rect x="80" y="320" width="250" height="220" rx="12" fill="#eaf6e6" />
 <g transform="translate(145 350)">
-<polygon points="0,36 60,0 120,36 60,72" fill="#00d8ff"/>
-<polygon points="0,36 60,72 60,132 0,96" fill="#0b2a5c"/>
-<polygon points="120,36 60,72 60,132 120,96" fill="#0b7cff"/>
+<polygon points="0,36 60,0 120,36 60,72" fill="#1fa6a0"/>
+<polygon points="0,36 60,72 60,132 0,96" fill="#163f5f"/>
+<polygon points="120,36 60,72 60,132 120,96" fill="#5dbb46"/>
 </g>
-<rect x="80" y="566" width="180" height="16" rx="8" fill="#10213f" />
-<rect x="80" y="598" width="120" height="14" rx="7" fill="#dce6f4" />
-<text x="80" y="660" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#0b7cff" text-anchor="start">R$ 89,90</text>
-<rect x="256" y="630" width="74" height="44" rx="10" fill="url(#grad)" /><rect x="378" y="300" width="290" height="400" rx="16" fill="#f6f9ff" />
-<rect x="398" y="320" width="250" height="220" rx="12" fill="#e6f1ff" />
+<rect x="80" y="566" width="180" height="16" rx="8" fill="#0f2d4a" />
+<rect x="80" y="598" width="120" height="14" rx="7" fill="#dbe7df" />
+<text x="80" y="660" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#5dbb46" text-anchor="start">R$ 89,90</text>
+<rect x="256" y="630" width="74" height="44" rx="10" fill="url(#grad)" /><rect x="378" y="300" width="290" height="400" rx="16" fill="#f5f9f6" />
+<rect x="398" y="320" width="250" height="220" rx="12" fill="#eaf6e6" />
 <g transform="translate(463 350)">
-<polygon points="0,36 60,0 120,36 60,72" fill="#00d8ff"/>
-<polygon points="0,36 60,72 60,132 0,96" fill="#0b2a5c"/>
-<polygon points="120,36 60,72 60,132 120,96" fill="#0b7cff"/>
+<polygon points="0,36 60,0 120,36 60,72" fill="#1fa6a0"/>
+<polygon points="0,36 60,72 60,132 0,96" fill="#163f5f"/>
+<polygon points="120,36 60,72 60,132 120,96" fill="#5dbb46"/>
 </g>
-<rect x="398" y="566" width="180" height="16" rx="8" fill="#10213f" />
-<rect x="398" y="598" width="120" height="14" rx="7" fill="#dce6f4" />
-<text x="398" y="660" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#0b7cff" text-anchor="start">R$ 149,90</text>
-<rect x="574" y="630" width="74" height="44" rx="10" fill="url(#grad)" /><rect x="696" y="300" width="290" height="400" rx="16" fill="#f6f9ff" />
-<rect x="716" y="320" width="250" height="220" rx="12" fill="#e6f1ff" />
+<rect x="398" y="566" width="180" height="16" rx="8" fill="#0f2d4a" />
+<rect x="398" y="598" width="120" height="14" rx="7" fill="#dbe7df" />
+<text x="398" y="660" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#5dbb46" text-anchor="start">R$ 149,90</text>
+<rect x="574" y="630" width="74" height="44" rx="10" fill="url(#grad)" /><rect x="696" y="300" width="290" height="400" rx="16" fill="#f5f9f6" />
+<rect x="716" y="320" width="250" height="220" rx="12" fill="#eaf6e6" />
 <g transform="translate(781 350)">
-<polygon points="0,36 60,0 120,36 60,72" fill="#00d8ff"/>
-<polygon points="0,36 60,72 60,132 0,96" fill="#0b2a5c"/>
-<polygon points="120,36 60,72 60,132 120,96" fill="#0b7cff"/>
+<polygon points="0,36 60,0 120,36 60,72" fill="#1fa6a0"/>
+<polygon points="0,36 60,72 60,132 0,96" fill="#163f5f"/>
+<polygon points="120,36 60,72 60,132 120,96" fill="#5dbb46"/>
 </g>
-<rect x="716" y="566" width="180" height="16" rx="8" fill="#10213f" />
-<rect x="716" y="598" width="120" height="14" rx="7" fill="#dce6f4" />
-<text x="716" y="660" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#0b7cff" text-anchor="start">R$ 59,90</text>
-<rect x="892" y="630" width="74" height="44" rx="10" fill="url(#grad)" /><rect x="1014" y="300" width="290" height="400" rx="16" fill="#f6f9ff" />
-<rect x="1034" y="320" width="250" height="220" rx="12" fill="#e6f1ff" />
+<rect x="716" y="566" width="180" height="16" rx="8" fill="#0f2d4a" />
+<rect x="716" y="598" width="120" height="14" rx="7" fill="#dbe7df" />
+<text x="716" y="660" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#5dbb46" text-anchor="start">R$ 59,90</text>
+<rect x="892" y="630" width="74" height="44" rx="10" fill="url(#grad)" /><rect x="1014" y="300" width="290" height="400" rx="16" fill="#f5f9f6" />
+<rect x="1034" y="320" width="250" height="220" rx="12" fill="#eaf6e6" />
 <g transform="translate(1099 350)">
-<polygon points="0,36 60,0 120,36 60,72" fill="#00d8ff"/>
-<polygon points="0,36 60,72 60,132 0,96" fill="#0b2a5c"/>
-<polygon points="120,36 60,72 60,132 120,96" fill="#0b7cff"/>
+<polygon points="0,36 60,0 120,36 60,72" fill="#1fa6a0"/>
+<polygon points="0,36 60,72 60,132 0,96" fill="#163f5f"/>
+<polygon points="120,36 60,72 60,132 120,96" fill="#5dbb46"/>
 </g>
-<rect x="1034" y="566" width="180" height="16" rx="8" fill="#10213f" />
-<rect x="1034" y="598" width="120" height="14" rx="7" fill="#dce6f4" />
-<text x="1034" y="660" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#0b7cff" text-anchor="start">R$ 219,90</text>
+<rect x="1034" y="566" width="180" height="16" rx="8" fill="#0f2d4a" />
+<rect x="1034" y="598" width="120" height="14" rx="7" fill="#dbe7df" />
+<text x="1034" y="660" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#5dbb46" text-anchor="start">R$ 219,90</text>
 <rect x="1210" y="630" width="74" height="44" rx="10" fill="url(#grad)" /></g>
 </svg>

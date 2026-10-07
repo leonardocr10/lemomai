@@ -1,8 +1,8 @@
 {
-  "name": "lc-servicos",
+  "name": "lenom-ai",
   "version": "1.0.0",
   "private": true,
-  "description": "Site institucional e comercial da LC Serviços — sistemas, sites e soluções digitais.",
+  "description": "Site institucional e comercial da Lenom.AI — sistemas, sites e soluções digitais.",
   "main": "server.js",
   "engines": {
     "node": ">=18.18"

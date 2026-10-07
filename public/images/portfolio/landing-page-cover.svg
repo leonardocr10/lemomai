@@ -1,41 +1,41 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="Landing page de conversão">
 <defs>
 <radialGradient id="glow" cx="75%" cy="20%" r="80%">
-<stop offset="0" stop-color="#0b7cff" stop-opacity=".55"/>
-<stop offset="1" stop-color="#061a3a" stop-opacity="0"/>
+<stop offset="0" stop-color="#5dbb46" stop-opacity=".55"/>
+<stop offset="1" stop-color="#0f2d4a" stop-opacity="0"/>
 </radialGradient>
 <linearGradient id="grad" x1="0" x2="1" y1="0" y2="1">
-<stop offset="0" stop-color="#00d8ff"/>
-<stop offset="1" stop-color="#0b7cff"/>
+<stop offset="0" stop-color="#1fa6a0"/>
+<stop offset="1" stop-color="#5dbb46"/>
 </linearGradient>
 <linearGradient id="area" x1="0" x2="0" y1="0" y2="1">
-<stop offset="0" stop-color="#0b7cff" stop-opacity=".35"/>
-<stop offset="1" stop-color="#0b7cff" stop-opacity="0"/>
+<stop offset="0" stop-color="#5dbb46" stop-opacity=".35"/>
+<stop offset="1" stop-color="#5dbb46" stop-opacity="0"/>
 </linearGradient>
 <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
 <feDropShadow dx="0" dy="24" stdDeviation="30" flood-color="#000" flood-opacity=".35"/>
 </filter>
 </defs>
-<rect width="1600" height="1000" fill="#061a3a"/>
+<rect width="1600" height="1000" fill="#0f2d4a"/>
 <rect width="1600" height="1000" fill="url(#glow)"/>
-<path d="M-20 820 C 300 720, 520 960, 860 820 S 1360 600, 1640 700" stroke="#00d8ff" stroke-opacity=".5" stroke-width="3" fill="none"/>
+<path d="M-20 820 C 300 720, 520 960, 860 820 S 1360 600, 1640 700" stroke="#1fa6a0" stroke-opacity=".5" stroke-width="3" fill="none"/>
 <g filter="url(#shadow)">
 <rect x="110" y="90" width="1380" height="820" rx="22" fill="#ffffff" />
-<rect x="110" y="90" width="1380" height="56" rx="22" fill="#eef3fb" />
-<rect x="110" y="124" width="1380" height="22" rx="0" fill="#eef3fb" />
+<rect x="110" y="90" width="1380" height="56" rx="22" fill="#eef5f0" />
+<rect x="110" y="124" width="1380" height="22" rx="0" fill="#eef5f0" />
 <circle cx="146" cy="118" r="8" fill="#ff5f57"/><circle cx="172" cy="118" r="8" fill="#febc2e"/><circle cx="198" cy="118" r="8" fill="#28c840"/>
 <rect x="520" y="104" width="560" height="28" rx="14" fill="#ffffff" />
 </g>
-<g transform="translate(110 146)"><rect x="0" y="0" width="1380" height="764" rx="0" fill="#03112a" />
-<circle cx="1150" cy="120" r="320" fill="#0b7cff" opacity=".25"/>
+<g transform="translate(110 146)"><rect x="0" y="0" width="1380" height="764" rx="0" fill="#091c2f" />
+<circle cx="1150" cy="120" r="320" fill="#5dbb46" opacity=".25"/>
 <rect x="80" y="60" width="140" height="36" rx="8" fill="#ffffff" opacity=".9"/>
-<text x="80" y="230" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="700" fill="#00d8ff" text-anchor="start">Oferta especial</text>
+<text x="80" y="230" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="700" fill="#1fa6a0" text-anchor="start">Oferta especial</text>
 <text x="80" y="310" font-family="Inter, Arial, sans-serif" font-size="62" font-weight="800" fill="#ffffff" text-anchor="start">Transforme visitas</text>
 <text x="80" y="385" font-family="Inter, Arial, sans-serif" font-size="62" font-weight="800" fill="#ffffff" text-anchor="start">em clientes</text>
-<rect x="80" y="430" width="520" height="16" rx="8" fill="#a9bddc" /><rect x="80" y="462" width="440" height="16" rx="8" fill="#a9bddc" />
+<rect x="80" y="430" width="520" height="16" rx="8" fill="#a9c0d0" /><rect x="80" y="462" width="440" height="16" rx="8" fill="#a9c0d0" />
 <rect x="80" y="520" width="300" height="68" rx="14" fill="url(#grad)" /><text x="230" y="563" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#ffffff" text-anchor="middle">Quero saber mais</text>
 <rect x="860" y="150" width="440" height="480" rx="22" fill="#ffffff" />
-<text x="900" y="214" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#10213f" text-anchor="start">Fale com a gente</text>
-<rect x="900" y="250" width="360" height="60" rx="10" fill="#f6f9ff" stroke="#dce6f4"/><rect x="900" y="336" width="360" height="60" rx="10" fill="#f6f9ff" stroke="#dce6f4"/><rect x="900" y="422" width="360" height="60" rx="10" fill="#f6f9ff" stroke="#dce6f4"/>
-<rect x="900" y="520" width="360" height="64" rx="12" fill="#0b7cff" /><text x="1080" y="560" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#ffffff" text-anchor="middle">Enviar</text></g>
+<text x="900" y="214" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" fill="#0f2d4a" text-anchor="start">Fale com a gente</text>
+<rect x="900" y="250" width="360" height="60" rx="10" fill="#f5f9f6" stroke="#dbe7df"/><rect x="900" y="336" width="360" height="60" rx="10" fill="#f5f9f6" stroke="#dbe7df"/><rect x="900" y="422" width="360" height="60" rx="10" fill="#f5f9f6" stroke="#dbe7df"/>
+<rect x="900" y="520" width="360" height="64" rx="12" fill="#5dbb46" /><text x="1080" y="560" font-family="Inter, Arial, sans-serif" font-size="22" font-weight="800" fill="#ffffff" text-anchor="middle">Enviar</text></g>
 </svg>

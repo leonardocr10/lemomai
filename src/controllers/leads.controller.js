@@ -34,7 +34,7 @@ async function renderContact(req, res, { values = {}, errors = {}, success = fal
     breadcrumbs,
     seo: seo.buildSeo({
       title: 'Contato',
-      description: 'Fale com a LC Serviços pelo formulário, WhatsApp ou e-mail. Retornamos em até 1 dia útil.',
+      description: 'Fale com a Lenom.AI pelo formulário, WhatsApp ou e-mail. Retornamos em até 1 dia útil.',
       path: '/contato',
       companyName: res.locals.company.companyName,
     }),

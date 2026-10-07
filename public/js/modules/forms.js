@@ -125,7 +125,7 @@ async function submit(form) {
       clearErrors(form);
       form.querySelectorAll('[data-file-name]').forEach((el) => { el.textContent = el.dataset.default || el.textContent; });
       showToast(result.message || 'Enviado com sucesso!', 'success');
-      window.dispatchEvent(new CustomEvent('lc:lead', { detail: { form: form.id, endpoint: form.dataset.endpoint } }));
+      window.dispatchEvent(new CustomEvent('lenom:lead', { detail: { form: form.id, endpoint: form.dataset.endpoint } }));
       return;
     }
 

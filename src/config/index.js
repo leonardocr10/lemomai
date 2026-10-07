@@ -26,7 +26,7 @@ const config = {
   db: {
     host: process.env.DB_HOST || '127.0.0.1',
     port: int(process.env.DB_PORT, 3306),
-    name: process.env.DB_NAME || 'lc_servicos',
+    name: process.env.DB_NAME || 'lenom_ai',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
     logging: bool(process.env.DB_LOGGING),
@@ -34,7 +34,7 @@ const config = {
 
   mail: {
     driver: process.env.MAIL_DRIVER || 'log',
-    from: process.env.MAIL_FROM || 'LC Serviços <nao-responda@lcservicos.com.br>',
+    from: process.env.MAIL_FROM || 'Lenom.AI <nao-responda@lenom.ai>',
     leadsTo: process.env.MAIL_TO_LEADS || '',
     smtp: {
       host: process.env.SMTP_HOST,

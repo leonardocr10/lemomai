@@ -1,10 +1,10 @@
 @echo off
 setlocal
-title LC Servicos - Servidor
+title Lenom.AI - Servidor
 cd /d "%~dp0"
 
 echo ============================================
-echo   LC Servicos - iniciando o site
+echo   Lenom.AI - iniciando o site
 echo ============================================
 echo.
 

@@ -4,7 +4,7 @@
  */
 import { loadAnalytics } from './analytics.js';
 
-const COOKIE = 'lc_consent';
+const COOKIE = 'lenom_consent';
 const MAX_AGE = 60 * 60 * 24 * 180; // 180 dias
 
 function readConsent() {

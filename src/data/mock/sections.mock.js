@@ -8,7 +8,7 @@ module.exports = {
     titleStart: 'Sistemas e sites para fazer',
     titleHighlight: 'sua empresa crescer',
     subtitle:
-      'A LC Serviços cria sites profissionais, sistemas sob medida e soluções digitais que impulsionam o seu negócio.',
+      'A Lenom.AI cria sites profissionais, sistemas sob medida e soluções digitais que impulsionam o seu negócio.',
     primaryCta: { label: 'Ver planos', href: '/#precos' },
     secondaryCta: { label: 'Solicitar orçamento', href: '/orcamento' },
     highlights: [
@@ -41,7 +41,7 @@ module.exports = {
   differentials: {
     eyebrow: 'Nossos diferenciais',
     title: 'Por que escolher a',
-    highlight: 'LC Serviços?',
+    highlight: 'Lenom.AI?',
     items: [
       { icon: 'users', title: 'Atendimento personalizado', text: 'Entendemos sua necessidade e criamos a melhor solução.' },
       { icon: 'diamond', title: 'Projeto profissional', text: 'Design moderno, foco em resultados e alta qualidade.' },
@@ -136,7 +136,7 @@ module.exports = {
     title: 'Tecnologia para transformar ideias em',
     highlight: 'soluções reais',
     intro:
-      'A LC Serviços desenvolve sites, sistemas e soluções digitais sob medida para empresas que desejam modernizar processos, aumentar produtividade e crescer com tecnologia.',
+      'A Lenom.AI desenvolve sites, sistemas e soluções digitais sob medida para empresas que desejam modernizar processos, aumentar produtividade e crescer com tecnologia.',
     paragraphs: [
       'Unimos design, desenvolvimento e atendimento próximo para entregar projetos que resolvem problemas reais. Cada solução é pensada a partir da rotina do cliente, com foco em usabilidade, desempenho e segurança.',
       'Atendemos empresas de diferentes portes e segmentos, desde a primeira presença digital até sistemas completos de gestão, sempre com suporte contínuo após a entrega.',

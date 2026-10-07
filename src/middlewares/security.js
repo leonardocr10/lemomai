@@ -57,7 +57,7 @@ const formLimiter = rateLimit({
       return res.status(429).json({ ok: false, message });
     }
     return res.status(429).renderPage('errors/error', {
-      seo: { title: 'Muitas tentativas | LC Serviços', noindex: true },
+      seo: { title: 'Muitas tentativas | Lenom.AI', noindex: true },
       status: 429,
       title: 'Muitas tentativas',
       message,

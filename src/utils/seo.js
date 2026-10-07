@@ -13,9 +13,11 @@ const absoluteUrl = (path = '/') => (/^https?:\/\//.test(path) ? path : `${confi
  * @param {string} options.title        Título da página (sem o nome da empresa)
  * @param {string} options.description  Meta description (ideal: 140–160 caracteres)
  * @param {string} options.path         Caminho canônico, ex.: /servicos
+ * @param {boolean} options.brandFirst  Nome da empresa antes do título (home)
  */
-function buildSeo({ title, description, path = '/', image = DEFAULT_IMAGE, type = 'website', noindex = false, companyName = 'LC Serviços' }) {
-  const fullTitle = title ? `${title} | ${companyName}` : companyName;
+function buildSeo({ title, description, path = '/', image = DEFAULT_IMAGE, type = 'website', noindex = false, companyName = 'Lenom.AI', brandFirst = false }) {
+  let fullTitle = companyName;
+  if (title) fullTitle = brandFirst ? `${companyName} | ${title}` : `${title} | ${companyName}`;
   return {
     title: fullTitle,
     description,

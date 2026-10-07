@@ -86,5 +86,5 @@ test('repositório mock segue a interface e não expõe o objeto original', asyn
   assert.equal(again.name, 'Essencial');
   assert.equal(await repositories.portfolio.findBySlug('nao-existe'), null);
   const company = await repositories.company.get();
-  assert.equal(company.companyName, 'LC Serviços');
+  assert.equal(company.companyName, 'Lenom.AI');
 });

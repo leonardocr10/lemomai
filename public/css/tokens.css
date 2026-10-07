@@ -1,29 +1,31 @@
 /* ==========================================================================
-   Design tokens — LC Serviços
+   Design tokens — Lenom.AI
    Todas as cores, sombras, raios e espaçamentos do site saem daqui.
    ========================================================================== */
 :root {
-  /* Marca */
-  --primary: #0b7cff;
-  --primary-dark: #072b63;
-  --secondary: #00d8ff;
-  --navy: #061a3a;
-  --navy-deep: #03112a;
-  --navy-soft: #0b2a5c;
-  --background: #f6f9ff;
+  /* Marca — Lenom.AI (paleta "Facetas") */
+  --primary: #5dbb46;          /* Verde */
+  --primary-strong: #2b7f2a;   /* verde legível como texto em fundo claro (AA) */
+  --primary-dark: #0f2d4a;     /* Petróleo */
+  --secondary: #6fd157;        /* Verde claro (sobre fundo escuro) */
+  --accent: #1fa6a0;           /* Verde-água */
+  --navy: #0f2d4a;
+  --navy-deep: #091c2f;
+  --navy-soft: #163f5f;
+  --background: #f5f9f6;
   --surface: #ffffff;
-  --surface-soft: #eef4ff;
-  --text: #10213f;
-  --muted: #64748b;
-  --border: #dce6f4;
+  --surface-soft: #ecf5ee;
+  --text: #0f2d4a;
+  --muted: #5b6b7a;
+  --border: #dbe7df;
 
   /* Derivadas */
-  --primary-tint: #e6f1ff;
-  --primary-tint-strong: #d3e6ff;
-  --on-primary: #ffffff;
+  --primary-tint: #eaf6e6;
+  --primary-tint-strong: #d2ecc9;
+  --on-primary: #0f2d4a;
   --on-dark: #ffffff;
-  --on-dark-muted: #a9bddc;
-  --on-dark-border: rgba(120, 170, 255, 0.22);
+  --on-dark-muted: #a9c0d0;
+  --on-dark-border: rgba(111, 209, 87, 0.22);
   --success: #16a34a;
   --success-tint: #dcfce7;
   --danger: #dc2626;
@@ -31,24 +33,24 @@
   --warning: #d97706;
   --whatsapp: #25d366;
   --whatsapp-dark: #128c4b;
-  --overlay: rgba(3, 17, 42, 0.62);
-  --glow-primary: rgba(11, 124, 255, 0.45);
-  --glow-secondary: rgba(0, 216, 255, 0.45);
-  --focus-ring: #00d8ff;
+  --overlay: rgba(9, 28, 47, 0.62);
+  --glow-primary: rgba(93, 187, 70, 0.45);
+  --glow-secondary: rgba(31, 166, 160, 0.45);
+  --focus-ring: #1fa6a0;
 
   /* Gradientes */
   --gradient-primary: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
-  --gradient-primary-hover: linear-gradient(135deg, #3fe3ff 0%, #2b8fff 100%);
-  --gradient-text: linear-gradient(90deg, var(--secondary) 0%, #36b3ff 55%, var(--primary) 100%);
-  --gradient-text-light: linear-gradient(90deg, var(--primary) 0%, #1aa3ff 100%);
-  --gradient-hero: radial-gradient(1200px 600px at 78% 30%, rgba(11, 124, 255, 0.38), transparent 60%),
-    radial-gradient(700px 420px at 12% 110%, rgba(0, 216, 255, 0.18), transparent 60%),
+  --gradient-primary-hover: linear-gradient(135deg, #86dc71 0%, #6fd157 100%);
+  --gradient-text: linear-gradient(90deg, var(--secondary) 0%, #4cc07a 55%, var(--accent) 100%);
+  --gradient-text-light: linear-gradient(90deg, var(--primary-strong) 0%, #17807a 100%);
+  --gradient-hero: radial-gradient(1200px 600px at 78% 30%, rgba(93, 187, 70, 0.30), transparent 60%),
+    radial-gradient(700px 420px at 12% 110%, rgba(31, 166, 160, 0.22), transparent 60%),
     linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
   --gradient-dark-card: linear-gradient(160deg, var(--navy-soft) 0%, var(--navy) 100%);
 
   /* Tipografia */
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-display: 'Lexend', 'Inter', system-ui, sans-serif;
   --fs-xs: 0.75rem;
   --fs-sm: 0.875rem;
   --fs-base: 1rem;
@@ -79,11 +81,11 @@
   --radius-pill: 999px;
 
   /* Sombras */
-  --shadow-sm: 0 1px 2px rgba(7, 43, 99, 0.06), 0 1px 3px rgba(7, 43, 99, 0.05);
-  --shadow: 0 6px 20px rgba(7, 43, 99, 0.08);
-  --shadow-lg: 0 18px 40px rgba(7, 43, 99, 0.14);
+  --shadow-sm: 0 1px 2px rgba(15, 45, 74, 0.06), 0 1px 3px rgba(15, 45, 74, 0.05);
+  --shadow: 0 6px 20px rgba(15, 45, 74, 0.08);
+  --shadow-lg: 0 18px 40px rgba(15, 45, 74, 0.14);
   --shadow-glow: 0 10px 30px var(--glow-primary);
-  --shadow-glow-cyan: 0 0 0 1px rgba(0, 216, 255, 0.6), 0 18px 45px rgba(0, 150, 255, 0.35);
+  --shadow-glow-cyan: 0 0 0 1px rgba(111, 209, 87, 0.6), 0 18px 45px rgba(31, 166, 160, 0.35);
 
   /* Movimento */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);

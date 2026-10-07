@@ -54,7 +54,7 @@ let listenersBound = false;
 function bindConversionEvents() {
   if (listenersBound) return;
   listenersBound = true;
-  window.addEventListener('lc:lead', (event) => track('generate_lead', { form: event.detail.form }));
+  window.addEventListener('lenom:lead', (event) => track('generate_lead', { form: event.detail.form }));
   document.addEventListener('click', (event) => {
     const link = event.target.closest('[data-track]');
     if (!link) return;

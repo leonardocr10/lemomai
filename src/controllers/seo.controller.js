@@ -60,12 +60,12 @@ function manifest(req, res) {
     description: company.tagline,
     start_url: '/',
     display: 'standalone',
-    background_color: '#f6f9ff',
-    theme_color: '#061a3a',
+    background_color: '#f5f9f6',
+    theme_color: '#0f2d4a',
     lang: 'pt-BR',
     icons: [
-      { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+      { src: '/icons/icon-192.png?v=lenom', sizes: '192x192', type: 'image/png' },
+      { src: '/icons/icon-512.png?v=lenom', sizes: '512x512', type: 'image/png' },
     ],
   });
 }

@@ -15,6 +15,6 @@ for (const init of modules) {
   try {
     init();
   } catch (error) {
-    console.error(`[lc] falha ao iniciar ${init.name}`, error);
+    console.error(`[lenom] falha ao iniciar ${init.name}`, error);
   }
 }

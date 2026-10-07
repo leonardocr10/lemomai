@@ -1,6 +1,6 @@
-# LC Serviços — site institucional e comercial
+# Lenom.AI — site institucional e comercial
 
-Site da **LC Serviços**, empresa de desenvolvimento de sites, sistemas sob medida, landing pages, e-commerce, automação, suporte e soluções SaaS.
+Site da **Lenom.AI**, empresa de desenvolvimento de sites, sistemas sob medida, landing pages, e-commerce, automação, suporte e soluções SaaS.
 
 - **Stack:** Node.js 18+ · Express 5 · EJS · Sequelize · MySQL
 - **Dados:** mock (padrão) ou MySQL, alternados por uma variável de ambiente, sem alterar views ou controllers
@@ -56,7 +56,7 @@ Os dois repositórios expõem a mesma interface (`findAll`, `findBySlug`, `get`,
    USE_MOCK_DATA=false
    DB_HOST=127.0.0.1
    DB_PORT=3306
-   DB_NAME=lc_servicos
+   DB_NAME=lenom_ai
    DB_USER=root
    DB_PASSWORD=sua_senha
    ```
@@ -71,7 +71,7 @@ Os dois repositórios expõem a mesma interface (`findAll`, `findBySlug`, `get`,
 O seed (`database/seeds/`) lê os **mesmos arquivos de mock**, então o site mostra o mesmo conteúdo nos dois modos. Se preferir criar o banco manualmente:
 
 ```sql
-CREATE DATABASE lc_servicos CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE lenom_ai CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 Se o servidor não conseguir conectar ao MySQL, ele encerra com uma mensagem clara. Para voltar ao modo mock, use `USE_MOCK_DATA=true`.
@@ -109,7 +109,7 @@ Se o servidor não conseguir conectar ao MySQL, ele encerra com uma mensagem cla
 │   ├── migrations/            # 9 tabelas
 │   └── seeds/
 ├── storage/                   # anexos dos orçamentos, leads em modo mock e logs (fora de public/)
-├── assets-src/                # arquivos originais da marca (banner e logo)
+├── assets-src/                # arquivos originais da marca (banner.webp e brand/)
 ├── scripts/                   # build, otimização de imagens, placeholders
 └── tests/
 ```
@@ -187,8 +187,8 @@ Defina `GA_MEASUREMENT_ID` e/ou `META_PIXEL_ID` no `.env`. Os scripts **só carr
 
 ## Design system
 
-- Tokens em `public/css/tokens.css`: `--primary`, `--primary-dark`, `--secondary`, `--navy`, `--background`, `--surface`, `--text`, `--muted`, `--border`, além de gradientes, sombras, raios e espaçamentos. Nenhuma cor fica espalhada fora dos tokens.
-- Tipografia: **Inter** no texto e **Plus Jakarta Sans** nos títulos, para ficar próximo da headline do banner.
+- Tokens em `public/css/tokens.css`: `--primary` (verde #5DBB46), `--primary-strong` (verde para texto), `--primary-dark` (petróleo #0F2D4A), `--secondary` (verde claro #6FD157), `--accent` (verde-água #1FA6A0), `--navy`, `--background`, `--surface`, `--text`, `--muted`, `--border`, além de gradientes, sombras, raios e espaçamentos. Nenhuma cor fica espalhada fora dos tokens.
+- Tipografia: **Inter** no texto e **Lexend** (bold, espaçamento -3%) nos títulos, conforme o manual da marca Lenom.AI.
 - Componentes (`views/components/`): Button, Badge, SectionTitle, ServiceCard, PricingCard, PortfolioCard, TestimonialCard, FaqAccordion, ContactForm, Picture, Breadcrumbs, PageHero, WhatsAppButton. Header, Hero e Footer ficam em `views/partials/`. Modal (preferências de cookies) e Toast são controlados por `public/js/modules/`.
 - Responsividade: layout amplo no desktop, 2 colunas no tablet e 1 coluna no mobile. Os planos viram carrossel com scroll-snap no celular, e a imagem do hero vai para baixo do texto.
 
@@ -201,10 +201,11 @@ Os arquivos originais ficam em `assets-src/` e `npm run images` gera:
 | `images/brand/logo-horizontal.*` | logo colorido para fundos claros (header) |
 | `images/brand/logo-dark.*` | símbolo colorido + texto branco para fundos escuros (footer) |
 | `images/brand/logo-white.*` | versão monocromática branca |
-| `images/brand/logo-symbol.*` | apenas o símbolo "LC" |
+| `images/brand/logo-symbol.*` | apenas o símbolo "L" (fundos claros) |
+| `images/brand/logo-symbol-dark.*` | apenas o símbolo "L" (fundos escuros) |
 | `favicon-*.png`, `apple-touch-icon.png`, `icons/icon-*.png` | favicons e PWA |
 
-Quando houver o logo vetorial (SVG), basta substituir os arquivos mantendo os nomes.
+Para trocar a marca, substitua os arquivos em `assets-src/brand/` mantendo os nomes e rode `npm run images`.
 
 ---
 

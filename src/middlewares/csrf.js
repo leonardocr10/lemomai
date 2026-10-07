@@ -12,7 +12,7 @@ const crypto = require('node:crypto');
 const config = require('../config');
 const HttpError = require('../utils/http-error');
 
-const COOKIE_NAME = 'lc_csrf';
+const COOKIE_NAME = 'lenom_csrf';
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
 function issueCsrfToken(req, res, next) {

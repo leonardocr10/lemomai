@@ -10,21 +10,21 @@ const path = require('node:path');
 
 const OUT = path.resolve(__dirname, '../public/images/portfolio');
 const C = {
-  navy: '#061a3a',
-  deep: '#03112a',
-  soft: '#0b2a5c',
-  primary: '#0b7cff',
-  cyan: '#00d8ff',
+  navy: '#0f2d4a',
+  deep: '#091c2f',
+  soft: '#163f5f',
+  primary: '#5dbb46',
+  cyan: '#1fa6a0',
   white: '#ffffff',
-  bg: '#f6f9ff',
-  line: '#dce6f4',
+  bg: '#f5f9f6',
+  line: '#dbe7df',
   muted: '#94a3b8',
-  text: '#10213f',
+  text: '#0f2d4a',
   green: '#16a34a',
   greenTint: '#dcfce7',
   amber: '#d97706',
   amberTint: '#fef3c7',
-  blueTint: '#e6f1ff',
+  blueTint: '#eaf6e6',
 };
 
 const W = 1600;
@@ -60,8 +60,8 @@ function frame(content, { title }) {
   <path d="M-20 820 C 300 720, 520 960, 860 820 S 1360 600, 1640 700" stroke="${C.cyan}" stroke-opacity=".5" stroke-width="3" fill="none"/>
   <g filter="url(#shadow)">
     ${rect(110, 90, 1380, 820, C.white, 22)}
-    ${rect(110, 90, 1380, 56, '#eef3fb', 22)}
-    ${rect(110, 124, 1380, 22, '#eef3fb', 0)}
+    ${rect(110, 90, 1380, 56, '#eef5f0', 22)}
+    ${rect(110, 124, 1380, 22, '#eef5f0', 0)}
     <circle cx="146" cy="118" r="8" fill="#ff5f57"/><circle cx="172" cy="118" r="8" fill="#febc2e"/><circle cx="198" cy="118" r="8" fill="#28c840"/>
     ${rect(520, 104, 560, 28, C.white, 14)}
   </g>
@@ -107,7 +107,7 @@ function dashboard(brand) {
   return `${rect(0, 0, 260, 764, C.navy, 0)}
     ${text(36, 64, brand, 26, C.white, 800)}
     ${rect(24, 100, 212, 48, C.primary, 10)}${text(48, 131, 'Dashboard', 18, C.white, 700)}
-    ${['Clientes', 'Projetos', 'Financeiro', 'Relatórios', 'Configurações'].map((l, i) => text(48, 196 + i * 56, l, 18, '#a9bddc', 500)).join('')}
+    ${['Clientes', 'Projetos', 'Financeiro', 'Relatórios', 'Configurações'].map((l, i) => text(48, 196 + i * 56, l, 18, '#a9c0d0', 500)).join('')}
     ${rect(260, 0, 1120, 764, C.bg, 0)}
     ${kpi(300, 'Receita', 'R$ 24.960', C.text)}${kpi(570, 'Clientes', '125', C.text)}${kpi(840, 'Projetos', '18', C.text)}${kpi(1110, 'Crescimento', '+32%', C.green)}
     ${rect(300, 270, 560, 440, C.white, 14, `stroke="${C.line}"`)}
@@ -153,7 +153,7 @@ function website() {
     ${rect(0, 90, 1380, 380, C.navy, 0)}
     ${text(80, 210, 'Soluções que geram', 54, C.white, 800)}
     ${text(80, 280, 'confiança', 54, C.cyan, 800)}
-    ${bar(80, 318, 460, '#a9bddc', 16)}${bar(80, 348, 380, '#a9bddc', 16)}
+    ${bar(80, 318, 460, '#a9c0d0', 16)}${bar(80, 348, 380, '#a9c0d0', 16)}
     ${rect(80, 390, 200, 56, 'url(#grad)', 12)}
     ${rect(760, 130, 560, 300, C.soft, 18)}
     <circle cx="1040" cy="280" r="90" fill="url(#grad)" opacity=".85"/>
@@ -172,7 +172,7 @@ function landing() {
     ${text(80, 230, 'Oferta especial', 26, C.cyan, 700)}
     ${text(80, 310, 'Transforme visitas', 62, C.white, 800)}
     ${text(80, 385, 'em clientes', 62, C.white, 800)}
-    ${bar(80, 430, 520, '#a9bddc', 16)}${bar(80, 462, 440, '#a9bddc', 16)}
+    ${bar(80, 430, 520, '#a9c0d0', 16)}${bar(80, 462, 440, '#a9c0d0', 16)}
     ${rect(80, 520, 300, 68, 'url(#grad)', 14)}${text(230, 563, 'Quero saber mais', 22, C.white, 800, 'middle')}
     ${rect(860, 150, 440, 480, C.white, 22)}
     ${text(900, 214, 'Fale com a gente', 28, C.text, 800)}
@@ -183,7 +183,7 @@ function landing() {
 const files = {
   'cassiano3d-cover.svg': frame(ecommerce(), { title: 'Loja virtual Cassiano3D' }),
   'cassiano3d-admin.svg': frame(dashboard('Cassiano3D'), { title: 'Painel administrativo Cassiano3D' }),
-  'sistema-administrativo-cover.svg': frame(dashboard('LC Gestão'), { title: 'Dashboard do sistema administrativo' }),
+  'sistema-administrativo-cover.svg': frame(dashboard('Lenom Gestão'), { title: 'Dashboard do sistema administrativo' }),
   'sistema-administrativo-list.svg': frame(listView(), { title: 'Listagem de projetos' }),
   'site-institucional-cover.svg': frame(website(), { title: 'Site institucional' }),
   'landing-page-cover.svg': frame(landing(), { title: 'Landing page de conversão' }),

@@ -73,7 +73,7 @@
 
 .btn--outline {
   --btn-bg: transparent;
-  --btn-color: var(--primary);
+  --btn-color: var(--primary-strong);
   --btn-border: var(--primary);
 }
 
@@ -152,7 +152,7 @@
   padding: 0.3rem 0.75rem;
   border-radius: var(--radius-pill);
   background: var(--primary-tint);
-  color: var(--primary);
+  color: var(--primary-strong);
   font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -176,7 +176,7 @@
   align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-3);
-  color: var(--primary);
+  color: var(--primary-strong);
   font-size: var(--fs-xs);
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -277,7 +277,7 @@
 
 .brand img {
   width: auto;
-  height: 46px;
+  height: 36px;
 }
 
 .nav {
@@ -321,7 +321,7 @@
 
 .nav__link:hover,
 .nav__link[aria-current='page'] {
-  color: var(--primary);
+  color: var(--primary-strong);
 }
 
 .nav__link:hover::after,
@@ -338,7 +338,7 @@
   align-items: center;
   justify-content: center;
   width: 46px;
-  height: 46px;
+  height: 36px;
   margin-left: auto;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -427,7 +427,7 @@
   height: 52px;
   border-radius: var(--radius);
   background: linear-gradient(145deg, var(--primary-tint) 0%, var(--primary-tint-strong) 100%);
-  color: var(--primary);
+  color: var(--primary-strong);
 }
 
 .icon-tile .icon {
@@ -491,7 +491,7 @@
   height: 32px;
   border: 1.5px solid var(--primary);
   border-radius: 50%;
-  color: var(--primary);
+  color: var(--primary-strong);
   transition: background var(--duration) var(--ease), color var(--duration) var(--ease);
 }
 
@@ -541,7 +541,7 @@
 }
 
 .pricing-card__amount {
-  color: var(--primary);
+  color: var(--primary-strong);
   font-family: var(--font-display);
   font-size: clamp(1.75rem, 1.4rem + 1vw, 2.125rem);
   font-weight: 800;
@@ -576,7 +576,7 @@
   width: 18px;
   height: 18px;
   margin-top: 1px;
-  color: var(--primary);
+  color: var(--primary-strong);
 }
 
 .pricing-card .check-list {
@@ -675,7 +675,7 @@
   align-items: center;
   gap: var(--space-2);
   margin-top: var(--space-2);
-  color: var(--primary);
+  color: var(--primary-strong);
   font-weight: 700;
   font-size: var(--fs-sm);
   text-decoration: none;
@@ -796,7 +796,7 @@
   padding: 5px;
   border-radius: 50%;
   background: var(--primary-tint);
-  color: var(--primary);
+  color: var(--primary-strong);
   transition: transform var(--duration) var(--ease);
 }
 
@@ -1353,7 +1353,7 @@
 .cookie-banner__text .icon {
   width: 28px;
   height: 28px;
-  color: var(--primary);
+  color: var(--primary-strong);
 }
 
 .cookie-banner__text strong {
