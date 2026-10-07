@@ -1,28 +1,29 @@
 <%#
-  Carrossel de banners da home (gerenciado em /admin/banners).
-  params: banners, desktopOnly (nenhum banner tem imagem de celular)
-  O texto dos banners está na imagem: o h1 fica oculto e o alt repete o texto.
+  Carrossel do topo da home: 1º slide = hero de texto (com o h1 da página);
+  depois, os banners gerenciados em /admin/banners. O texto dos banners está
+  na imagem, por isso o alt repete esse texto. Banners sem imagem de celular
+  não aparecem no celular.
 %>
-<% const hero = sections.hero; %>
-<section class="banner-carousel<%= locals.desktopOnly ? ' banner-carousel--desktop-only' : '' %>"
-         aria-roledescription="carrossel" aria-label="Destaques" data-banner-carousel>
-  <h1 class="visually-hidden"><%= hero.titleStart %> <%= hero.titleHighlight %></h1>
+<% const total = banners.length + 1; %>
+<section class="banner-carousel" aria-roledescription="carrossel" aria-label="Destaques" data-banner-carousel>
   <ul class="banner-carousel__track" data-banner-track>
+    <li class="banner-slide banner-slide--hero" aria-roledescription="slide" aria-label="1 de <%= total %>" data-banner-slide>
+      <%- include('hero') %>
+    </li>
     <% banners.forEach((banner, index) => { %>
       <li class="banner-slide<%= banner.mobileImage ? '' : ' banner-slide--desktop-only' %>"
-          aria-roledescription="slide" aria-label="<%= index + 1 %> de <%= banners.length %>" data-banner-slide>
+          aria-roledescription="slide" aria-label="<%= index + 2 %> de <%= total %>" data-banner-slide>
         <% const tag = banner.href ? 'a' : 'div'; %>
         <<%= tag %> class="banner-slide__link"<% if (banner.href) { %> href="<%= banner.href %>"<% } %>>
           <picture>
             <% if (banner.mobileImage) { %><source media="(max-width: 767px)" srcset="<%= banner.mobileImage %>"><% } %>
-            <img src="<%= banner.image %>" alt="<%= banner.alt %>" width="2000" height="667" decoding="async"
-                 <%- index === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %>>
+            <img src="<%= banner.image %>" alt="<%= banner.alt %>" width="2000" height="667" decoding="async" loading="lazy">
           </picture>
         </<%= tag %>>
       </li>
     <% }) %>
   </ul>
-  <% if (banners.length > 1) { %>
+  <% if (total > 1) { %>
     <div class="banner-carousel__controls" data-banner-controls>
       <button class="banner-carousel__button" type="button" data-banner-prev aria-label="Banner anterior">
         <%- include('../../components/icon', { name: 'arrow-left' }) %>

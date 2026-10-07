@@ -1,18 +1,13 @@
 <%# Hero — segue o banner oficial: fundo tecnológico, headline grande, CTAs fortes, notebook + celular. %>
-<%#
-  heroMobileOnly: o carrossel de banners ocupa o topo no desktop; o hero aparece só
-  no celular e usa h2 (o h1 fica no carrossel).
-%>
 <% const hero = sections.hero; %>
-<% const mobileOnly = Boolean(locals.heroMobileOnly); const titleTag = mobileOnly ? 'h2' : 'h1'; %>
-<section class="hero<%= mobileOnly ? ' hero--mobile-only' : '' %>" aria-labelledby="hero-title">
+<section class="hero" aria-labelledby="hero-title">
   <%- include('../../components/waves') %>
   <div class="container hero__inner">
     <div class="hero__content">
       <p class="eyebrow eyebrow--pill"><%= hero.eyebrow %></p>
-      <<%= titleTag %> class="hero__title" id="hero-title">
+      <h1 class="hero__title" id="hero-title">
         <%= hero.titleStart %> <span class="text-gradient"><%= hero.titleHighlight %></span>
-      </<%= titleTag %>>
+      </h1>
       <p class="hero__subtitle"><%= hero.subtitle %></p>
 
       <div class="hero__actions">
@@ -45,7 +40,7 @@
         fallback: 'jpg',
         sizes: '(max-width: 1080px) 100vw, 55vw',
         alt: 'Notebook e celular exibindo o painel de gestão desenvolvido pela ' + company.companyName,
-        width: 1100, height: 733, eager: !mobileOnly
+        width: 1100, height: 733, eager: true
       }) %>
     </div>
   </div>

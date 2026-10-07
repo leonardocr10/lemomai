@@ -264,13 +264,28 @@
   display: none;
 }
 
+/* Slides com alturas diferentes (hero x banner 3:1): o banner fica centralizado
+   sobre um fundo claro parecido com o dos próprios banners. */
 .banner-slide {
   flex: 0 0 100%;
+  display: flex;
+  align-items: center;
   scroll-snap-align: start;
+  background: linear-gradient(180deg, #ffffff 0%, var(--surface-soft) 100%);
+}
+
+.banner-slide--hero {
+  display: block;
+  background: none;
+}
+
+.banner-slide--hero > .hero {
+  height: 100%;
 }
 
 .banner-slide__link {
   display: block;
+  width: 100%;
 }
 
 .banner-slide img {
@@ -279,13 +294,20 @@
   height: auto;
 }
 
+/* Controles sobrepostos no canto superior direito: sempre na primeira dobra
+   (o hero é mais alto que a tela) e fora do texto dos slides. */
 .banner-carousel__controls {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--gutter);
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--gutter);
-  border-bottom: 1px solid var(--border);
+  gap: var(--space-2);
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
 }
 
 .banner-carousel.is-single .banner-carousel__controls {
@@ -295,8 +317,8 @@
 .banner-carousel__button {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: 1px solid var(--border);
   border-radius: 50%;
@@ -317,7 +339,7 @@
 }
 
 .banner-carousel__pause {
-  margin-left: var(--space-3);
+  margin-left: var(--space-2);
 }
 
 .banner-carousel__icon-play,
@@ -350,18 +372,9 @@
   background: var(--primary);
 }
 
-.hero--mobile-only {
-  display: none;
-}
-
 @media (max-width: 767px) {
-  .banner-slide--desktop-only,
-  .banner-carousel--desktop-only {
+  .banner-slide--desktop-only {
     display: none;
-  }
-
-  .hero--mobile-only {
-    display: block;
   }
 }
 
