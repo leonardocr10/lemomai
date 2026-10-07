@@ -55,9 +55,9 @@ test('empresa e leads', async () => {
   assert.equal((await repositories.leads.findAll({ status: 'contacted' })).length, 1);
 });
 
-test('banco novo traz os 6 banners iniciais', async () => {
+test('banco novo traz os 3 banners iniciais', async () => {
   const banners = await repositories.banners.findAll();
-  assert.equal(banners.length, 6);
+  assert.equal(banners.length, 3);
   for (const banner of banners) {
     assert.match(banner.image, /^\/images\/banners\//);
     assert.ok(banner.alt.length > 10);
@@ -85,7 +85,7 @@ test('leads: busca por nome ou e-mail', async () => {
   assert.equal(await repositories.leads.count({ q: 'ninguem' }), 0);
 });
 
-test('migração troca os 4 banners antigos de exemplo pelos 6 novos e mantém os enviados pelo painel', () => {
+test('migração troca banners de exemplo antigos pelos atuais e mantém os enviados pelo painel', () => {
   const { DatabaseSync } = require('node:sqlite');
   const { SCHEMA } = require('../src/db/schema');
   const { seed } = require('../src/db/seed');
@@ -93,15 +93,21 @@ test('migração troca os 4 banners antigos de exemplo pelos 6 novos e mantém o
   db.exec(SCHEMA);
   const insert = db.prepare('INSERT INTO banners (title, alt, href, image, active, display_order) VALUES (?, ?, ?, ?, 1, ?)');
   for (const n of [1, 2, 3, 4]) insert.run(`Antigo ${n}`, 'Banner antigo de exemplo', '/orcamento', `/images/banners/banner-${n}.webp`, n);
+  insert.run('Versão 2', 'Banner da segunda leva', '/orcamento', '/images/banners/sites-sob-medida-claro.webp', 5);
   insert.run('Meu banner', 'Banner enviado pelo painel', '/sobre', '/uploads/banners/meu.webp', 9);
 
   seed(db, { withLeads: false });
   const images = db.prepare('SELECT image FROM banners ORDER BY display_order').all().map((row) => row.image);
-  assert.equal(images.filter((image) => image.startsWith('/images/banners/banner-')).length, 0);
-  assert.equal(images.filter((image) => image.startsWith('/images/banners/')).length, 6);
+  assert.equal(images.filter((image) => image.startsWith('/images/banners/banner-') || image.includes('sites-sob-medida')).length, 0);
+  assert.equal(images.filter((image) => image.startsWith('/images/banners/')).length, 3);
   assert.ok(images.includes('/uploads/banners/meu.webp'));
 
   // Rodar de novo não duplica nada.
   seed(db, { withLeads: false });
-  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM banners').get().n, 7);
+  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM banners').get().n, 4);
+
+  // Um exemplo atual excluído pelo painel não volta.
+  db.prepare("DELETE FROM banners WHERE image = '/images/banners/sites-crescimento.webp'").run();
+  seed(db, { withLeads: false });
+  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM banners').get().n, 3);
 });
