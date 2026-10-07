@@ -1,0 +1,30 @@
+<%
+  const items = [
+    { key: 'dashboard', label: 'Painel', href: '/admin' },
+    { key: 'plans', label: 'Planos e preços', href: '/admin/planos' },
+    { key: 'faq', label: 'FAQ', href: '/admin/faq' },
+    { key: 'testimonials', label: 'Depoimentos', href: '/admin/depoimentos' },
+    { key: 'company', label: 'Empresa', href: '/admin/empresa' },
+    { key: 'leads', label: 'Leads', href: '/admin/leads' },
+    { key: 'password', label: 'Trocar senha', href: '/admin/senha' },
+  ];
+%>
+<aside class="admin-nav">
+  <a class="admin-nav__brand" href="/admin">
+    <img src="/images/brand/logo-dark.png" alt="Lenom.AI" width="160" height="29">
+  </a>
+  <nav aria-label="Painel">
+    <ul>
+      <% items.forEach((item) => { %>
+        <li><a href="<%= item.href %>"<%- section === item.key ? ' aria-current="page"' : '' %>><%= item.label %></a></li>
+      <% }) %>
+    </ul>
+  </nav>
+  <div class="admin-nav__footer">
+    <a href="/" target="_blank" rel="noopener">Ver site ↗</a>
+    <form action="/admin/logout" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="admin-link">Sair</button>
+    </form>
+  </div>
+</aside>

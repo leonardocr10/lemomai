@@ -1,0 +1,16 @@
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead><tr><th>Data</th><th>Nome</th><th>E-mail</th><th>Origem</th><th>Status</th></tr></thead>
+    <tbody>
+      <% leads.forEach((lead) => { %>
+        <tr>
+          <td><%= adminFmt.dateTime(lead.createdAt) %></td>
+          <td><a href="/admin/leads/<%= lead.id %>"><%= lead.name || '—' %></a></td>
+          <td><%= lead.email || '—' %></td>
+          <td><%= lead.source === 'quote' ? 'Orçamento' : 'Contato' %></td>
+          <td><span class="admin-badge admin-badge--<%= lead.status %>"><%= adminFmt.leadStatus(lead.status) %></span></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>

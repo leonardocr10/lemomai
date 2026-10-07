@@ -11,6 +11,10 @@ const { globalLocals, renderPage } = require('./middlewares/locals');
 const { notFound, errorHandler } = require('./middlewares/error-handler');
 const webRoutes = require('./routes/web.routes');
 const apiRoutes = require('./routes/api.routes');
+const adminRoutes = require('./routes/admin.routes');
+const repositories = require('./repositories');
+const auth = require('./services/auth.service');
+const HttpError = require('./utils/http-error');
 
 const ROOT = path.resolve(__dirname, '..');
 const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
@@ -46,6 +50,21 @@ function createApp() {
   app.use(renderPage);
 
   app.use('/api', apiRoutes);
+
+  // Painel administrativo: só com o banco interno (sqlite). O admin é criado na
+  // primeira visita; sem ADMIN_PASSWORD em produção o painel responde 404.
+  if (repositories.driver === 'sqlite') {
+    let adminReady = null;
+    const adminGate = async (req, res, next) => {
+      try {
+        adminReady = adminReady ?? (await auth.ensureAdminUser());
+        return adminReady ? next() : next(HttpError.notFound());
+      } catch (err) {
+        return next(err);
+      }
+    };
+    app.use('/admin', adminGate, adminRoutes);
+  }
   app.use(globalLocals);
   app.use('/', webRoutes);
 

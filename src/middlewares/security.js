@@ -73,4 +73,14 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-module.exports = { securityHeaders, formLimiter, apiLimiter };
+/** Login do painel: 10 tentativas erradas por IP a cada 15 minutos. */
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  handler: (req, res) => res.status(429).type('text/plain').send('Muitas tentativas de login. Aguarde 15 minutos.'),
+});
+
+module.exports = { securityHeaders, formLimiter, apiLimiter, loginLimiter };
