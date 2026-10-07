@@ -15,3 +15,42 @@ test('banco novo é populado com os dados de exemplo', () => {
   assert.equal(company.companyName, 'Lenom.AI');
   assert.equal(getDb(), db, 'getDb reutiliza a conexão');
 });
+
+const repositories = require('../src/repositories');
+
+test('driver sqlite selecionado por DATA_DRIVER', () => {
+  assert.equal(repositories.driver, 'sqlite');
+});
+
+test('planos: público só vê ativos; admin vê todos; CRUD funciona', async () => {
+  const created = await repositories.plans.create({
+    name: 'Plano Teste', slug: 'plano-teste', category: 'project', price: 99.9, billingType: 'one-time',
+    features: ['Um', 'Dois'], highlighted: false, active: false, displayOrder: 99,
+  });
+  assert.deepEqual(created.features, ['Um', 'Dois']);
+  assert.equal(created.active, false);
+  assert.equal(await repositories.plans.findBySlug('plano-teste'), null);
+  assert.ok((await repositories.plans.findAllAdmin()).some((p) => p.id === created.id));
+
+  const updated = await repositories.plans.update(created.id, { active: true, price: 120 });
+  assert.equal(updated.price, 120);
+  assert.equal((await repositories.plans.findBySlug('plano-teste')).name, 'Plano Teste');
+  assert.ok((await repositories.plans.findAll({ category: 'project' })).some((p) => p.slug === 'plano-teste'));
+
+  assert.equal(await repositories.plans.remove(created.id), true);
+  assert.equal(await repositories.plans.findById(created.id), null);
+});
+
+test('empresa e leads', async () => {
+  const company = await repositories.company.get();
+  await repositories.company.update({ ...company, phone: '(11) 0000-0000' });
+  assert.equal((await repositories.company.get()).phone, '(11) 0000-0000');
+
+  const lead = await repositories.leads.create({ source: 'contact', name: 'Ana', email: 'ana@x.com', message: 'Oi', status: 'new' });
+  assert.equal(lead.status, 'new');
+  assert.equal(lead.message, 'Oi');
+  await repositories.leads.updateStatus(lead.id, 'contacted');
+  assert.equal((await repositories.leads.findById(lead.id)).status, 'contacted');
+  assert.equal(await repositories.leads.count({ status: 'contacted' }), 1);
+  assert.equal((await repositories.leads.findAll({ status: 'contacted' })).length, 1);
+});
