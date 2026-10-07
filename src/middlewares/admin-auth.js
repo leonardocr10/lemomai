@@ -34,7 +34,7 @@ function setSessionCookie(res, session) {
   res.cookie(COOKIE, session.id, {
     httpOnly: true,
     sameSite: 'lax',
-    secure: config.isProduction,
+    secure: config.secureContext,
     signed: true,
     path: '/admin',
     expires: new Date(session.expiresAt),

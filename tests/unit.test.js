@@ -103,3 +103,13 @@ test('repositório mock segue a interface e não expõe o objeto original', asyn
   const company = await repositories.company.get();
   assert.equal(company.companyName, 'Lenom.AI');
 });
+
+test('produção só ativa cookies Secure/HSTS quando APP_URL é https', () => {
+  const { execFileSync } = require('node:child_process');
+  const check = (appUrl) => execFileSync(process.execPath, ['-e', 'process.stdout.write(String(require("./src/config").secureContext))'], {
+    cwd: require('node:path').resolve(__dirname, '..'),
+    env: { ...process.env, NODE_ENV: 'production', COOKIE_SECRET: 'x'.repeat(32), APP_URL: appUrl },
+  }).toString();
+  assert.equal(check('http://203.0.113.10:8080'), 'false');
+  assert.equal(check('https://lenom.ai'), 'true');
+});

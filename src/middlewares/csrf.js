@@ -22,7 +22,7 @@ function issueCsrfToken(req, res, next) {
     res.cookie(COOKIE_NAME, token, {
       httpOnly: true,
       sameSite: 'lax',
-      secure: config.isProduction,
+      secure: config.secureContext,
       signed: true,
       path: '/',
     });
