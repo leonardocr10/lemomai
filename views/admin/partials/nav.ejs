@@ -37,19 +37,23 @@
           <% }) %>
         <% }) %>
       </ul>
-      <div class="admin-sidebar__footer">
-        <a class="nav-link" href="/" target="_blank" rel="noopener">
-          <span class="nav-link-icon"><i class="ti ti-external-link icon" aria-hidden="true"></i></span>
-          <span class="nav-link-title">Ver site</span>
-        </a>
-        <form action="/admin/logout" method="post">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <button type="submit" class="nav-link admin-sidebar__logout">
-            <span class="nav-link-icon"><i class="ti ti-logout icon" aria-hidden="true"></i></span>
-            <span class="nav-link-title">Sair</span>
-          </button>
-        </form>
-      </div>
+      <ul class="navbar-nav admin-sidebar__footer">
+        <li class="nav-item">
+          <a class="nav-link" href="/" target="_blank" rel="noopener">
+            <span class="nav-link-icon"><i class="ti ti-external-link icon" aria-hidden="true"></i></span>
+            <span class="nav-link-title">Ver site</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <form action="/admin/logout" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="nav-link admin-sidebar__logout">
+              <span class="nav-link-icon"><i class="ti ti-logout icon" aria-hidden="true"></i></span>
+              <span class="nav-link-title">Sair</span>
+            </button>
+          </form>
+        </li>
+      </ul>
     </div>
   </div>
 </aside>

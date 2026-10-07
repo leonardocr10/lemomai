@@ -152,7 +152,7 @@ const banners = resourceController({
     { label: 'Imagem', image: (b) => b.image },
     { label: 'Nome', value: (b) => b.title, link: true, sort: 'title' },
     { label: 'Link', value: (b) => b.href || '—', sort: 'href' },
-    { label: 'Celular', value: (b) => (b.mobileImage ? 'Sim' : 'Não aparece') },
+    { label: 'Celular', value: (b) => (b.mobileImage ? 'Sim' : 'Não aparece'), nowrap: true },
   ],
   defaults: { active: true, displayOrder: 0 },
   toForm: (b) => ({ ...b }),

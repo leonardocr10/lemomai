@@ -43,7 +43,7 @@
             <tr<%- item.active ? '' : ' class="is-inactive"' %>>
               <td><input class="form-check-input m-0 align-middle" type="checkbox" form="bulk-form" name="ids" value="<%= item.id %>" data-bulk-item aria-label="Selecionar item <%= item.id %>"></td>
               <% def.columns.forEach((column) => { %>
-                <td class="<%= column.num ? 'text-end text-nowrap' : '' %>">
+                <td class="<%= column.num ? 'text-end text-nowrap' : column.nowrap ? 'text-nowrap' : '' %>">
                   <% if (column.image) { %><img class="admin-thumb" src="<%= column.image(item) %>" alt=""><% } else if (column.link) { %><a class="fw-medium" href="/admin/<%= def.path %>/<%= item.id %>"><%= column.value(item) %></a><% } else { %><%= column.value(item) %><% } %>
                 </td>
               <% }) %>

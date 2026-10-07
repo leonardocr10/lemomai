@@ -257,7 +257,12 @@
     applyButton.onclick = () => {
       if (!cropper) return;
       const max = MAX_OUTPUT[aspect] || MAX_OUTPUT.default;
+      // 3:1 sai com tamanho exato (ex.: 2000×667), sem arredondar para 666.
+      const exact = aspect === '3'
+        ? (() => { const width = Math.min(max.width, Math.round(cropper.getData().width)); return { width, height: Math.round(width / 3) }; })()
+        : {};
       const canvas = cropper.getCroppedCanvas({
+        ...exact,
         maxWidth: max.width,
         maxHeight: max.height,
         imageSmoothingEnabled: true,
