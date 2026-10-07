@@ -1,61 +1,50 @@
 #!/usr/bin/env bash
 # =============================================================================
-# 3) Troca: para a aplicação ANTIGA e coloca a NOVA na mesma porta.
+# 3) Troca: para a aplicação ANTIGA e liga a NOVA na mesma porta.
 #
 #   bash 3-trocar-para-app-nova.sh
 #
-# O Nginx continua igual (domínio e HTTPS não mudam): ele já repassa para essa porta.
-# Fora do ar por poucos segundos. Se a app nova não responder em 30 s,
-# a antiga volta sozinha.
-#
-# A antiga sai da lista do PM2 (para não disputar a porta num reinício do
-# servidor), mas os arquivos dela não são tocados e o backup fica guardado.
-# Para voltar: bash 9-voltar-app-antiga.sh
+# O Nginx continua igual (domínio e HTTPS não mudam). Fora do ar por poucos
+# segundos. Se a app nova não responder em 30 s, a antiga volta sozinha.
+# A antiga não é apagada: arquivos e backup ficam. Para voltar:
+#   bash 9-voltar-app-antiga.sh
 # =============================================================================
 set -euo pipefail
 source "$(dirname "$0")/comum.sh"
+precisa_root
 
 [[ -f "$STATE_FILE" ]] || erro "Rode antes: 1-backup-app-antiga.sh e 2-instalar-app-nova.sh"
 # shellcheck disable=SC1090
 source "$STATE_FILE"
-[[ -n "${NODE_BIN:-}" && -x "$NODE_BIN" ]] || erro "Rode antes: bash 2-instalar-app-nova.sh"
-[[ -f "$APP_DIR/server.js" && -f "$APP_DIR/.env" ]] || erro "App nova não está instalada em $APP_DIR."
+[[ -f "$SERVICE_FILE" && -f "$APP_DIR/.env" ]] || erro "App nova não instalada. Rode: bash 2-instalar-app-nova.sh"
 
-echo "Vai parar: $OLD_NAME ($OLD_CWD)"
-echo "Vai subir: $APP_NAME ($APP_DIR) na porta $PORT"
+echo "Vai parar: app antiga ($OLD_MANAGER ${OLD_UNIT}${OLD_CONTAINER}${OLD_PM2_NAME}) em $OLD_CWD"
+echo "Vai ligar: serviço $APP_NAME ($APP_DIR) na porta $PORT"
 confirmar "Continuar?" || exit 0
 
-voltar_antiga() {
-  aviso "A app nova não respondeu. Voltando a antiga..."
-  pm2 logs "$APP_NAME" --lines 40 --nostream || true
-  pm2 delete "$APP_NAME" >/dev/null 2>&1 || true
-  if pm2 describe "$OLD_NAME" >/dev/null 2>&1; then
-    pm2 start "$OLD_NAME" >/dev/null
-  else
-    pm2 start "$OLD_SCRIPT" --name "$OLD_NAME" --cwd "$OLD_CWD" ${OLD_INTERP:+--interpreter "$OLD_INTERP"} >/dev/null
-  fi
-  pm2 save >/dev/null
-  erro "A app antiga voltou ao ar. Veja os logs acima, corrija e rode este script de novo."
-}
-
 info "Parando a app antiga..."
-pm2 stop "$OLD_NAME" >/dev/null
+parar_antiga
 
-info "Subindo a app nova..."
-pm2 delete "$APP_NAME" >/dev/null 2>&1 || true
-pm2 start "$APP_DIR/server.js" --name "$APP_NAME" --cwd "$APP_DIR" --interpreter "$NODE_BIN" --time >/dev/null
+info "Ligando a app nova..."
+systemctl enable --now "$APP_NAME" >/dev/null 2>&1 || true
 
 if ! esperar_resposta "$PORT"; then
-  voltar_antiga
+  aviso "A app nova não respondeu. Voltando a antiga..."
+  journalctl -u "$APP_NAME" -n 40 --no-pager || true
+  systemctl disable --now "$APP_NAME" >/dev/null 2>&1 || true
+  esperar_porta_livre "$PORT" || true
+  iniciar_antiga
+  esperar_resposta "$PORT" && erro "A app antiga voltou ao ar. Veja os logs acima, corrija e rode este script de novo." ||
+    erro "Nem a nova nem a antiga responderam! Veja: journalctl -u $APP_NAME -n 100  e  $BACKUP_ROOT/app-antiga.log"
 fi
 
-info "App nova respondendo na porta $PORT. Removendo a antiga da lista do PM2 (arquivos mantidos)..."
-pm2 delete "$OLD_NAME" >/dev/null
-pm2 save >/dev/null
-
 echo
-pm2 list
+systemctl --no-pager --lines=0 status "$APP_NAME" || true
 echo
-info "Pronto! Abra o site pelo domínio e entre em /admin com o usuário e a senha do .env."
-echo "    Logs:   pm2 logs $APP_NAME"
-echo "    Voltar: bash 9-voltar-app-antiga.sh"
+info "Pronto! A app nova está no ar na porta $PORT. Abra o site pelo domínio e entre em /admin."
+echo "    Logs:      journalctl -u $APP_NAME -f"
+echo "    Reiniciar: systemctl restart $APP_NAME"
+echo "    Voltar:    bash 9-voltar-app-antiga.sh"
+if [[ "$OLD_MANAGER" == "manual" ]]; then
+  aviso "Se a app antiga era iniciada por cron/@reboot ou rc.local (veja o passo 1), desative essa linha agora."
+fi

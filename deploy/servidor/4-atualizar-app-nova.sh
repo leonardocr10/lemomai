@@ -9,37 +9,31 @@
 # =============================================================================
 set -euo pipefail
 source "$(dirname "$0")/comum.sh"
+precisa_root
+[[ -d "$APP_DIR/.git" ]] || erro "App nova não encontrada em $APP_DIR."
 
-[[ -f "$STATE_FILE" ]] || erro "Arquivo $STATE_FILE não encontrado (a instalação foi feita por estes scripts?)."
-# shellcheck disable=SC1090
-source "$STATE_FILE"
-[[ -n "${NODE_BIN:-}" && -x "$NODE_BIN" ]] || preparar_node
-NPM_BIN="${NPM_BIN:-$(dirname "$NODE_BIN")/npm}"
+como_app() { runuser -u "$APP_USER" -- env PATH="$NODE_DIR/bin:/usr/bin:/bin" HOME="/home/$APP_USER" "$@"; }
+PORT="$(grep -E '^PORT=' "$APP_DIR/.env" | cut -d= -f2- | tr -d "\"'\`")"
 
 cd "$APP_DIR"
 
 if [[ -f storage/lenom.db ]]; then
-  STAMP="$(date +%Y%m%d-%H%M%S)"
   mkdir -p "$BACKUP_ROOT/banco"
-  "$NODE_BIN" -e '
+  COPIA="$BACKUP_ROOT/banco/lenom-$(date +%Y%m%d-%H%M%S).db"
+  "$NODE_BIN" --no-warnings -e '
     const { DatabaseSync } = require("node:sqlite");
-    const db = new DatabaseSync(process.argv[1]);
-    db.exec(`VACUUM INTO '"'"'${process.argv[2]}'"'"'`);
-  ' storage/lenom.db "$BACKUP_ROOT/banco/lenom-$STAMP.db" 2>/dev/null &&
-    info "Cópia do banco: $BACKUP_ROOT/banco/lenom-$STAMP.db" ||
-    aviso "Não consegui copiar o banco; seguindo mesmo assim."
+    new DatabaseSync(process.argv[1]).exec(`VACUUM INTO '"'"'${process.argv[2]}'"'"'`);
+  ' storage/lenom.db "$COPIA" && info "Cópia do banco: $COPIA" || aviso "Não consegui copiar o banco; seguindo mesmo assim."
 fi
 
 info "Baixando atualizações..."
-git fetch --quiet origin "$BRANCH"
-git pull --quiet --ff-only origin "$BRANCH"
+como_app git pull --quiet --ff-only origin "$BRANCH"
 
 info "Instalando dependências e gerando arquivos de produção..."
-npm_novo ci --no-audit --no-fund
-npm_novo run build
+como_app "$NPM_BIN" ci --no-audit --no-fund
+como_app "$NPM_BIN" run build
 
-info "Reiniciando sem derrubar (pm2 reload)..."
-pm2 reload "$APP_NAME" --update-env >/dev/null
-esperar_resposta "$PORT" || erro "A app não respondeu depois da atualização. Veja: pm2 logs $APP_NAME"
-pm2 save >/dev/null
-info "Atualizado: $(git log -1 --format='%h %s')"
+info "Reiniciando o serviço..."
+systemctl restart "$APP_NAME"
+esperar_resposta "$PORT" || erro "A app não respondeu depois da atualização. Veja: journalctl -u $APP_NAME -n 100"
+info "Atualizado: $(como_app git log -1 --format='%h %s')"
