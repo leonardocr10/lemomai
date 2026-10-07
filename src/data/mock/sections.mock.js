@@ -19,6 +19,14 @@ module.exports = {
     handwritten: 'Ideias em soluções reais',
   },
 
+  // Faixa logo abaixo do banner da home: o que a empresa garante (sem números inventados).
+  highlights: [
+    { icon: 'diamond', title: 'Projeto sob medida', text: 'Feito para o seu processo' },
+    { icon: 'headset', title: 'Suporte contínuo', text: 'Acompanhamento após a entrega' },
+    { icon: 'cpu', title: 'Tecnologia moderna', text: 'Rápido, seguro e escalável' },
+    { icon: 'map-pin', title: 'Todo o Brasil', text: 'Atendimento remoto' },
+  ],
+
   services: {
     eyebrow: 'Nossos serviços',
     title: 'Soluções completas para o',

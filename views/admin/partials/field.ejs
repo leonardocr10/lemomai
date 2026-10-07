@@ -1,34 +1,48 @@
 <%#
-  Campo de formulário do painel.
-  params: name, label, value, errors, type ('text'|'number'|'email'|'password'|'textarea'|'select'|'checkbox'),
-          options [{ value, label }], hint, required, rows, full (ocupa a linha inteira), attrs (atributos extras, texto fixo)
+  Campo de formulário do painel (Tabler).
+  params: name, label, value, errors, type ('text'|'number'|'email'|'password'|'textarea'|'select'|'switch'|'file'),
+          options [{ value, label }], hint, required, rows, full (linha inteira), prefix (ex.: 'R$'),
+          attrs (atributos extras, texto fixo),
+          type 'file': ratio ('3' | 'portrait'), crop ('3' | '0.8,1,free'), removeName (checkbox "remover imagem atual")
 %>
 <%
   const id = 'f-' + name;
   const error = (locals.errors || {})[name];
   const type = locals.type || 'text';
   const val = locals.value === null || locals.value === undefined ? '' : locals.value;
+  const invalid = error ? ' is-invalid' : '';
+  const describedBy = [locals.hint ? id + '-hint' : '', error ? id + '-error' : ''].filter(Boolean).join(' ');
+  const aria = (error ? ' aria-invalid="true"' : '') + (describedBy ? ' aria-describedby="' + describedBy + '"' : '');
+  const wide = locals.full || type === 'textarea' || type === 'file';
 %>
-<% if (type === 'checkbox') { %>
-  <div class="field<%= locals.full ? ' field--full' : '' %>">
-    <label class="admin-check"><input type="checkbox" name="<%= name %>"<%= val ? ' checked' : '' %>> <%= label %></label>
-    <% if (locals.hint) { %><p class="field__hint"><%= hint %></p><% } %>
-  </div>
-<% } else { %>
-  <div class="field<%= locals.full ? ' field--full' : '' %><%= error ? ' has-error' : '' %>">
-    <label for="<%= id %>"><%= label %><% if (locals.required) { %> <span class="req" aria-hidden="true">*</span><% } %></label>
+<div class="<%= wide ? 'col-12' : 'col-md-6' %>">
+  <% if (type === 'switch') { %>
+    <label class="form-check form-switch form-switch-lg m-0">
+      <input class="form-check-input" type="checkbox" name="<%= name %>" role="switch"<%= val ? ' checked' : '' %>>
+      <span class="form-check-label"><%= label %></span>
+    </label>
+    <% if (locals.hint) { %><small class="form-hint" id="<%= id %>-hint"><%= hint %></small><% } %>
+  <% } else { %>
+    <label class="form-label<%= locals.required ? ' required' : '' %>" for="<%= id %>"><%= label %></label>
     <% if (type === 'textarea') { %>
-      <textarea class="textarea" id="<%= id %>" name="<%= name %>" rows="<%= locals.rows || 4 %>"<%- error ? ' aria-invalid="true"' : '' %>><%= val %></textarea>
+      <textarea class="form-control<%= invalid %>" id="<%= id %>" name="<%= name %>" rows="<%= locals.rows || 4 %>"<%- aria %>><%= val %></textarea>
     <% } else if (type === 'select') { %>
-      <select class="select" id="<%= id %>" name="<%= name %>"<%- error ? ' aria-invalid="true"' : '' %>>
+      <select class="form-select<%= invalid %>" id="<%= id %>" name="<%= name %>"<%- aria %>>
         <% options.forEach((option) => { %>
           <option value="<%= option.value %>"<%= String(option.value) === String(val) ? ' selected' : '' %>><%= option.label %></option>
         <% }) %>
       </select>
+    <% } else if (type === 'file') { %>
+      <%- include('dropzone', { id, name, val, error, aria, ratio: locals.ratio, crop: locals.crop, removeName: locals.removeName }) %>
+    <% } else if (locals.prefix) { %>
+      <div class="input-group">
+        <span class="input-group-text"><%= prefix %></span>
+        <input class="form-control<%= invalid %>" id="<%= id %>" name="<%= name %>" type="<%= type %>" value="<%= val %>"<%- locals.attrs || '' %><%- aria %>>
+      </div>
     <% } else { %>
-      <input class="input" id="<%= id %>" name="<%= name %>" type="<%= type %>" value="<%= type === 'password' ? '' : val %>"<%- locals.attrs || '' %><%- error ? ' aria-invalid="true"' : '' %>>
+      <input class="form-control<%= invalid %>" id="<%= id %>" name="<%= name %>" type="<%= type %>" value="<%= type === 'password' ? '' : val %>"<%- locals.attrs || '' %><%- aria %>>
     <% } %>
-    <% if (locals.hint) { %><p class="field__hint"><%= hint %></p><% } %>
-    <p class="field__error"><%= error || '' %></p>
-  </div>
-<% } %>
+    <% if (locals.hint) { %><small class="form-hint" id="<%= id %>-hint"><%= hint %></small><% } %>
+    <% if (error) { %><div class="invalid-feedback d-block" id="<%= id %>-error"><%= error %></div><% } %>
+  <% } %>
+</div>

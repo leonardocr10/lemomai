@@ -51,6 +51,8 @@
   /* Tipografia */
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Lexend', 'Inter', system-ui, sans-serif;
+  /* Rótulos pequenos (eyebrows, selos): a mesma máquina de escrever do ".AI" do logo. */
+  --font-label: 'Courier Prime', ui-monospace, 'Courier New', monospace;
   --fs-xs: 0.75rem;
   --fs-sm: 0.875rem;
   --fs-base: 1rem;
@@ -69,7 +71,7 @@
   --space-6: 2rem;
   --space-7: 3rem;
   --space-8: 4rem;
-  --section-y: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  --section-y: clamp(3rem, 2rem + 3.5vw, 5.25rem);
   --container: 1240px;
   --gutter: clamp(1rem, 0.5rem + 2vw, 2rem);
 
@@ -81,9 +83,9 @@
   --radius-pill: 999px;
 
   /* Sombras */
-  --shadow-sm: 0 1px 2px rgba(15, 45, 74, 0.06), 0 1px 3px rgba(15, 45, 74, 0.05);
-  --shadow: 0 6px 20px rgba(15, 45, 74, 0.08);
-  --shadow-lg: 0 18px 40px rgba(15, 45, 74, 0.14);
+  --shadow-sm: 0 1px 2px rgba(15, 45, 74, 0.04), 0 2px 8px rgba(15, 45, 74, 0.04);
+  --shadow: 0 8px 24px rgba(15, 45, 74, 0.07);
+  --shadow-lg: 0 18px 44px rgba(15, 45, 74, 0.11);
   --shadow-glow: 0 10px 30px var(--glow-primary);
   --shadow-glow-cyan: 0 0 0 1px rgba(111, 209, 87, 0.6), 0 18px 45px rgba(31, 166, 160, 0.35);
 

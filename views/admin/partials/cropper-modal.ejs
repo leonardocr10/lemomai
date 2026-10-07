@@ -1,0 +1,20 @@
+<%# Modal de recorte (Cropper.js). Aberto pelo botão "Recortar" de cada área de imagem. %>
+<div class="modal modal-blur fade" id="cropper-modal" tabindex="-1" aria-hidden="true" aria-labelledby="cropper-modal-title">
+  <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="cropper-modal-title">Recortar imagem</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="btn-group mb-3" role="group" aria-label="Proporção" data-cropper-aspects></div>
+        <div class="admin-cropper"><img alt="Imagem para recortar" data-cropper-image></div>
+        <p class="text-secondary small mt-2 mb-0" data-cropper-info></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" data-cropper-apply><i class="ti ti-check icon" aria-hidden="true"></i> Aplicar recorte</button>
+      </div>
+    </div>
+  </div>
+</div>

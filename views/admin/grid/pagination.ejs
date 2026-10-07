@@ -1,0 +1,30 @@
+<%# Rodapé da lista: contagem + paginação. params: grid, count (itens nesta página) %>
+<% const first = grid.total ? grid.state.offset + 1 : 0; const last = grid.state.offset + count; %>
+<div class="card-footer d-flex flex-wrap align-items-center gap-2">
+  <p class="m-0 text-secondary">Mostrando <strong><%= first %>–<%= last %></strong> de <strong><%= grid.total %></strong></p>
+  <% if (grid.pages > 1) { %>
+    <nav class="ms-auto" aria-label="Paginação">
+      <ul class="pagination m-0">
+        <li class="page-item<%= grid.state.page <= 1 ? ' disabled' : '' %>">
+          <a class="page-link" href="<%= grid.url({ page: Math.max(1, grid.state.page - 1) }) %>" aria-label="Página anterior"<%- grid.state.page <= 1 ? ' tabindex="-1" aria-disabled="true"' : '' %>>
+            <i class="ti ti-chevron-left icon" aria-hidden="true"></i>
+          </a>
+        </li>
+        <% grid.pageItems.forEach((item) => { %>
+          <% if (item === '…') { %>
+            <li class="page-item disabled"><span class="page-link">…</span></li>
+          <% } else { %>
+            <li class="page-item<%= item === grid.state.page ? ' active' : '' %>">
+              <a class="page-link" href="<%= grid.url({ page: item }) %>"<%- item === grid.state.page ? ' aria-current="page"' : '' %>><%= item %></a>
+            </li>
+          <% } %>
+        <% }) %>
+        <li class="page-item<%= grid.state.page >= grid.pages ? ' disabled' : '' %>">
+          <a class="page-link" href="<%= grid.url({ page: Math.min(grid.pages, grid.state.page + 1) }) %>" aria-label="Próxima página"<%- grid.state.page >= grid.pages ? ' tabindex="-1" aria-disabled="true"' : '' %>>
+            <i class="ti ti-chevron-right icon" aria-hidden="true"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  <% } %>
+</div>

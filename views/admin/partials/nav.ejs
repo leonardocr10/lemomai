@@ -1,30 +1,59 @@
 <%
-  const items = [
-    { key: 'dashboard', label: 'Painel', href: '/admin' },
-    { key: 'plans', label: 'Planos e preços', href: '/admin/planos' },
-    { key: 'faq', label: 'FAQ', href: '/admin/faq' },
-    { key: 'testimonials', label: 'Depoimentos', href: '/admin/depoimentos' },
-    { key: 'company', label: 'Empresa', href: '/admin/empresa' },
-    { key: 'leads', label: 'Leads', href: '/admin/leads' },
-    { key: 'password', label: 'Trocar senha', href: '/admin/senha' },
+  const groups = [
+    [{ key: 'dashboard', label: 'Painel', href: '/admin', icon: 'layout-dashboard' }],
+    [
+      { key: 'banners', label: 'Banners da home', href: '/admin/banners', icon: 'photo' },
+      { key: 'plans', label: 'Planos e preços', href: '/admin/planos', icon: 'receipt-2' },
+      { key: 'faq', label: 'FAQ', href: '/admin/faq', icon: 'help-circle' },
+      { key: 'testimonials', label: 'Depoimentos', href: '/admin/depoimentos', icon: 'quote' },
+      { key: 'company', label: 'Empresa', href: '/admin/empresa', icon: 'building' },
+    ],
+    [
+      { key: 'leads', label: 'Leads', href: '/admin/leads', icon: 'inbox' },
+      { key: 'password', label: 'Trocar senha', href: '/admin/senha', icon: 'key' },
+    ],
   ];
 %>
-<aside class="admin-nav">
-  <a class="admin-nav__brand" href="/admin">
-    <img src="/images/brand/logo-dark.png" alt="Lenom.AI" width="160" height="29">
-  </a>
-  <nav aria-label="Painel">
-    <ul>
-      <% items.forEach((item) => { %>
-        <li><a href="<%= item.href %>"<%- section === item.key ? ' aria-current="page"' : '' %>><%= item.label %></a></li>
-      <% }) %>
-    </ul>
-  </nav>
-  <div class="admin-nav__footer">
-    <a href="/" target="_blank" rel="noopener">Ver site ↗</a>
-    <form action="/admin/logout" method="post">
-      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-      <button type="submit" class="admin-link">Sair</button>
-    </form>
+<aside class="navbar navbar-vertical navbar-expand-lg admin-sidebar" data-bs-theme="dark">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu"
+            aria-controls="sidebar-menu" aria-expanded="false" aria-label="Abrir menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-brand">
+      <a href="/admin"><img src="/images/brand/logo-dark.png" alt="Lenom.AI" width="150" height="27" class="admin-sidebar__logo"></a>
+    </div>
+    <div class="collapse navbar-collapse" id="sidebar-menu">
+      <ul class="navbar-nav pt-lg-3">
+        <% groups.forEach((group, index) => { %>
+          <% if (index > 0) { %><li class="nav-item" aria-hidden="true"><hr class="navbar-divider my-2"></li><% } %>
+          <% group.forEach((item) => { %>
+            <li class="nav-item<%= section === item.key ? ' active' : '' %>">
+              <a class="nav-link" href="<%= item.href %>"<%- section === item.key ? ' aria-current="page"' : '' %>>
+                <span class="nav-link-icon"><i class="ti ti-<%= item.icon %> icon" aria-hidden="true"></i></span>
+                <span class="nav-link-title"><%= item.label %></span>
+              </a>
+            </li>
+          <% }) %>
+        <% }) %>
+      </ul>
+      <ul class="navbar-nav admin-sidebar__footer">
+        <li class="nav-item">
+          <a class="nav-link" href="/" target="_blank" rel="noopener">
+            <span class="nav-link-icon"><i class="ti ti-external-link icon" aria-hidden="true"></i></span>
+            <span class="nav-link-title">Ver site</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <form action="/admin/logout" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="nav-link admin-sidebar__logout">
+              <span class="nav-link-icon"><i class="ti ti-logout icon" aria-hidden="true"></i></span>
+              <span class="nav-link-title">Sair</span>
+            </button>
+          </form>
+        </li>
+      </ul>
+    </div>
   </div>
 </aside>

@@ -1,20 +1,64 @@
-<nav class="admin-filters" aria-label="Filtrar por status">
-  <a href="/admin/leads"<%- !status ? ' aria-current="true"' : '' %>>Todos</a>
-  <% Object.entries(statuses).forEach(([value, label]) => { %>
-    <a href="/admin/leads?status=<%= value %>"<%- status === value ? ' aria-current="true"' : '' %>><%= label %></a>
-  <% }) %>
-</nav>
-<section class="admin-card">
+<div class="card" data-bulk>
+  <div class="card-header border-bottom-0 pb-0">
+    <ul class="nav nav-tabs card-header-tabs" aria-label="Filtrar por status">
+      <% tabs.forEach((tab) => { const active = (status || '') === tab.key; %>
+        <li class="nav-item">
+          <a class="nav-link<%= active ? ' active' : '' %>" href="<%= grid.url({ status: tab.key, page: 1 }) %>"<%- active ? ' aria-current="page"' : '' %>>
+            <%= tab.label %> <span class="badge bg-secondary-lt ms-2"><%= tab.count %></span>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+  <div class="card-header">
+    <%- include('../grid/toolbar', { grid, extra: { status } }) %>
+  </div>
+  <%
+    const statusSelect = '<label class="visually-hidden" for="bulk-status">Novo status</label>'
+      + '<select id="bulk-status" class="form-select form-select-sm w-auto" form="bulk-form" name="status">'
+      + Object.entries(statuses).map(([value, label]) => `<option value="${value}">${label}</option>`).join('')
+      + '</select>';
+  %>
+  <%- include('../grid/bulkbar', {
+    grid,
+    slot: statusSelect,
+    buttons: [{ action: 'status', label: 'Mudar status', icon: 'check' }],
+  }) %>
   <% if (!leads.length) { %>
-    <p class="admin-empty">Nenhum lead<%= status ? ' com este status' : '' %>.</p>
+    <div class="empty">
+      <div class="empty-icon"><i class="ti ti-<%= grid.state.q ? 'search-off' : 'inbox' %> icon" aria-hidden="true"></i></div>
+      <p class="empty-title"><%= grid.state.q ? 'Nada encontrado' : 'Nenhum lead aqui' %></p>
+      <p class="empty-subtitle text-secondary">
+        <%= grid.state.q ? `Nenhum resultado para "${grid.state.q}".` : 'Os contatos e orçamentos enviados pelo site aparecem nesta lista.' %>
+      </p>
+    </div>
   <% } else { %>
-    <%- include('table', { leads }) %>
-    <% if (pages > 1) { const q = status ? '&status=' + status : ''; %>
-      <nav class="admin-pager" aria-label="Paginação">
-        <% if (page > 1) { %><a class="btn btn--outline btn--small" href="/admin/leads?pagina=<%= page - 1 %><%= q %>">← Anteriores</a><% } %>
-        <span>Página <%= page %> de <%= pages %></span>
-        <% if (page < pages) { %><a class="btn btn--outline btn--small" href="/admin/leads?pagina=<%= page + 1 %><%= q %>">Próximos →</a><% } %>
-      </nav>
-    <% } %>
+    <div class="table-responsive">
+      <table class="table table-vcenter card-table table-hover">
+        <thead>
+          <tr>
+            <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" data-bulk-all aria-label="Selecionar todos desta página"></th>
+            <%- include('../grid/th', { grid, label: 'Recebido', sort: 'createdAt' }) %>
+            <%- include('../grid/th', { grid, label: 'Nome', sort: 'name' }) %>
+            <%- include('../grid/th', { grid, label: 'E-mail', sort: 'email' }) %>
+            <%- include('../grid/th', { grid, label: 'Origem', sort: 'source' }) %>
+            <%- include('../grid/th', { grid, label: 'Status', sort: 'status' }) %>
+          </tr>
+        </thead>
+        <tbody>
+          <% leads.forEach((lead) => { %>
+            <tr>
+              <td><input class="form-check-input m-0 align-middle" type="checkbox" form="bulk-form" name="ids" value="<%= lead.id %>" data-bulk-item aria-label="Selecionar <%= lead.name || 'lead ' + lead.id %>"></td>
+              <td class="text-secondary text-nowrap"><%= adminFmt.dateTime(lead.createdAt) %></td>
+              <td><a href="/admin/leads/<%= lead.id %>"><%= lead.name || '—' %></a></td>
+              <td class="text-secondary"><%= lead.email || '—' %></td>
+              <td><%= lead.source === 'quote' ? 'Orçamento' : 'Contato' %></td>
+              <td><span class="badge <%= adminFmt.leadBadge(lead.status) %>"><%= adminFmt.leadStatus(lead.status) %></span></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <%- include('../grid/pagination', { grid, count: leads.length }) %>
   <% } %>
-</section>
+</div>

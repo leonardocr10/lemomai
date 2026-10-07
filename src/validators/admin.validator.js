@@ -81,6 +81,15 @@ const schemas = {
     displayOrder,
   }),
 
+  banner: z.object({
+    title: text(120, 'Informe um nome para o banner.'),
+    alt: text(300, 'Escreva o texto do banner (para leitores de tela e Google).'),
+    href: link,
+    active: checkbox,
+    displayOrder,
+    removeMobileImage: checkbox,
+  }),
+
   company: z.object({
     companyName: text(120, 'Informe o nome da empresa.'),
     legalName: optional(160),

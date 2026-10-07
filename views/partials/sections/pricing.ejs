@@ -1,13 +1,11 @@
 <% const s = sections.pricing; %>
 <section class="section section--soft" id="precos" aria-labelledby="precos-title">
   <div class="container">
-    <div class="pricing-head">
-      <div class="section-title" data-reveal>
-        <p class="eyebrow"><%= s.eyebrow %></p>
-        <h2 id="precos-title"><%= s.title %> <span class="text-gradient--light"><%= s.highlight %></span></h2>
-        <p><%= s.subtitle %></p>
-      </div>
-      <ul class="pricing-perks" data-reveal>
+    <div class="section-title section-title--center" data-reveal>
+      <p class="eyebrow"><%= s.eyebrow %></p>
+      <h2 id="precos-title"><%= s.title %> <span class="text-gradient--light"><%= s.highlight %></span></h2>
+      <p><%= s.subtitle %></p>
+      <ul class="pricing-perks">
         <% s.perks.forEach((perk) => { %>
           <li><%- include('../../components/icon', { name: perk.icon }) %><span><%= perk.text %></span></li>
         <% }) %>

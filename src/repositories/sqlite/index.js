@@ -10,6 +10,13 @@ const mock = require('../mock');
 
 const ORDER = 'ORDER BY display_order ASC, id ASC';
 
+/** Busca "contém" com LIKE: %, _ e ! digitados são tratados como texto (escape = !). */
+const likeTerm = (q) => `%${String(q).replace(/[!%_]/g, (char) => `!${char}`)}%`;
+const searchClause = (columns, q) => ({
+  sql: `(${columns.map((column) => `${column} LIKE ? ESCAPE '!'`).join(' OR ')})`,
+  params: columns.map(() => likeTerm(q)),
+});
+
 function table(def) {
   const decode = (row) => decodeRow(def, row);
   const findById = async (id) => decode(getDb().prepare(`SELECT * FROM ${def.table} WHERE id = ?`).get(Number(id)));
@@ -30,6 +37,23 @@ function table(def) {
     },
     async findAllAdmin() {
       return getDb().prepare(`SELECT * FROM ${def.table} ${ORDER}`).all().map(decode);
+    },
+    /**
+     * Lista do painel (inclui inativos). sort/searchColumns só aceitam colunas
+     * declaradas em def.columns — nunca texto livre no SQL.
+     */
+    async findPage({ q = '', searchColumns = [], sort, dir = 'asc', limit = 25, offset = 0 } = {}) {
+      const allowed = (key) => def.columns.includes(key) || key === 'id' || key === 'createdAt' || key === 'updatedAt';
+      const columns = searchColumns.filter(allowed).map(toSnake);
+      const where = q && columns.length ? searchClause(columns, q) : { sql: '1 = 1', params: [] };
+      const order = sort && allowed(sort)
+        ? `ORDER BY ${toSnake(sort)} ${dir === 'desc' ? 'DESC' : 'ASC'}, id ASC`
+        : ORDER;
+      const db = getDb();
+      const total = db.prepare(`SELECT COUNT(*) AS n FROM ${def.table} WHERE ${where.sql}`).get(...where.params).n;
+      const items = db.prepare(`SELECT * FROM ${def.table} WHERE ${where.sql} ${order} LIMIT ? OFFSET ?`)
+        .all(...where.params, limit, offset).map(decode);
+      return { items, total };
     },
     findById,
     async create(data) {
@@ -71,7 +95,22 @@ const decodeLead = (row) =>
     ? { ...JSON.parse(row.data), id: row.id, source: row.source, status: row.status, createdAt: row.created_at, updatedAt: row.updated_at }
     : null);
 
-const leadFilter = (status) => (status ? { sql: 'WHERE status = ?', params: [status] } : { sql: '', params: [] });
+const LEAD_SORT = { createdAt: 'created_at', name: 'name', email: 'email', status: 'status', source: 'source' };
+
+function leadFilter({ status, q } = {}) {
+  const parts = [];
+  const params = [];
+  if (status) {
+    parts.push('status = ?');
+    params.push(status);
+  }
+  if (q) {
+    const search = searchClause(['name', 'email', 'data'], q);
+    parts.push(search.sql);
+    params.push(...search.params);
+  }
+  return { sql: parts.length ? `WHERE ${parts.join(' AND ')}` : '', params };
+}
 
 const leads = {
   async create(lead) {
@@ -82,15 +121,17 @@ const leads = {
       .run(data.source, status, data.name || null, data.email || null, JSON.stringify(data), now, now);
     return leads.findById(result.lastInsertRowid);
   },
-  async findAll({ status, limit = 1000, offset = 0 } = {}) {
-    const { sql, params } = leadFilter(status);
+  async findAll({ status, q, sort = 'createdAt', dir = 'desc', limit = 1000, offset = 0 } = {}) {
+    const { sql, params } = leadFilter({ status, q });
+    const column = LEAD_SORT[sort] || 'created_at';
+    const direction = dir === 'asc' ? 'ASC' : 'DESC';
     return getDb()
-      .prepare(`SELECT * FROM leads ${sql} ORDER BY created_at DESC, id DESC LIMIT ? OFFSET ?`)
+      .prepare(`SELECT * FROM leads ${sql} ORDER BY ${column} ${direction}, id ${direction} LIMIT ? OFFSET ?`)
       .all(...params, limit, offset)
       .map(decodeLead);
   },
-  async count({ status } = {}) {
-    const { sql, params } = leadFilter(status);
+  async count({ status, q } = {}) {
+    const { sql, params } = leadFilter({ status, q });
     return getDb().prepare(`SELECT COUNT(*) AS n FROM leads ${sql}`).get(...params).n;
   },
   async findById(id) {
@@ -137,6 +178,7 @@ module.exports = {
   plans: table(TABLES.plans),
   faq: table(TABLES.faq),
   testimonials: table(TABLES.testimonials),
+  banners: table(TABLES.banners),
   company,
   leads,
   admin,

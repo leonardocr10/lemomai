@@ -30,8 +30,11 @@
     "ext": "js,ejs,json"
   },
   "dependencies": {
+    "@tabler/core": "^1.6.1",
+    "@tabler/icons-webfont": "^3.49.0",
     "compression": "^1.8.2",
     "cookie-parser": "^1.4.7",
+    "cropperjs": "^1.6.3",
     "dotenv": "^18.0.4",
     "ejs": "^6.0.1",
     "express": "^5.2.1",

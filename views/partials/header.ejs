@@ -1,11 +1,21 @@
 <header class="site-header" data-header>
   <div class="container site-header__inner">
     <a class="brand" href="/" aria-label="<%= company.companyName %> — página inicial">
-      <%- include('../components/picture', {
-        src: '/images/brand/logo-horizontal',
-        alt: company.companyName,
-        width: 199, height: 36, eager: true
-      }) %>
+      <%# Símbolo fixo + nome digitado em loop (public/js/typing-banner.js). Sem JS, o nome aparece completo. %>
+      <span class="brand-typing" data-typing-banner>
+        <svg class="brand-typing__symbol" viewBox="-4 -2 80 72" aria-hidden="true" focusable="false">
+          <rect x="8" y="0" width="24" height="68" rx="8" fill="#5DBB46" transform="translate(20 34) skewX(-16) translate(-20 -34)"/>
+          <rect x="4" y="44" width="66" height="24" rx="8" fill="#0F2D4A" transform="translate(37 56) skewX(-16) translate(-37 -56)"/>
+          <g transform="translate(14 56) skewX(-16) translate(-14 -56)">
+            <rect x="3" y="44" width="22" height="24" rx="8" fill="#1FA6A0"/>
+            <rect x="14" y="44" width="11" height="24" fill="#1FA6A0"/>
+          </g>
+        </svg>
+        <span class="brand-typing__name" aria-hidden="true">
+          <span class="brand-typing__ghost"><span class="brand-typing__lenom">Lenom</span><span class="brand-typing__ai">.AI</span><span class="brand-typing__cursor"></span></span>
+          <span class="brand-typing__typed"><span class="brand-typing__lenom" data-typed-lenom>Lenom</span><span class="brand-typing__ai" data-typed-ai>.AI</span><span class="brand-typing__cursor" data-cursor></span></span>
+        </span>
+      </span>
     </a>
 
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-principal" data-menu-toggle>

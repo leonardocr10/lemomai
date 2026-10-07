@@ -20,34 +20,136 @@
   color: var(--on-dark-muted);
 }
 
-.section--tight {
-  padding-block: calc(var(--section-y) * 0.7);
+/* No fundo escuro o degradê some no verde-água: destaque em verde claro sólido. */
+.section--dark .text-gradient--light {
+  background: none;
+  color: var(--secondary);
 }
 
-/* Layout "título à esquerda + conteúdo" do mockup */
-.split {
-  display: grid;
-  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
-  gap: var(--space-7);
-  align-items: start;
+/* Cabeçalho de seção com título à esquerda e link "ver todos" à direita. */
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
+  margin-bottom: var(--space-7);
 }
 
-.split > .section-title {
-  position: sticky;
-  top: calc(var(--header-h) + var(--space-6));
+.section-head .section-title {
   margin-bottom: 0;
 }
 
-@media (max-width: 1080px) {
-  .split {
-    grid-template-columns: 1fr;
-    gap: 0;
+.section-head__link {
+  display: inline-flex;
+  padding-block: 8px;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--primary-strong);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.section-head__link .icon {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--duration) var(--ease);
+}
+
+.section-head__link:hover .icon {
+  transform: translateX(4px);
+}
+
+/* ---------- Faixa de destaques (abaixo do topo da home) ---------- */
+.highlights {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.highlights__list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-block: 0;
+  list-style: none;
+}
+
+.highlights__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-4);
+}
+
+/* Divisória inclinada (faceta do símbolo) entre os itens. */
+.highlights__item + .highlights__item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 28%;
+  height: 44%;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--border);
+  transform: skewX(-16deg);
+}
+
+.highlights__icon {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  background: var(--primary-tint);
+  color: var(--primary-strong);
+}
+
+.highlights__icon .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.highlights__item strong {
+  display: block;
+  color: var(--primary-dark);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.highlights__item span span {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+@media (max-width: 960px) {
+  .highlights__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .split > .section-title {
-    position: static;
-    margin-bottom: var(--space-6);
+  .highlights__item:nth-child(3)::before {
+    display: none;
   }
+}
+
+@media (max-width: 480px) {
+  .highlights__list {
+    grid-template-columns: 1fr;
+  }
+
+  .highlights__item {
+    padding-block: var(--space-3);
+  }
+
+  .highlights__item::before {
+    display: none;
+  }
+}
+
+.section--tight {
+  padding-block: calc(var(--section-y) * 0.7);
 }
 
 .grid {
@@ -240,6 +342,181 @@
   }
 }
 
+/* ---------- Carrossel de banners (home) ----------
+   Faixa na largura toda da tela. O banner fica no centro sempre em 3:1
+   (2000×667, sem cortar a imagem) e no máximo 40% da altura da tela (largura
+   ≤ 120vh); as laterais são preenchidas pela própria imagem desfocada. */
+.banner-carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-carousel__track {
+  position: relative;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.banner-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.banner-slide {
+  position: relative;
+  flex: 0 0 100%;
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+
+.banner-slide__backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(28px) saturate(1.1);
+  transform: scale(1.15);
+}
+
+.banner-slide__link {
+  position: relative;
+  display: block;
+  width: min(100%, 120vh);
+  margin-inline: auto;
+}
+
+.banner-slide__link img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 1;
+  object-fit: cover;
+}
+
+/* Quando o banner é mais estreito que a tela, as bordas da imagem se fundem ao fundo desfocado. */
+@media (min-aspect-ratio: 13 / 10) {
+  .banner-slide__link img {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 3%, #000 97%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 3%, #000 97%, transparent 100%);
+  }
+}
+
+/* Imagem própria de celular: mantém a proporção dela e dispensa o fundo desfocado. */
+@media (max-width: 767px) {
+  .banner-slide__link img {
+    aspect-ratio: auto;
+  }
+
+  .banner-slide__backdrop {
+    display: none;
+  }
+}
+
+/* Controles numa pílula sobre a base do banner, no centro (área sem texto nos banners). */
+.banner-carousel__controls {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(8px, 1.4vw, 18px);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 5px 8px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+}
+
+.banner-carousel.is-single .banner-carousel__controls {
+  display: none;
+}
+
+.banner-carousel__button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--primary-dark);
+  cursor: pointer;
+  transition: border-color var(--duration) var(--ease), color var(--duration) var(--ease);
+}
+
+.banner-carousel__button:hover {
+  border-color: var(--primary);
+  color: var(--primary-strong);
+}
+
+.banner-carousel__button .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.banner-carousel__pause {
+  margin-left: var(--space-2);
+}
+
+.banner-carousel__icon-play,
+.banner-carousel.is-paused .banner-carousel__icon-pause {
+  display: none;
+}
+
+.banner-carousel.is-paused .banner-carousel__icon-play {
+  display: block;
+}
+
+.banner-carousel__dots {
+  display: flex;
+}
+
+/* Área de toque de 24px (tablets); a bolinha visível de 8px é o miolo (content-box). */
+.banner-carousel__dot {
+  width: 24px;
+  height: 24px;
+  padding: 8px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--border);
+  background-clip: content-box;
+  cursor: pointer;
+  transition: width var(--duration) var(--ease), background var(--duration) var(--ease);
+}
+
+.banner-carousel__dot[aria-current='true'] {
+  width: 40px;
+  background-color: var(--primary);
+}
+
+.hero--mobile-only {
+  display: none;
+}
+
+/* No celular a faixa de destaques vem logo abaixo: evita repetir os destaques do hero. */
+.hero--mobile-only .hero__highlights {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .banner-slide--desktop-only,
+  .banner-carousel--desktop-only {
+    display: none;
+  }
+
+  .hero--mobile-only {
+    display: block;
+  }
+}
+
 /* ---------- Page hero (páginas internas) ---------- */
 .page-hero {
   position: relative;
@@ -281,12 +558,6 @@
   gap: var(--space-5);
 }
 
-@media (max-width: 1280px) and (min-width: 1081px) {
-  .services-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 1080px) {
   .services-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -300,43 +571,30 @@
 }
 
 /* ---------- Planos ---------- */
-.pricing-head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-6);
-  align-items: end;
-  margin-bottom: var(--space-7);
-}
-
-.pricing-head .section-title {
-  margin-bottom: 0;
-}
-
 .pricing-perks {
-  display: grid;
-  gap: var(--space-3);
-  padding: var(--space-5);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2) var(--space-3);
+  margin-top: var(--space-5);
   list-style: none;
 }
 
-@media (max-width: 860px) {
-  .pricing-head {
-    grid-template-columns: 1fr;
-  }
-}
-
 .pricing-perks li {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
   color: var(--text);
   font-size: var(--fs-sm);
 }
 
 .pricing-perks .icon {
+  width: 16px;
+  height: 16px;
   color: var(--primary-strong);
 }
 
@@ -351,7 +609,12 @@
   align-items: stretch;
 }
 
-@media (max-width: 1280px) {
+.pricing-grid {
+  align-items: stretch;
+  padding-top: var(--space-6);
+}
+
+@media (max-width: 1080px) {
   .pricing-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: var(--space-7);
@@ -390,19 +653,21 @@
   margin-top: var(--space-3);
 }
 
+/* Área de toque de 24px; a bolinha visível (8px) é só o miolo (content-box). */
 .carousel-dots button {
-  width: 8px;
-  height: 8px;
-  padding: 0;
+  width: 24px;
+  height: 24px;
+  padding: 8px;
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--border);
+  background-clip: content-box;
   transition: width var(--duration) var(--ease), background var(--duration) var(--ease);
 }
 
 .carousel-dots button[aria-current='true'] {
-  width: 24px;
-  background: var(--primary);
+  width: 40px;
+  background-color: var(--primary);
 }
 
 @media (max-width: 640px) {
@@ -620,11 +885,21 @@
 
 @media (max-width: 860px) {
   .cta-banner {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .cta-banner__actions .btn {
     flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta-banner {
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .cta-banner__actions .btn {
+    flex-basis: 100%;
   }
 }
 
@@ -780,6 +1055,22 @@ a.contact-info__item:hover {
   transition: color var(--duration) var(--ease);
 }
 
+/* Links do rodapé com altura mínima de toque no celular. */
+.footer-links a {
+  display: inline-block;
+  padding-block: 4px;
+}
+
+@media (max-width: 767px) {
+  .footer-links {
+    gap: var(--space-1);
+  }
+
+  .footer-links a {
+    padding-block: 8px;
+  }
+}
+
 .site-footer a:hover {
   color: var(--secondary);
 }
@@ -809,6 +1100,7 @@ a.contact-info__item:hover {
 .footer-contact small {
   display: block;
   color: var(--on-dark-muted);
+  font-size: 0.75rem;
   opacity: 0.75;
 }
 

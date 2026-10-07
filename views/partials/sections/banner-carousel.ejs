@@ -1,0 +1,45 @@
+<%#
+  Carrossel do topo da home: banners gerenciados em /admin/banners, todos em 3:1
+  ocupando a largura (limitado pela altura da tela). O texto dos banners está
+  na imagem, por isso o alt repete esse texto. Banners sem imagem de celular
+  não aparecem no celular.
+  params: banners, desktopOnly (nenhum banner tem imagem de celular)
+%>
+<% const total = banners.length; %>
+<section class="banner-carousel<%= locals.desktopOnly ? ' banner-carousel--desktop-only' : '' %>"
+         aria-roledescription="carrossel" aria-label="Destaques" data-banner-carousel>
+  <ul class="banner-carousel__track" data-banner-track>
+    <% banners.forEach((banner, index) => { %>
+      <li class="banner-slide<%= banner.mobileImage ? '' : ' banner-slide--desktop-only' %>"
+          aria-roledescription="slide" aria-label="<%= index + 1 %> de <%= total %>" data-banner-slide>
+        <%# Fundo: a mesma imagem ampliada e desfocada preenche as laterais (mesmo arquivo, sem novo download). %>
+        <img class="banner-slide__backdrop" src="<%= banner.image %>" alt="" aria-hidden="true" decoding="async"
+             <%- index === 0 ? '' : 'loading="lazy"' %>>
+        <% const tag = banner.href ? 'a' : 'div'; %>
+        <<%= tag %> class="banner-slide__link"<% if (banner.href) { %> href="<%= banner.href %>"<% } %>>
+          <picture>
+            <% if (banner.mobileImage) { %><source media="(max-width: 767px)" srcset="<%= banner.mobileImage %>"><% } %>
+            <img src="<%= banner.image %>" alt="<%= banner.alt %>" width="2000" height="667" decoding="async"
+                 <%- index === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %>>
+          </picture>
+        </<%= tag %>>
+      </li>
+    <% }) %>
+  </ul>
+  <% if (total > 1) { %>
+    <div class="banner-carousel__controls" data-banner-controls>
+      <button class="banner-carousel__button" type="button" data-banner-prev aria-label="Banner anterior">
+        <%- include('../../components/icon', { name: 'arrow-left' }) %>
+      </button>
+      <div class="banner-carousel__dots" data-banner-dots></div>
+      <button class="banner-carousel__button" type="button" data-banner-next aria-label="Próximo banner">
+        <%- include('../../components/icon', { name: 'arrow-right' }) %>
+      </button>
+      <button class="banner-carousel__button banner-carousel__pause" type="button" data-banner-pause
+              aria-pressed="false" aria-label="Pausar troca automática">
+        <svg class="icon banner-carousel__icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg>
+        <svg class="icon banner-carousel__icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13a1 1 0 0 0 1.5.87l10.5-6.5a1 1 0 0 0 0-1.74L9.5 4.63A1 1 0 0 0 8 5.5Z" fill="currentColor"/></svg>
+      </button>
+    </div>
+  <% } %>
+</section>

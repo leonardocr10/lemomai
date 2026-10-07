@@ -1,8 +1,15 @@
-<%# ServiceCard — params: service %>
+<%# ServiceCard — params: service. O card inteiro é o link para a página do serviço. %>
 <a class="card card--hover service-card" href="/servicos/<%= service.slug %>" data-reveal>
   <span class="icon-tile"><%- include('icon', { name: service.icon || 'code' }) %></span>
   <h3><%= service.name %></h3>
   <p><%= service.shortDescription %></p>
-  <span class="service-card__arrow" aria-hidden="true"><%- include('icon', { name: 'arrow-right' }) %></span>
+  <% if (service.features && service.features.length) { %>
+    <ul class="service-card__features">
+      <% service.features.slice(0, 3).forEach((feature) => { %>
+        <li><%- include('icon', { name: 'check' }) %><span><%= feature %></span></li>
+      <% }) %>
+    </ul>
+  <% } %>
+  <span class="service-card__more" aria-hidden="true">Saiba mais <%- include('icon', { name: 'arrow-right' }) %></span>
   <span class="visually-hidden">Saiba mais sobre <%= service.name %></span>
 </a>

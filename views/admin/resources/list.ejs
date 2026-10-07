@@ -1,34 +1,61 @@
-<div class="admin-main__toolbar">
-  <a class="btn btn--primary btn--small" href="/admin/<%= def.path %>/novo">+ Novo cadastro</a>
-</div>
-<section class="admin-card">
+<div class="card" data-bulk>
+  <div class="card-header">
+    <%- include('../grid/toolbar', { grid }) %>
+  </div>
+  <%- include('../grid/bulkbar', {
+    grid,
+    buttons: [
+      { action: 'activate', label: 'Ativar', icon: 'eye' },
+      { action: 'deactivate', label: 'Desativar', icon: 'eye-off' },
+      { action: 'delete', label: 'Excluir', icon: 'trash', cls: 'btn-danger', confirm: 'Excluir os itens selecionados? Esta ação não pode ser desfeita.' },
+    ],
+  }) %>
   <% if (!items.length) { %>
-    <p class="admin-empty">Nenhum cadastro ainda.</p>
+    <div class="empty">
+      <div class="empty-icon"><i class="ti ti-<%= grid.state.q ? 'search-off' : 'mood-empty' %> icon" aria-hidden="true"></i></div>
+      <p class="empty-title"><%= grid.state.q ? 'Nada encontrado' : 'Nenhum cadastro ainda' %></p>
+      <p class="empty-subtitle text-secondary">
+        <%= grid.state.q ? `Nenhum resultado para "${grid.state.q}".` : 'Crie o primeiro pelo botão abaixo.' %>
+      </p>
+      <div class="empty-action">
+        <% if (grid.state.q) { %>
+          <a class="btn" href="<%= grid.url({ q: '', page: 1 }) %>">Limpar busca</a>
+        <% } else { %>
+          <a class="btn btn-primary" href="<%= grid.base %>/novo"><i class="ti ti-plus icon" aria-hidden="true"></i> Novo cadastro</a>
+        <% } %>
+      </div>
+    </div>
   <% } else { %>
-    <div class="admin-table-wrap">
-      <table class="admin-table">
+    <div class="table-responsive">
+      <table class="table table-vcenter card-table table-hover">
         <thead>
           <tr>
-            <% def.columns.forEach((column) => { %><th<%- column.num ? ' class="num"' : '' %>><%= column.label %></th><% }) %>
-            <th>Status</th>
-            <th class="num">Ações</th>
+            <th class="w-1"><input class="form-check-input m-0 align-middle" type="checkbox" data-bulk-all aria-label="Selecionar todos desta página"></th>
+            <% def.columns.forEach((column) => { %>
+              <%- include('../grid/th', { grid, label: column.label, sort: column.sort, cls: column.num ? 'text-end' : '' }) %>
+            <% }) %>
+            <%- include('../grid/th', { grid, label: 'Status', sort: 'active' }) %>
+            <th class="w-1"><span class="visually-hidden">Ações</span></th>
           </tr>
         </thead>
         <tbody>
-          <% items.forEach((item) => { const st = def.status(item); %>
+          <% items.forEach((item) => { %>
             <tr<%- item.active ? '' : ' class="is-inactive"' %>>
+              <td><input class="form-check-input m-0 align-middle" type="checkbox" form="bulk-form" name="ids" value="<%= item.id %>" data-bulk-item aria-label="Selecionar item <%= item.id %>"></td>
               <% def.columns.forEach((column) => { %>
-                <td<%- column.num ? ' class="num"' : '' %>>
-                  <% if (column.link) { %><a href="/admin/<%= def.path %>/<%= item.id %>"><%= column.value(item) %></a><% } else { %><%= column.value(item) %><% } %>
+                <td class="<%= column.num ? 'text-end text-nowrap' : column.nowrap ? 'text-nowrap' : '' %>">
+                  <% if (column.image) { %><img class="admin-thumb" src="<%= column.image(item) %>" alt=""><% } else if (column.link) { %><a class="fw-medium" href="/admin/<%= def.path %>/<%= item.id %>"><%= column.value(item) %></a><% } else { %><%= column.value(item) %><% } %>
                 </td>
               <% }) %>
-              <td><span class="admin-badge admin-badge--<%= st.badge %>"><%= st.text %></span></td>
               <td>
-                <div class="admin-row-actions">
-                  <a class="btn btn--outline btn--small" href="/admin/<%= def.path %>/<%= item.id %>">Editar</a>
+                <% if (item.active) { %><span class="badge bg-green-lt">Ativo</span><% } else { %><span class="badge bg-secondary-lt">Inativo</span><% } %>
+              </td>
+              <td>
+                <div class="btn-list flex-nowrap">
+                  <a class="btn btn-sm" href="/admin/<%= def.path %>/<%= item.id %>"><i class="ti ti-pencil icon" aria-hidden="true"></i> Editar</a>
                   <form action="/admin/<%= def.path %>/<%= item.id %>/excluir" method="post" data-confirm="Excluir este item? Esta ação não pode ser desfeita.">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <button class="btn btn--danger btn--small" type="submit">Excluir</button>
+                    <button class="btn btn-sm btn-ghost-danger btn-icon" type="submit" aria-label="Excluir"><i class="ti ti-trash icon" aria-hidden="true"></i></button>
                   </form>
                 </div>
               </td>
@@ -37,5 +64,6 @@
         </tbody>
       </table>
     </div>
+    <%- include('../grid/pagination', { grid, count: items.length }) %>
   <% } %>
-</section>
+</div>

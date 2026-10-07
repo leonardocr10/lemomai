@@ -33,12 +33,29 @@ function importLeads(db) {
   }
 }
 
+/**
+ * Os 4 banners de exemplo da primeira versão (/images/banners/banner-N.webp)
+ * foram substituídos por 6 novos. Bancos já criados trocam só esses 4;
+ * banners enviados pelo painel (/uploads/...) são mantidos.
+ */
+function replaceLegacyBanners(db) {
+  const legacy = db.prepare("SELECT COUNT(*) AS n FROM banners WHERE image LIKE '/images/banners/banner-%'").get().n;
+  if (!legacy) return;
+  db.prepare("DELETE FROM banners WHERE image LIKE '/images/banners/banner-%'").run();
+  const existing = new Set(db.prepare('SELECT image FROM banners').all().map((row) => row.image));
+  for (const banner of require('../data/mock/banners.mock')) {
+    if (!existing.has(banner.image)) insert(db, TABLES.banners, banner);
+  }
+}
+
 function seed(db, { withLeads = true } = {}) {
   db.exec('BEGIN');
   try {
     seedCollection(db, TABLES.plans, require('../data/mock/plans.mock'));
     seedCollection(db, TABLES.faq, require('../data/mock/faq.mock'));
     seedCollection(db, TABLES.testimonials, require('../data/mock/testimonials.mock'));
+    seedCollection(db, TABLES.banners, require('../data/mock/banners.mock'));
+    replaceLegacyBanners(db);
     if (isEmpty(db, 'company_settings')) {
       const { id, ...company } = require('../data/mock/company.mock');
       db.prepare('INSERT INTO company_settings (id, data) VALUES (1, ?)').run(JSON.stringify(company));

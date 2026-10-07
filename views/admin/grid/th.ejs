@@ -1,0 +1,12 @@
+<%# Cabeçalho ordenável. params: grid, label, sort (coluna), cls %>
+<% if (locals.sort) { %>
+  <% const active = grid.state.sort === sort; const nextDir = active && grid.state.dir === 'asc' ? 'desc' : 'asc'; %>
+  <th class="<%= locals.cls || '' %>" aria-sort="<%= active ? (grid.state.dir === 'asc' ? 'ascending' : 'descending') : 'none' %>">
+    <a class="admin-sort<%= active ? ' is-active' : '' %>" href="<%= grid.url({ sort, dir: nextDir, page: 1 }) %>">
+      <%= label %>
+      <i class="ti ti-<%= active ? (grid.state.dir === 'asc' ? 'sort-ascending' : 'sort-descending') : 'arrows-sort' %> icon" aria-hidden="true"></i>
+    </a>
+  </th>
+<% } else { %>
+  <th class="<%= locals.cls || '' %>"><%= label %></th>
+<% } %>

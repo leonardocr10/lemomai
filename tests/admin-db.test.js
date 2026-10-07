@@ -54,3 +54,54 @@ test('empresa e leads', async () => {
   assert.equal(await repositories.leads.count({ status: 'contacted' }), 1);
   assert.equal((await repositories.leads.findAll({ status: 'contacted' })).length, 1);
 });
+
+test('banco novo traz os 6 banners iniciais', async () => {
+  const banners = await repositories.banners.findAll();
+  assert.equal(banners.length, 6);
+  for (const banner of banners) {
+    assert.match(banner.image, /^\/images\/banners\//);
+    assert.ok(banner.alt.length > 10);
+  }
+});
+
+test('findPage: busca, ordena e pagina; total ignora a paginação', async () => {
+  const found = await repositories.plans.findPage({ q: 'landing', searchColumns: ['name', 'slug', 'description'] });
+  assert.equal(found.total, 1);
+  assert.equal(found.items[0].slug, 'landing-page');
+
+  const byPrice = await repositories.plans.findPage({ sort: 'price', dir: 'desc', limit: 2 });
+  assert.equal(byPrice.items.length, 2);
+  assert.ok(byPrice.total > 2);
+  assert.ok(byPrice.items[0].price >= byPrice.items[1].price);
+
+  // Curingas do LIKE são tratados como texto.
+  assert.equal((await repositories.plans.findPage({ q: '%', searchColumns: ['name'] })).total, 0);
+});
+
+test('leads: busca por nome ou e-mail', async () => {
+  await repositories.leads.create({ source: 'contact', name: 'Beatriz Souza', email: 'bia@empresa.com', status: 'new' });
+  assert.equal((await repositories.leads.findAll({ q: 'beatriz' })).length, 1);
+  assert.equal(await repositories.leads.count({ q: 'empresa.com' }), 1);
+  assert.equal(await repositories.leads.count({ q: 'ninguem' }), 0);
+});
+
+test('migração troca os 4 banners antigos de exemplo pelos 6 novos e mantém os enviados pelo painel', () => {
+  const { DatabaseSync } = require('node:sqlite');
+  const { SCHEMA } = require('../src/db/schema');
+  const { seed } = require('../src/db/seed');
+  const db = new DatabaseSync(':memory:');
+  db.exec(SCHEMA);
+  const insert = db.prepare('INSERT INTO banners (title, alt, href, image, active, display_order) VALUES (?, ?, ?, ?, 1, ?)');
+  for (const n of [1, 2, 3, 4]) insert.run(`Antigo ${n}`, 'Banner antigo de exemplo', '/orcamento', `/images/banners/banner-${n}.webp`, n);
+  insert.run('Meu banner', 'Banner enviado pelo painel', '/sobre', '/uploads/banners/meu.webp', 9);
+
+  seed(db, { withLeads: false });
+  const images = db.prepare('SELECT image FROM banners ORDER BY display_order').all().map((row) => row.image);
+  assert.equal(images.filter((image) => image.startsWith('/images/banners/banner-')).length, 0);
+  assert.equal(images.filter((image) => image.startsWith('/images/banners/')).length, 6);
+  assert.ok(images.includes('/uploads/banners/meu.webp'));
+
+  // Rodar de novo não duplica nada.
+  seed(db, { withLeads: false });
+  assert.equal(db.prepare('SELECT COUNT(*) AS n FROM banners').get().n, 7);
+});

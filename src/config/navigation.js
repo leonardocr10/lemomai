@@ -5,8 +5,8 @@
 const mainNav = [
   { label: 'Início', href: '/', match: /^\/$/ },
   { label: 'Serviços', href: '/servicos', match: /^\/servicos/ },
-  { label: 'Soluções', href: '/planos', match: /^\/planos/ },
-  { label: 'Preços', href: '/#precos' },
+  // Um único destino para preços: a página /planos mostra planos de projeto e SaaS.
+  { label: 'Planos e preços', href: '/planos', match: /^\/planos/ },
   { label: 'Portfólio', href: '/portfolio', match: /^\/portfolio/ },
   { label: 'Sobre', href: '/sobre', match: /^\/sobre/ },
   { label: 'Contato', href: '/contato', match: /^\/contato/ },

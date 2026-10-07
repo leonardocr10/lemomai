@@ -1,34 +1,60 @@
 <%
-  const fields = [
-    { name: 'companyName', label: 'Nome da empresa', required: true },
-    { name: 'legalName', label: 'Razão social' },
-    { name: 'tagline', label: 'Frase de apresentação', full: true },
-    { name: 'email', label: 'E-mail de contato', type: 'email', required: true },
-    { name: 'phone', label: 'Telefone (exibido no site)' },
-    { name: 'whatsapp', label: 'WhatsApp', hint: 'Com DDD. Ex.: 11987654321' },
-    { name: 'whatsappMessage', label: 'Mensagem inicial do WhatsApp', type: 'textarea', rows: 2, full: true },
-    { name: 'instagram', label: 'Instagram (link)' },
-    { name: 'linkedin', label: 'LinkedIn (link)' },
-    { name: 'youtube', label: 'YouTube (link)' },
-    { name: 'address', label: 'Endereço' },
-    { name: 'city', label: 'Cidade' },
-    { name: 'state', label: 'UF' },
-    { name: 'serviceArea', label: 'Área de atendimento' },
-    { name: 'businessHoursLabel', label: 'Horário (texto exibido)', hint: 'Ex.: Segunda a sexta, das 9h às 18h' },
-    { name: 'openingHours', label: 'Horário (formato Google)', hint: 'Ex.: Mo-Fr 09:00-18:00' },
+  const sections = [
+    { title: 'Identificação', icon: 'building', fields: [
+      { name: 'companyName', label: 'Nome da empresa', required: true },
+      { name: 'legalName', label: 'Razão social' },
+      { name: 'tagline', label: 'Frase de apresentação', full: true },
+    ] },
+    { title: 'Contato', icon: 'phone', fields: [
+      { name: 'email', label: 'E-mail de contato', type: 'email', required: true },
+      { name: 'phone', label: 'Telefone (exibido no site)' },
+      { name: 'whatsapp', label: 'WhatsApp', hint: 'Com DDD. Ex.: 11987654321' },
+      { name: 'whatsappMessage', label: 'Mensagem inicial do WhatsApp', type: 'textarea', rows: 2 },
+    ] },
+    { title: 'Redes sociais', icon: 'share', fields: [
+      { name: 'instagram', label: 'Instagram (link)', full: true },
+      { name: 'linkedin', label: 'LinkedIn (link)', full: true },
+      { name: 'youtube', label: 'YouTube (link)', full: true },
+    ] },
+    { title: 'Endereço e horário', icon: 'map-pin', fields: [
+      { name: 'address', label: 'Endereço', full: true },
+      { name: 'city', label: 'Cidade' },
+      { name: 'state', label: 'UF' },
+      { name: 'serviceArea', label: 'Área de atendimento', full: true },
+      { name: 'businessHoursLabel', label: 'Horário (texto exibido)', hint: 'Ex.: Segunda a sexta, das 9h às 18h' },
+      { name: 'openingHours', label: 'Horário (formato Google)', hint: 'Ex.: Mo-Fr 09:00-18:00' },
+    ] },
   ];
 %>
-<form class="admin-card admin-form" action="/admin/empresa" method="post" novalidate>
-  <% if (Object.keys(errors).length) { %>
-    <div class="alert alert--error" role="alert"><span>Verifique os campos destacados.</span></div>
-  <% } %>
+<form action="/admin/empresa" method="post" novalidate>
   <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-  <div class="form-grid">
-    <% fields.forEach((field) => { %>
-      <%- include('partials/field', { ...field, value: values[field.name], errors }) %>
+  <% if (Object.keys(errors).length) { %>
+    <div class="alert alert-danger" role="alert">
+      <div class="d-flex align-items-center gap-2"><i class="ti ti-alert-circle icon alert-icon" aria-hidden="true"></i><div>Verifique os campos destacados.</div></div>
+    </div>
+  <% } %>
+  <div class="row row-cards">
+    <% sections.forEach((section) => { %>
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-header">
+            <h2 class="card-title d-flex align-items-center gap-2"><i class="ti ti-<%= section.icon %> icon text-primary" aria-hidden="true"></i> <%= section.title %></h2>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <% section.fields.forEach((field) => { %>
+                <%- include('partials/field', { ...field, value: values[field.name], errors }) %>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
     <% }) %>
   </div>
-  <div class="admin-form__actions">
-    <button class="btn btn--primary" type="submit">Salvar</button>
+  <div class="card mt-3">
+    <div class="card-body d-flex align-items-center gap-2">
+      <span class="text-secondary">As mudanças aparecem no site assim que você salvar.</span>
+      <button class="btn btn-primary ms-auto" type="submit"><i class="ti ti-device-floppy icon" aria-hidden="true"></i> Salvar</button>
+    </div>
   </div>
 </form>

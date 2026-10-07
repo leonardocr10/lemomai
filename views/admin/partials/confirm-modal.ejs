@@ -1,0 +1,22 @@
+<%# Modal único de confirmação. public/js/admin.js abre ao enviar formulários com data-confirm. %>
+<div class="modal modal-blur fade" id="confirm-modal" tabindex="-1" aria-hidden="true" aria-labelledby="confirm-modal-title">
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      <div class="modal-status bg-danger"></div>
+      <div class="modal-body text-center py-4">
+        <i class="ti ti-alert-triangle icon mb-2 text-danger icon-lg" aria-hidden="true"></i>
+        <h3 id="confirm-modal-title">Tem certeza?</h3>
+        <div class="text-secondary" data-confirm-message></div>
+      </div>
+      <div class="modal-footer">
+        <div class="w-100">
+          <div class="row">
+            <div class="col"><button type="button" class="btn w-100" data-bs-dismiss="modal">Cancelar</button></div>
+            <div class="col"><button type="button" class="btn btn-danger w-100" data-confirm-accept>Confirmar</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

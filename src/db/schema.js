@@ -44,6 +44,18 @@ CREATE TABLE IF NOT EXISTS testimonials (
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS banners (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  alt TEXT NOT NULL,
+  href TEXT,
+  image TEXT NOT NULL,
+  mobile_image TEXT,
+  active INTEGER NOT NULL DEFAULT 1,
+  display_order INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 CREATE TABLE IF NOT EXISTS company_settings (
   id INTEGER PRIMARY KEY CHECK (id = 1),
   data TEXT NOT NULL,
@@ -83,6 +95,11 @@ const TABLES = {
   faq: {
     table: 'faq',
     columns: ['question', 'answer', 'active', 'displayOrder'],
+    bool: ['active'],
+  },
+  banners: {
+    table: 'banners',
+    columns: ['title', 'alt', 'href', 'image', 'mobileImage', 'active', 'displayOrder'],
     bool: ['active'],
   },
   testimonials: {

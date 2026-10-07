@@ -1,9 +1,26 @@
-<%- include('../partials/sections/hero') %>
+<%#
+  Topo da home: com banners ativos, carrossel de imagens 3:1 (largura toda).
+  Banners sem imagem de celular não aparecem no celular; se nenhum tiver,
+  o celular vê o hero de texto. O h1 da página fica fora dos dois, oculto
+  visualmente, para existir em qualquer tamanho de tela.
+%>
+<% if (banners.length) { %>
+  <% const hasMobile = banners.some((banner) => banner.mobileImage); %>
+  <h1 class="visually-hidden"><%= sections.hero.titleStart %> <%= sections.hero.titleHighlight %></h1>
+  <%- include('../partials/sections/banner-carousel', { desktopOnly: !hasMobile }) %>
+  <% if (!hasMobile) { %>
+    <%- include('../partials/sections/hero', { heroMobileOnly: true }) %>
+  <% } %>
+<% } else { %>
+  <%- include('../partials/sections/hero') %>
+<% } %>
+<%- include('../partials/sections/highlights') %>
+<%# Ordem pensada para quem decide: o que fazemos → trabalhos feitos → como funciona → preço → por que nós → quem já contratou. %>
 <%- include('../partials/sections/services') %>
-<%- include('../partials/sections/pricing') %>
-<%- include('../partials/sections/differentials') %>
 <%- include('../partials/sections/portfolio') %>
 <%- include('../partials/sections/process') %>
+<%- include('../partials/sections/pricing') %>
+<%- include('../partials/sections/differentials') %>
 <%- include('../partials/sections/testimonials') %>
 <%- include('../partials/sections/cta') %>
 <%- include('../partials/sections/faq') %>

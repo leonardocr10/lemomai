@@ -28,6 +28,8 @@
     background var(--duration) var(--ease), border-color var(--duration) var(--ease), color var(--duration) var(--ease);
 }
 
+
+
 .btn:hover {
   transform: translateY(-2px);
 }
@@ -171,28 +173,32 @@
   color: var(--on-dark);
 }
 
+/* Rótulo de seção: duas "facetas" inclinadas a −16°, como as barras do símbolo L. */
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   margin-bottom: var(--space-3);
   color: var(--primary-strong);
-  font-size: var(--fs-xs);
+  font-family: var(--font-label);
+  font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
 .eyebrow::before {
   content: '';
-  width: 8px;
-  height: 8px;
+  width: 16px;
+  height: 11px;
   border-radius: 2px;
-  background: var(--gradient-primary);
-  transform: rotate(45deg);
+  background: linear-gradient(90deg, var(--primary) 0 45%, transparent 45% 60%, var(--accent) 60% 100%);
+  transform: skewX(-16deg);
 }
 
 .eyebrow--pill {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
   padding: 0.4rem 0.9rem;
   border: 1px solid var(--on-dark-border);
   border-radius: var(--radius-pill);
@@ -215,13 +221,16 @@
 }
 
 .section-title--center {
+  max-width: 760px;
   margin-inline: auto;
   text-align: center;
 }
 
 .section-title h2 {
   font-size: var(--fs-2xl);
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
 .section-title h2 .text-gradient--light {
@@ -232,6 +241,7 @@
   margin-top: var(--space-4);
   color: var(--muted);
   font-size: var(--fs-md);
+  text-wrap: pretty;
 }
 
 .section--dark .section-title h2 {
@@ -251,10 +261,20 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: color-mix(in srgb, var(--surface) 92%, transparent);
-  backdrop-filter: saturate(160%) blur(12px);
   border-bottom: 1px solid transparent;
   transition: box-shadow var(--duration) var(--ease), border-color var(--duration) var(--ease);
+  isolation: isolate;
+}
+
+/* O desfoque fica numa camada própria: backdrop-filter no próprio header faria
+   o menu do celular (position: fixed) ficar preso dentro dos 76px do header. */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: saturate(160%) blur(12px);
 }
 
 .site-header.is-scrolled {
@@ -267,6 +287,15 @@
   align-items: center;
   gap: var(--space-5);
   height: var(--header-h);
+  transition: height var(--duration) var(--ease);
+}
+
+/* Computador: ao rolar, o cabeçalho fica mais baixo e libera espaço de leitura.
+   (No celular a altura fica fixa porque o menu aberto começa logo abaixo dele.) */
+@media (min-width: 1081px) {
+  .site-header.is-scrolled .site-header__inner {
+    height: 60px;
+  }
 }
 
 .brand {
@@ -275,9 +304,88 @@
   align-items: center;
 }
 
-.brand img {
+/* Logo do topo: símbolo fixo + "Lenom.AI" digitado. A cópia invisível (ghost)
+   reserva a largura do nome completo para nada se mover enquanto digita. */
+.brand-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-typing__symbol {
   width: auto;
-  height: 36px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
+.brand-typing__name {
+  position: relative;
+  display: inline-block;
+  font-size: 1.65rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.brand-typing__ghost {
+  visibility: hidden;
+}
+
+.brand-typing__typed {
+  position: absolute;
+  inset: 0;
+}
+
+.brand-typing__lenom {
+  font-family: 'Lexend', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--primary-dark);
+}
+
+/* Courier é monoespaçada: aperta o ".AI" para ficar como no logo oficial. */
+.brand-typing__ai {
+  font-family: 'Courier Prime', monospace;
+  font-weight: 700;
+  letter-spacing: -0.09em;
+  /* o ponto da Courier fica no meio de uma célula larga: puxa para junto do "m" */
+  margin-left: -0.22em;
+  color: var(--primary);
+}
+
+.brand-typing__cursor {
+  display: inline-block;
+  width: 0.07em;
+  height: 0.74em;
+  margin-left: 0.05em;
+  background: var(--primary);
+  vertical-align: -0.02em;
+  animation: typing-blink 1s steps(1) infinite;
+}
+
+.brand-typing__cursor.is-typing {
+  animation: none;
+}
+
+@keyframes typing-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-typing__cursor {
+    animation: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .brand-typing__symbol {
+    height: 28px;
+  }
+
+  .brand-typing__name {
+    font-size: 1.35rem;
+  }
 }
 
 .nav {
@@ -337,8 +445,8 @@
   display: none;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   margin-left: auto;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -400,6 +508,7 @@
   }
 
   .nav__link {
+    width: 100%;
     height: 56px;
     padding: 0 var(--space-2);
     font-size: var(--fs-md);
@@ -478,37 +587,100 @@
 }
 
 .service-card p {
-  flex: 1;
   color: var(--muted);
   font-size: var(--fs-sm);
 }
 
-.service-card__arrow {
-  display: inline-grid;
-  place-items: center;
-  align-self: flex-end;
-  width: 32px;
-  height: 32px;
-  border: 1.5px solid var(--primary);
-  border-radius: 50%;
-  color: var(--primary-strong);
-  transition: background var(--duration) var(--ease), color var(--duration) var(--ease);
+.service-card__features {
+  flex: 1;
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+  list-style: none;
 }
 
-.service-card__arrow .icon {
+.service-card__features li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+}
+
+.service-card__features .icon {
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
+  margin-top: 2px;
+  color: var(--primary-strong);
 }
 
-.service-card:hover .service-card__arrow {
-  background: var(--primary);
+.service-card__more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  color: var(--primary-strong);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.service-card__more .icon {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--duration) var(--ease);
+}
+
+.service-card:hover .service-card__more .icon {
+  transform: translateX(4px);
+}
+
+.service-card:hover .icon-tile {
+  background: var(--gradient-primary);
   color: var(--on-primary);
+}
+
+/* Celular: cards compactos (ícone ao lado do título, sem a lista de itens). */
+@media (max-width: 560px) {
+  .service-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--space-4);
+    row-gap: var(--space-1);
+    padding: var(--space-4);
+  }
+
+  .service-card .icon-tile {
+    grid-row: span 3;
+    width: 44px;
+    height: 44px;
+  }
+
+  .service-card h3 {
+    margin-top: 0;
+  }
+
+  .service-card__features {
+    display: none;
+  }
+
+  .service-card__more {
+    margin-top: var(--space-1);
+  }
 }
 
 /* ---------- PricingCard ---------- */
 .pricing-card {
   padding: var(--space-6) var(--space-5) var(--space-5);
   gap: var(--space-4);
+}
+
+/* Lista de itens empurra o botão para a base: todos os botões alinhados. */
+.pricing-card .check-list {
+  flex: 1;
 }
 
 .pricing-card__head {
@@ -588,6 +760,12 @@
   border-color: var(--secondary);
   box-shadow: var(--shadow-glow-cyan);
   color: var(--on-dark);
+}
+
+@media (min-width: 1081px) {
+  .pricing-card--highlight {
+    transform: translateY(-12px);
+  }
 }
 
 .pricing-card--highlight .pricing-card__name,
@@ -714,7 +892,7 @@
 .stars {
   display: flex;
   gap: 2px;
-  color: var(--warning);
+  color: var(--primary);
 }
 
 .stars .icon {
@@ -896,11 +1074,13 @@
   font-weight: 400;
 }
 
+/* 16px: abaixo disso o Safari do iPhone dá zoom ao tocar no campo. */
 .input,
 .select,
 .textarea {
   width: 100%;
   min-height: 50px;
+  font-size: 1rem;
   padding: 0.75rem 1rem;
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
@@ -1408,6 +1588,26 @@
   animation: pulse 2.6s ease-out infinite;
 }
 
+/* Com o menu do celular aberto, o menu já tem o botão de WhatsApp: o flutuante sai da frente. */
+body.is-locked .whatsapp-float {
+  visibility: hidden;
+  opacity: 0;
+}
+
+@media (max-width: 640px) {
+  .whatsapp-float {
+    right: var(--space-4);
+    bottom: max(var(--space-4), env(safe-area-inset-bottom));
+    width: 54px;
+    height: 54px;
+  }
+
+  .whatsapp-float .icon {
+    width: 27px;
+    height: 27px;
+  }
+}
+
 /* ---------- Breadcrumbs ---------- */
 .breadcrumbs ol {
   display: flex;
@@ -1476,4 +1676,112 @@
 
 figure.testimonial-card {
   margin: 0;
+}
+
+/* Celulares pequenos: botões grandes encolhem para caber numa linha; se ainda
+   assim faltar espaço, o texto quebra em vez de passar da tela. */
+@media (max-width: 400px) {
+  .btn {
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+    padding-inline: var(--space-4);
+  }
+
+  .btn--lg {
+    gap: 6px;
+    font-size: var(--fs-base);
+  }
+}
+
+/* ---------- Voltar ao topo ---------- */
+.back-to-top {
+  position: fixed;
+  right: calc(var(--space-5) + 8px);
+  bottom: calc(var(--space-5) + 72px);
+  z-index: 149;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--primary-dark);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity var(--duration) var(--ease), transform var(--duration) var(--ease), visibility var(--duration);
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.back-to-top:hover {
+  border-color: var(--primary);
+  color: var(--primary-strong);
+}
+
+.back-to-top__icon {
+  width: 20px;
+  height: 20px;
+  transform: rotate(-90deg);
+}
+
+body.is-locked .back-to-top {
+  visibility: hidden;
+  opacity: 0;
+}
+
+@media (max-width: 640px) {
+  .back-to-top {
+    right: calc(var(--space-4) + 5px);
+    bottom: calc(var(--space-4) + 64px);
+  }
+}
+
+/* ---------- Formulário: "Mais detalhes (opcional)" ---------- */
+.form-more {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+}
+
+.form-more summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 32px;
+  color: var(--primary-dark);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.form-more summary::-webkit-details-marker {
+  display: none;
+}
+
+.form-more summary::before {
+  content: '+';
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary-tint);
+  color: var(--primary-strong);
+  font-weight: 700;
+}
+
+.form-more[open] summary::before {
+  content: '−';
+}
+
+.form-more[open] > .form-grid {
+  margin-top: var(--space-4);
 }

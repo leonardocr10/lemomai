@@ -1,0 +1,66 @@
+/**
+ * Banners do carrossel da home (imagens 2000×667, proporção 3:1, com título e
+ * botão desenhados). O `alt` repete o texto da imagem para leitores de tela e buscadores.
+ */
+module.exports = [
+  {
+    id: 1,
+    title: 'Sites e sistemas sob medida (escuro)',
+    alt: 'Sites e sistemas sob medida para acelerar o seu negócio. Soluções digitais modernas para empresas que querem vender mais, organizar processos e crescer com eficiência. Solicitar proposta.',
+    href: '/orcamento',
+    image: '/images/banners/sites-sob-medida-escuro.webp',
+    mobileImage: null,
+    active: true,
+    displayOrder: 1,
+  },
+  {
+    id: 2,
+    title: 'Projetos digitais que geram crescimento (claro)',
+    alt: 'Projetos digitais que geram crescimento. Landing pages, sistemas web e experiências digitais desenvolvidas para transformar presença online em resultados concretos. Ver soluções.',
+    href: '/servicos',
+    image: '/images/banners/projetos-crescimento-claro.webp',
+    mobileImage: null,
+    active: true,
+    displayOrder: 2,
+  },
+  {
+    id: 3,
+    title: 'Automação inteligente (claro)',
+    alt: 'Automação inteligente para ganhar produtividade. Integre tarefas, reduza retrabalho e automatize etapas do seu negócio com WhatsApp, e-mail, CRM, ERP e relatórios. Falar com um especialista.',
+    href: '/contato',
+    image: '/images/banners/automacao-claro.webp',
+    mobileImage: null,
+    active: true,
+    displayOrder: 3,
+  },
+  {
+    id: 4,
+    title: 'Sites e sistemas sob medida (claro)',
+    alt: 'Sites e sistemas sob medida para acelerar o seu negócio. Criamos soluções digitais modernas para empresas que querem vender mais, organizar processos e crescer com eficiência. Solicitar proposta.',
+    href: '/orcamento',
+    image: '/images/banners/sites-sob-medida-claro.webp',
+    mobileImage: null,
+    active: true,
+    displayOrder: 4,
+  },
+  {
+    id: 5,
+    title: 'Projetos digitais que geram crescimento (escuro)',
+    alt: 'Projetos digitais que geram crescimento. Landing pages, sistemas web e experiências digitais desenvolvidas para transformar presença online em resultados concretos. Ver soluções.',
+    href: '/servicos',
+    image: '/images/banners/projetos-crescimento-escuro.webp',
+    mobileImage: null,
+    active: true,
+    displayOrder: 5,
+  },
+  {
+    id: 6,
+    title: 'Automação inteligente (escuro)',
+    alt: 'Automação inteligente para ganhar produtividade. Integre tarefas, reduza retrabalho e automatize etapas do seu negócio com soluções pensadas para sua operação. Falar com um especialista.',
+    href: '/contato',
+    image: '/images/banners/automacao-escuro.webp',
+    mobileImage: null,
+    active: true,
+    displayOrder: 6,
+  },
+];

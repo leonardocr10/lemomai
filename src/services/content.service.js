@@ -21,20 +21,22 @@ const contentService = {
 
   listTestimonials: () => repositories.testimonials.findAll(),
   listFaq: () => repositories.faq.findAll(),
+  listBanners: () => repositories.banners.findAll(),
 
   getSections: () => remember('sections', SECTIONS_TTL, () => repositories.sections.getAll()),
 
   /** Tudo que a home precisa, carregado em paralelo. */
   async getHomeContent() {
-    const [sections, services, plans, portfolio, testimonials, faq] = await Promise.all([
+    const [sections, services, plans, portfolio, testimonials, faq, banners] = await Promise.all([
       contentService.getSections(),
       contentService.listServices(),
       contentService.listProjectPlans(),
       contentService.listPortfolio(),
       contentService.listTestimonials(),
       contentService.listFaq(),
+      contentService.listBanners(),
     ]);
-    return { sections, services, plans, portfolio, testimonials, faq };
+    return { sections, services, plans, portfolio, testimonials, faq, banners };
   },
 
   /** Projetos relacionados para a página de detalhe do portfólio. */
