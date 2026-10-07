@@ -111,8 +111,12 @@ async function submit(form) {
   const token = form.querySelector('[name="_csrf"]')?.value;
   const { body, headers } = buildBody(form);
 
+  const label = button?.querySelector('[data-btn-label]');
+  const labelDefault = label?.textContent;
+
   button?.classList.add('is-loading');
   button?.setAttribute('disabled', '');
+  if (label && button.dataset.loadingLabel) label.textContent = button.dataset.loadingLabel;
   try {
     const response = await fetch(form.dataset.endpoint, {
       method: 'POST',
@@ -128,6 +132,14 @@ async function submit(form) {
       form.querySelectorAll('[data-file-name]').forEach((el) => { el.textContent = el.dataset.default || el.textContent; });
       showToast(result.message || 'Enviado com sucesso!', 'success');
       window.dispatchEvent(new CustomEvent('lenom:lead', { detail: { form: form.id, endpoint: form.dataset.endpoint } }));
+      // Troca o formulário pela confirmação, quando a página oferece uma.
+      const panel = form.dataset.successPanel && document.querySelector(form.dataset.successPanel);
+      if (panel) {
+        form.hidden = true;
+        panel.hidden = false;
+        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        panel.focus({ preventScroll: true });
+      }
       return;
     }
 
@@ -141,6 +153,7 @@ async function submit(form) {
   } finally {
     button?.classList.remove('is-loading');
     button?.removeAttribute('disabled');
+    if (label && labelDefault) label.textContent = labelDefault;
   }
 }
 
@@ -188,7 +201,8 @@ export function initForms() {
       event.preventDefault();
       const firstInvalid = validateForm(form);
       if (firstInvalid) {
-        firstInvalid.focus();
+        (firstInvalid.closest('.field') || firstInvalid).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstInvalid.focus({ preventScroll: true });
         showToast('Verifique os campos destacados.', 'error', { timeout: 4000 });
         return;
       }

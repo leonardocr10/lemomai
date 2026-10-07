@@ -1,0 +1,704 @@
+/* ==========================================================================
+   Solicitar orçamento (/orcamento)
+   Layout largo em duas colunas (formulário + sidebar), compacto na vertical:
+   a pessoa enxerga quase todos os campos sem rolar num monitor comum.
+   ========================================================================== */
+.quote-page {
+  padding-block: clamp(1.5rem, 1rem + 2vw, 2.75rem);
+  background: linear-gradient(180deg, var(--background) 0%, var(--surface-soft) 100%);
+}
+
+.quote-page__container {
+  max-width: calc(1360px + var(--gutter) * 2);
+}
+
+/* Breadcrumbs nasceram para o hero escuro; aqui o fundo é claro. */
+.quote-page .breadcrumbs {
+  margin-bottom: var(--space-3);
+}
+
+.quote-page .breadcrumbs li,
+.quote-page .breadcrumbs a {
+  color: var(--muted);
+}
+
+.quote-page .breadcrumbs a:hover {
+  color: var(--primary-strong);
+}
+
+.quote-page .breadcrumbs [aria-current="page"] {
+  color: var(--primary-dark);
+}
+
+/* ---------- Cabeçalho ---------- */
+.quote-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
+  margin-bottom: var(--space-5);
+}
+
+.quote-head__intro {
+  max-width: 62ch;
+}
+
+.quote-head .eyebrow {
+  margin-bottom: var(--space-2);
+}
+
+.quote-head__title {
+  margin-bottom: var(--space-2);
+  color: var(--primary-dark);
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  line-height: 1.15;
+}
+
+.quote-head__subtitle {
+  color: var(--muted);
+  font-size: var(--fs-base);
+}
+
+.quote-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  list-style: none;
+}
+
+.quote-trust li {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  max-width: 7.5rem;
+  text-align: center;
+}
+
+.quote-trust__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--primary-tint);
+  color: var(--primary-strong);
+}
+
+.quote-trust__icon .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.quote-trust__text {
+  display: grid;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  line-height: 1.35;
+}
+
+.quote-trust__text strong {
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+/* ---------- Grade formulário + sidebar ---------- */
+.quote-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 68fr) minmax(300px, 32fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.quote-form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.quote-form[hidden] {
+  display: none;
+}
+
+/* ---------- Cards numerados ---------- */
+.quote-card {
+  padding: var(--space-5) var(--space-5) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.quote-card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.quote-card__head h3 {
+  color: var(--primary-dark);
+  font-size: var(--fs-md);
+  line-height: 1.2;
+}
+
+.quote-card__head p {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.quote-card__step {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  color: var(--on-primary);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.quote-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4) var(--space-5);
+  align-items: start;
+}
+
+.quote-grid .field--full {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Campos ---------- */
+.quote-form .field {
+  gap: 6px;
+}
+
+.quote-form .input,
+.quote-form .select {
+  min-height: 48px;
+  padding: 0.6rem 0.9rem;
+  border-width: 1px;
+  border-color: #dce5e1;
+  border-radius: 10px;
+}
+
+.quote-form .select {
+  padding-right: 2.5rem;
+}
+
+.quote-form .textarea {
+  border-width: 1px;
+  border-color: #dce5e1;
+  border-radius: 10px;
+}
+
+.quote-form .textarea--compact {
+  min-height: 88px;
+  padding: 0.6rem 0.9rem;
+}
+
+.quote-form .input:focus,
+.quote-form .select:focus,
+.quote-form .textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.quote-form .field.has-error .input,
+.quote-form .field.has-error .select,
+.quote-form .field.has-error .textarea,
+.quote-form .field.has-error .file-drop {
+  border-color: var(--danger);
+}
+
+.quote-form .field__error {
+  font-size: var(--fs-xs);
+}
+
+.input-icon {
+  position: relative;
+  display: block;
+}
+
+.input-icon__icon {
+  position: absolute;
+  top: 50%;
+  left: 0.85rem;
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.input-icon:focus-within .input-icon__icon {
+  color: var(--primary-strong);
+}
+
+.quote-form .input--icon {
+  padding-left: 2.6rem;
+}
+
+/* ---------- Chips (tipo de projeto, prazo, investimento) ---------- */
+.quote-form .radio-cards {
+  display: block;
+}
+
+.quote-form .radio-cards legend {
+  margin-bottom: 6px;
+  color: var(--primary-dark);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.quote-form .radio-cards > .radio-card {
+  display: inline-block;
+  margin: 0 6px 6px 0;
+}
+
+.quote-form .radio-card span {
+  min-height: 36px;
+  padding: 0 0.85rem;
+  border-width: 1px;
+  border-color: #dce5e1;
+  color: var(--primary-dark);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  transition: all 150ms ease;
+}
+
+.quote-form .radio-card input:checked + span {
+  border-color: var(--primary);
+  background: var(--primary-tint);
+  color: var(--primary-strong);
+  box-shadow: none;
+}
+
+.quote-form .radio-card:hover span {
+  border-color: var(--primary);
+}
+
+/* ---------- Anexo em linha ---------- */
+.quote-form .file-drop--inline {
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: var(--space-2) var(--space-4);
+  border: 1px dashed #c9dccf;
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.quote-form .file-drop--inline:hover,
+.quote-form .file-drop--inline.is-dragover {
+  border-color: var(--primary);
+  background: var(--primary-tint);
+}
+
+.file-drop__icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--surface-soft);
+  color: var(--primary-strong);
+}
+
+.file-drop__icon .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.file-drop__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.file-drop__line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-2);
+}
+
+.quote-form .file-drop--inline strong {
+  display: inline;
+  font-size: var(--fs-sm);
+}
+
+.quote-form .file-drop__name {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quote-form .file-drop__hint {
+  display: block;
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  opacity: 0.85;
+}
+
+.file-drop__action {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--primary-dark);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.quote-form .file-drop__action .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.quote-form .file-drop--inline:hover .file-drop__action {
+  border-color: var(--primary);
+  color: var(--primary-strong);
+}
+
+/* ---------- Privacidade + envio ---------- */
+.quote-submit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-5);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.quote-submit .field {
+  flex: 1 1 18rem;
+}
+
+.quote-submit .checkbox {
+  font-size: var(--fs-xs);
+}
+
+.quote-submit .checkbox input {
+  width: 18px;
+  height: 18px;
+}
+
+.quote-submit__btn {
+  min-height: 48px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* ---------- Confirmação de envio ---------- */
+.quote-success {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-7) var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.quote-success[hidden] {
+  display: none;
+}
+
+.quote-success__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary-tint);
+  color: var(--primary-strong);
+}
+
+.quote-success__icon .icon {
+  width: 28px;
+  height: 28px;
+}
+
+.quote-success h2 {
+  color: var(--primary-dark);
+  font-size: var(--fs-xl);
+}
+
+.quote-success p {
+  max-width: 46ch;
+  color: var(--muted);
+}
+
+.quote-success__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+/* ---------- Coluna lateral ---------- */
+.quote-aside {
+  position: sticky;
+  top: 90px;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.quote-steps {
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--gradient-dark-card);
+  color: var(--on-dark-muted);
+}
+
+.quote-steps h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--on-dark);
+  font-size: var(--fs-md);
+}
+
+.quote-steps h2 .icon {
+  width: 20px;
+  height: 20px;
+  color: var(--secondary);
+}
+
+.quote-steps__lead {
+  margin-top: var(--space-2);
+  font-size: var(--fs-sm);
+}
+
+.quote-timeline {
+  position: relative;
+  display: grid;
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
+  list-style: none;
+}
+
+.quote-timeline li {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+/* Linha vertical discreta ligando os ícones. */
+.quote-timeline li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: 34px;
+  left: 16px;
+  width: 1px;
+  height: calc(100% + var(--space-4) - 34px);
+  background: var(--on-dark-border);
+}
+
+.quote-timeline__icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  border: 1px solid var(--on-dark-border);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--secondary) 12%, transparent);
+  color: var(--secondary);
+}
+
+.quote-timeline__icon .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.quote-timeline strong {
+  display: block;
+  color: var(--on-dark);
+  font-size: var(--fs-sm);
+}
+
+.quote-timeline span {
+  font-size: var(--fs-xs);
+}
+
+/* ---------- Card rápido do WhatsApp ---------- */
+.quote-chat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--primary-tint-strong);
+  border-radius: var(--radius-lg);
+  background: var(--primary-tint);
+  color: var(--primary-dark);
+  text-decoration: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.quote-chat:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.quote-chat__icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--primary-strong);
+}
+
+.quote-chat__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.quote-chat__text strong {
+  display: block;
+  font-size: var(--fs-sm);
+}
+
+.quote-chat__text span {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.quote-chat__arrow {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--primary-strong);
+}
+
+/* ---------- Por que escolher ---------- */
+.quote-why {
+  padding: var(--space-5) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.quote-why h2 {
+  margin-bottom: var(--space-4);
+  color: var(--primary-dark);
+  font-size: var(--fs-base);
+}
+
+.quote-why ul {
+  display: grid;
+  gap: var(--space-4);
+  list-style: none;
+}
+
+.quote-why li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.quote-why__icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--primary-tint);
+  color: var(--primary-strong);
+}
+
+.quote-why__icon .icon {
+  width: 17px;
+  height: 17px;
+}
+
+.quote-why strong {
+  display: block;
+  color: var(--primary-dark);
+  font-size: var(--fs-sm);
+}
+
+.quote-why span {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 1100px) {
+  .quote-layout {
+    grid-template-columns: minmax(0, 65fr) minmax(280px, 35fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .quote-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .quote-aside {
+    position: static;
+  }
+
+  .quote-head {
+    flex-direction: column;
+  }
+
+  .quote-trust {
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 640px) {
+  .quote-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quote-trust li {
+    grid-template-columns: auto 1fr;
+    justify-items: start;
+    max-width: none;
+    text-align: left;
+  }
+
+  .quote-trust__text {
+    display: inline;
+  }
+
+  .quote-trust__text strong {
+    margin-left: 0.25rem;
+  }
+
+  .quote-form .file-drop--inline {
+    flex-wrap: wrap;
+  }
+
+  .file-drop__action {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .quote-submit__btn {
+    width: 100%;
+  }
+}
